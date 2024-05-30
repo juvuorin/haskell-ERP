@@ -1,7 +1,7 @@
 ## HASKELL-ERP
 This is a demonstrative ERP application for learning Haskell.
 
-The SW cannot be run as such as there is a great deal of configuration information missing relating to the services accessed. Also, for creating reposts the SW relies on a nodejs based piece of code for creating pdf-reports. 
+The SW cannot be run as such as there is a great deal of configuration information missing relating to the services accessed. Also, for creating reports the SW relies on a nodejs based piece of code for creating pdf-reports. 
 
 I have used this SW in teaching Haskell and type safe programming in general since 2022. Not that this should not be used for production. There is, for example, something to the security of this SW which is still very much work in progress. Can you figure out what it is, fork your own version and propose a solution? 
 
