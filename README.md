@@ -1,5 +1,5 @@
 ## HASKELL-ERP
-This is a demonstrative ERP application for learning Haskell.
+This is a demonstrative ERP application for learning Haskell based on Yesod web application framework by Michael Snoyman.
 
 The SW cannot be run as such as there is a great deal of configuration information missing relating to the services accessed. Also, for creating reports the SW relies on a nodejs based piece of code for creating pdf-reports. 
 
