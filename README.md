@@ -92,6 +92,3 @@ If you have trouble, refer to the [Yesod Quickstart guide](https://www.yesodweb.
 * There are several chatrooms you can ask for help:
 	* For IRC, try Freenode#yesod and Freenode#haskell
 	* [Functional Programming Slack](https://fpchat-invite.herokuapp.com/), in the #haskell, #haskell-beginners, or #yesod channels.
-"# hookkeeperserver" 
-# haskellBookkeeper
-# haskellBookkeeper
