@@ -10,13 +10,6 @@
 -- by overriding methods in the Yesod typeclass. That instance is
 -- declared in the Foundation.hs file.
 module Settings where
---import External.CertificateService 
-{-     ,CustomerId(..)
-    ,CustomerName(..)
-    ,TransferId(..)
-    ,TransferPassword(..))
-
- -}
 
 import ClassyPrelude.Yesod
 import qualified Control.Exception as Exception
@@ -40,14 +33,9 @@ import qualified Control.Concurrent        as CC
 import qualified Control.Concurrent.STM    as T
 import qualified Control.Monad             as CM
 
---type AccountMap = (Map DefaultAccountType (Entity Account))
 
 type AccountMapMutable = T.TVar (Map DefaultAccountType (Entity Account))
 
-
---    accounts <- selectList [AccountDefaultAccountType ==. Just DefaultAccountTypeInterestNonTax][]  
-
---
 
 data AccountConstant = AccountConstant 
                      {grossPay::AccountId, --6000
@@ -145,9 +133,9 @@ data AppSettings = AppSettings
     
     , appMySetting :: String
 
-    , maventa_client_id :: String
-    , maventa_client_secret :: String 
-    , maventa_vendor_api_key :: String
+    , appMmaventa_client_id :: String
+    , appMaventa_client_secret :: String 
+    , appMaventa_vendor_api_key :: String
 
 
     
@@ -205,6 +193,10 @@ instance FromJSON AppSettings where
         appRedirectUriAuth        <- fromString <$> o .:  "redirectUriAuth"
         appAccountAccessConsentsEndpoint <- fromString <$> o .:  "accountAccessConsentsEndpoint"
         appApiEndpoint            <- fromString <$> o .:  "apiEndpoint" 
+        appMaventa_client_id <- fromString <$> o .: "maventa_client_id" 
+        appMaventa_client_secret <- fromString <$> o .: "maventa_client_secret"
+        appMaventa_vendor_api_key <- fromString <$> o .: "maventa_vendor_api_key"
+
 
         let appPredefinedAccounts = predefinedAccounts
         let appMySetting = "moro"

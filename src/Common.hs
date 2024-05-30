@@ -13,7 +13,6 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -234,34 +233,6 @@ instance UpdateBatch Transaction Entry where
 
 
 
-{- getCompanyId :: Handler CompanyId
-getCompanyId = do
-  e <- getYesod
-  let set = appSettings e
-  req <- waiRequest
-  let path = pathInfo req
-
-  -- | Check if we need to check the company id in order to assess access rights
-  case path of
-    -- | If user is requesting a list of companies, companyId is not needed
-    (company : companies : _)
-      | company == "company" && companies == "companies" ->
-        sendResponseStatus status404 ("This should not happen" :: Text)
-
-    -- | If user is requesting company or filestore related services the companyId is needed
-    (x : _)
-      | x == "company" || x == "filestore" ->
-        return $ toSqlKey $ (read $ unpack $ path !! 1 :: Int64)
-
-    -- | If user is requesting payroll related services the companyId is needed
-    (payroll : company : _)
-      | payroll == "payroll" && company == "company" ->
-        return $ toSqlKey (read $ unpack $ path !! 2 :: Int64)
-    _ -> sendResponseStatus status404 ("This should not happen" :: Text)
-
- -}
-
-
 -- Function to calculate the number of months between two dates
 monthsBetween :: Day -> Day -> Int
 monthsBetween startDate endDate =
@@ -343,13 +314,6 @@ account (CodeAccount account) = do
     (x : []) -> return (Just (entityVal x))
     [] -> return Nothing
 
-{- data AccountType' i where
-  Id :: AccountType' AccountId
-  Code :: AccountType' Int
-
-deriving instance Show (AccountType' i)
-deriving instance Eq (AccountType' i)
- -}
 fromId :: AccountId -> CompanyId -> Handler Int
 fromId accountId companyId = do
   account <- runDB $ selectList [AccountId ==. accountId, AccountCompanyId ==. companyId] []
@@ -403,12 +367,6 @@ transformEntryAccountCodeToAccountId accounts entries' = do
 
 newtype CachedAccountList list = CachedAccountList {unCachedAccountList :: list}
   deriving (Typeable)
-
-{- getSetting ::(AppSettings->a)->Handler a
-getSetting x = do
-  yesod <-getYesod
-  return $ x $ appSettings yesod
- -}
 
 getAccountMap :: Handler (Map DefaultAccountType Int)
 getAccountMap = do
@@ -488,20 +446,11 @@ getCompanyId = do
           return $ toSqlKey (read $ unpack $ path !! 2 :: Int64)
       
       _ -> sendResponseStatus status404 ("Company id is not provided by the client!"::Text)
---Nothing --sendResponseStatus status404 ("This route does not exist" :: Text)
     
-
-
-      --uncle <- runInputGet $ ireq textField "bobsuncle"
-      --(Entity bob _) <- runDB $ getBy404 $ UniqueBob uncle
     
 
 newtype CachedCompanyId id = CachedCompanyId {unCachedCompanyId :: id}
   deriving (Typeable)
-
---getCompanyId' :: Handler CompanyId 
---getCompanyId' = unCachedCompanyId <$> cached (CachedCompanyId unCachedCompanyId)
-
 
 getAccountEntities :: CompanyId -> Handler [Entity Account]
 getAccountEntities companyId = unCachedAccountList <$> cached (CachedAccountList <$> getAccountEntities_ companyId)
@@ -529,25 +478,12 @@ getIdByCode code accounts = do
   case filteredAccount of
     [x] -> entityKey x
 
-{-
-i :: Map AccountConstant AccountCode -> AccountConstant -> [Entity Account] -> Key Account
-i a accountConstant accounts = do
-          let Just validAccount = Data.Map.lookup accountConstant a
-          getIdByCode validAccount accounts
- -}
 logEvent :: String -> Maybe CompanyId -> ReaderT SqlBackend (HandlerFor App) ()
 logEvent message companyId = do
   time <- liftIO $ getCurrentTime
   insert $ Event (pack message) time companyId
   return ()
 
-{-
-logEvent::String-> CompanyId->Handler ()
-logEvent message companyId = do
-    time <- liftIO $ getCurrentTime
-    runDB $ insert $ Event message time (Just companyId)
-    return ()
- -}
 logEvent' :: String -> Handler ()
 logEvent' message = do
   time <- liftIO $ getCurrentTime
@@ -794,64 +730,6 @@ insertEntries companyId newEntries transactionDate = do
   ids <- insertMany newEntries
   return ids
 
---  putStrLn "JUst abou to insert"
-
-{- updateAccountBalancesForNewEntries :: [Entry] -> Day -> DB ()
-updateAccountBalancesForNewEntries entriesToInsert dateOfPostedTransaction = do
-  let endDateOfPostedTransaction = getEndDate dateOfPostedTransaction
-
-  -- 1. Create a list of unique accounts found in the incoming entries
-  let accountIds = nub $ map entryAccountId entriesToInsert
-
-  -- Get current balances from the MonthlyBalance table for each account
-  currentBalances' <- selectList ([MonthlyBalanceAccountId <-. accountIds, MonthlyBalanceDate ==. endDateOfPostedTransaction]) []
-
-  putStrLn $ pack $ "current balances:" ++ (show currentBalances')
-
-  -- 2. Map over the list of accounts by grouping entries by account and calculating balances for each account.
-  newBalancesWithKeys <-
-    mapM
-      ( \item -> do
-          -- Find the entries of the same account
-          let entriesOfAccount = filter ((== item) . entryAccountId) entriesToInsert
-
-          --  | Calculate a balance for the entries with the same account identity
-          let balance = foldl (\acc item -> acc + round' (entryAmount item)) 0 entriesOfAccount
-
-          -- Create a key for a balance record
-
-          case keyFromValues [PersistInt64 $ fromSqlKey item, PersistDay $ endDateOfPostedTransaction] of
-            Left s -> sendResponseStatus status404 ("Cannot create balance record key" :: Text)
-            Right x -> do
-              let (Entity key value) =
-                    Entity
-                      (x)
-                      MonthlyBalance
-                        { monthlyBalanceAccountId = item,
-                          monthlyBalanceDate = endDateOfPostedTransaction,
-                          monthlyBalanceBalance = balance
-                        }
-
-              --              let existingBalance = filter (\item -> entityKey item == key) currentBalances'
-              let existingBalance = filter ((== key) . entityKey) currentBalances'
-
-              -- If a balance exists for a specific key...
-              if not $ null existingBalance
-                then do
-                  let oldBalance = entityVal (Data.List.head existingBalance)
-                  -- ...we calculate new total balance of an account for a month
-                  return $ Entity key value {monthlyBalanceBalance = round' (monthlyBalanceBalance oldBalance + monthlyBalanceBalance value)}
-                else -- If a for a specific key does not exist, we need a new balance record...
-
-                -- ...the balance will be set according to what we have in the entry
-                  return $ Entity key value {monthlyBalanceBalance = round' (monthlyBalanceBalance value)}
-      )
-      accountIds
-
-  -- Repsert accepts [(Key, Value)], so we need a transformation
-  -- Database action to replace or insert balance entries
-  repsertMany $ map (\(Entity key val) -> (key, val)) newBalancesWithKeys
- -}
 monthlyBalanceEntity :: Key Account -> Day -> Double -> Handler (Entity MonthlyBalance)
 monthlyBalanceEntity accountId endDateOfPostedTransaction balance = do
   companyId <- getCompanyId 
@@ -924,18 +802,9 @@ instance CoherentObject SalesInvoice where
   requireCheckJsonBodyForceCoherence = do
     invoice <- (requireCheckJsonBody :: Handler SalesInvoice)
     when (salesInvoicePaymenttermdays invoice < salesInvoiceCashdiscountdays invoice) $ sendResponseStatus status404 ("The due date of payment can not be less than the due date of payment with cash discount" :: Text)
-    --    unless(invoiceTransactiontype invoice `elem` listInvoiceTransactionType) $ sendResponseStatus status404 ("Invoice must be of type PurchaseInvoice or SalesInvoice" :: Text)
 
     return invoice
 
-{- instance CoherentObject PurchaseInvoice where
-  requireCheckJsonBodyForceCoherence = do
-    invoice <- (requireCheckJsonBody :: Handler PurchaseInvoice)
-    when(purchaseInvoicePaymenttermdays invoice < purchaseInvoiceCashdiscountdays invoice) $ sendResponseStatus status404 ("The due date of payment can not be less than the due date of payment with cash discount" :: Text)
---    unless(invoiceTransactiontype invoice `elem` listInvoiceTransactionType) $ sendResponseStatus status404 ("Invoice must be of type PurchaseInvoice or SalesInvoice" :: Text)
-
-    return invoice
- -}
 
 instance CoherentObject Partner where
   requireCheckJsonBodyForceCoherence = do
@@ -946,22 +815,3 @@ instance CoherentObject Partner where
 class Extension a b where
   extend :: a b -> Handler Value
 
-{- instance Extension Entity Invoice where
-  extend invoice = runDB $ do
-      $(logInfo) $ red "Logging from Extension Invoice intance"
-
-      partnerMaybe <- selectFirst [PartnerId==. invoicePartnerId (entityVal invoice)][]
-
-      deliveryterm <- case invoiceDeliverytermId (entityVal invoice) of
-        Just x -> selectFirst [DeliverytermId==. x][]
-        Nothing -> return Nothing
-
-      case partnerMaybe of
-        Just customer -> return $  object ["invoice" .= invoice,"customer" .= customer,"deliveryterm" .= deliveryterm]
-        Nothing -> sendResponseStatus status404 ("Partner does not exist!"::Text)
-
- -}
--- import Import
--- muutos
--- These handlers embed files in the executable at compile time to avoid a
--- runtime dependency, and for efficiency.

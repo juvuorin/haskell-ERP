@@ -113,9 +113,9 @@ authenticationTokenRequest = do
               [("Content-Type", "application/x-www-form-urlencoded")]
           }
 
-  maventa_client_id <- getSetting maventa_client_id
-  maventa_client_secret <- getSetting maventa_client_secret
-  maventa_vendor_api_key <- getSetting maventa_vendor_api_key
+  maventa_client_id <- getSetting appMaventa_client_id
+  maventa_client_secret <- getSetting appMaventa_client_secret
+  maventa_vendor_api_key <- getSetting appMaventa_vendor_api_key
 
   let request = urlEncodedBody
           [("client_id", fromString $ maventa_client_id),

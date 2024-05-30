@@ -1,0 +1,74 @@
+# Values formatted like "_env:YESOD_ENV_VAR_NAME:default_value" can be overridden by the specified environment variable.
+# See https://github.com/yesodweb/yesod/wiki/Configuration#overriding-configuration-values-with-environment-variables
+
+#static-dir:     "_env:YESOD_STATIC_DIR:C:\\Users\\juuso\\bookkeeper\\client\\build\\static"
+static-dir:     "_env:YESOD_STATIC_DIR:static"
+# Default behavior: determine the application root from the request headers.
+host:           "_env:YESOD_HOST:*4" # any IPv4 host
+port:           "_env:YESOD_PORT:4000" # NB: The port `yesod devel` uses is distinct from this value. Set the `yesod devel` port from the command line.
+ip-from-header: "_env:YESOD_IP_FROM_HEADER:false"
+jwt-secret:     "_env:YESOD_JWT-SECRET:xxxxxx"
+
+
+#Income register
+authorityCompanyId: 0
+authorityCustomerId: 1234567-0
+authorityCustomerName: Something Ltd
+authorityTransferId: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+authorityTransferPassword: xxxxxxxxxxxxxxxxxxx
+
+#Banking API
+clientId: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+xApiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+tokenEndpoint: "https://alandsbanken-fi-api-sandbox.crosskey.io/open-banking/v2.0/oidc/token"
+authEndpoint: "https://alandsbanken-fi-sandbox.crosskey.io/open-banking/v3.0/oidc/auth"
+redirectUriAuth: "https://xx.xx.xx.xx/banking/authcallback"
+accountAccessConsentsEndpoint: "https://alandsbanken-fi-api-sandbox.crosskey.io/open-banking/v3.1.6/aisp/account-access-consents"
+apiEndpoint: "https://alandsbanken-fi-api-sandbox.crosskey.io/open-banking/v3.1.6/aisp"
+
+#Maventa integration
+maventa_client_id : ""
+maventa_client_secret : ""
+maventa_vendor_api_key : ""
+
+
+# Default behavior: determine the application root from the request headers.
+# Uncomment to set an explicit approot
+# approot:        "_env:YESOD_APPROOT:http://localhost:3443"
+
+# By default, `yesod devel` runs in development, and built executables use
+# production settings (see below). To override this, use the following:
+#
+# development: false
+
+# Optional values with the following production defaults.
+# In development, they default to the inverse.
+#
+# detailed-logging: false
+# should-log-all: false
+# reload-templates: false
+# mutable-static: false
+# skip-combining: false
+# auth-dummy-login : false
+
+# NB: If you need a numeric value (e.g. 123) to parse as a String, wrap it in single quotes (e.g. "_env:YESOD_PGPASS:'123'")
+# See https://github.com/yesodweb/yesod/wiki/Configuration#parsing-numeric-values-as-strings
+
+# ***REMOVED***
+# See config/test-settings.yml for an override during tests
+#  ***REMOVED*** "_env:YESOD_SQLITE_DATABASE:web-boilerplate-haskell.sqlite3"
+#  poolsize: "_env:YESOD_SQLITE_POOLSIZE:10"
+
+# copyright: Insert copyright statement here
+#analytics: UA-YOURCODE
+
+***REMOVED***
+  user:     "_env:YESOD_PGUSER:xxxxxxxxx"
+  password: "_env:YESOD_PGPASS:xxxxxxxxx"
+  host:     "_env:YESOD_PGHOST:localhost"
+  port:     "_env:YESOD_PGPORT:5432"
+ # See config/test-settings.yml for an override during tests
+  ***REMOVED*** "_env:YESOD_PGDATABASE:xxxxxx"
+  poolsize: "_env:YESOD_PGPOOLSIZE:10"
+copyright: Insert copyright statement here
+#analytics: UA-YOURCODE
