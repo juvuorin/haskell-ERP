@@ -1,33 +1,32 @@
 ## HASKELLERP
 A Simple demo ERP application for learning Haskell. The SW cannot be run as such as there is a great deal of configuration information missing relating to the services accessed. I have used this SW in teaching Haskell and type safe programming in general since 2022. 
 
-What is demonstrated and what you could learn while dealing with this piece of software? 
-
-Creating and maintaining SQL data using Persistent ORM
-Using transactions for data integrity 
-Designing maintainable SQL databases and exploiting ORM if it is feasable
-Accessing file system  
-Passing settings information around by using the Reader monad
-Using middleware to do some preprocessing for the incoming HTTP requests
-Accessing Finnish Tax authority by filing VAT report to the authority
-Accessing Maventa invoicing API
-Accessing tulorekisteri API and filing wage payment related reports to the authorities
-Accessing Finnish income register to get and renew certifcates to get credentials for accessing several authorities
-Accessing Alandsbanken Open Banking API 
-Using Bang patterns to force code execution
-Using secure sockets to deal with secure HTTP endpoints
-Using GADT's to demonstrate type safe for invoicing
-Using HAXML for producing Haskell code for parsing XML
-Using Tree structures for handling account charts
-Using JWT to authenticate the users
-Using HTTP libraries to communicate with remote endpoints
-Relying on template haskell for code generation
-Using digital signatures for real use cases
-Parsing XML for real life use cases dealing with real life business entities (banks, taxation authorities, income registy, E-invoicing...)
-Learning about the ergonomics of Haskell and the lack of it, too
-Using haskell toolchain and VSCode for Haskell development
-
-In general you will learn to rely on the type checker and learn to have fun with Haskell!
+* What is demonstrated and what you could learn while dealing with this piece of software? 
+* Creating and maintaining SQL data using Persistent ORM
+* Using transactions for data integrity 
+* Designing maintainable SQL databases and exploiting ORM if it is feasable
+* Accessing file system  
+* Passing settings information around by using the Reader monad
+* Using middleware to do some preprocessing for the incoming HTTP requests
+* Accessing Finnish Tax authority by filing VAT report to the authority
+* Accessing Maventa invoicing API
+* Accessing tulorekisteri API and filing wage payment related reports to the authorities
+* Accessing Finnish income register to get and renew certifcates to get credentials for accessing several authorities
+* Accessing Alandsbanken Open Banking API 
+* Using Bang patterns to force code execution
+* Using secure sockets to deal with secure HTTP endpoints
+* Using GADT's to demonstrate type safe for invoicing
+* Using HAXML for producing Haskell code for parsing XML
+* Using Tree structures for handling account charts
+* Using JWT to authenticate the users
+* Using HTTP libraries to communicate with remote endpoints
+* Relying on template haskell for code generation
+* Using digital signatures for real use cases
+* Parsing XML for real life use cases dealing with real life business entities (banks, taxation authorities, income registy, E-invoicing...)
+* Learning about the ergonomics of Haskell and the lack of it, too
+* Using haskell toolchain and VSCode for Haskell development
+* Using typeclasses at basic level to define interfaces
+* In general you will learn to rely on the type checker and learn to have fun with Haskell!
 
 
 ## Directory structure
