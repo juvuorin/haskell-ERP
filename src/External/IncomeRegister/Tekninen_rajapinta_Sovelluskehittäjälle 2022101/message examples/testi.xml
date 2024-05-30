@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <wrtir:WageReportRequestToIR xmlns:wrtir="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tulorekisteri.fi/2017/1/WageReportsToIR WageReportsToIR.xsd">
+      <DeliveryData>
+        <Timestamp>2022-02-08T15:52:41Z</Timestamp>
+        <Source>EasyBooks</Source>
+        <DeliveryDataType>100</DeliveryDataType>
+        <DeliveryId>aineistoviite-2020-01-01-abc</DeliveryId>
+        <FaultyControl>2</FaultyControl>
+        <ProductionEnvironment>false</ProductionEnvironment>
+        <DeliveryDataOwner>
+          <Type>1</Type>
+          <Code>7017229-7</Code>
+        </DeliveryDataOwner>
+        <DeliveryDataCreator>
+          <Type>1</Type>
+          <Code>7017229-7</Code>
+        </DeliveryDataCreator>
+        <DeliveryDataSender>
+          <Type>1</Type>
+          <Code>7017229-7</Code>
+        </DeliveryDataSender>
+        <PaymentPeriod>
+          <PaymentDate>2022-01-31</PaymentDate>
+          <StartDate>2022-01-01</StartDate>
+          <EndDate>2022-01-01</EndDate>
+        </PaymentPeriod>
+        <ContactPersons>
+          <ContactPerson>
+            <Name>Juuso Vuorinen</Name>
+            <Telephone>0504828940</Telephone>
+          </ContactPerson>
+        </ContactPersons>
+        <Payer>
+          <PayerIds>
+            <Id>
+              <Type>1</Type>
+              <Code>7017229-7</Code>
+            </Id>
+          </PayerIds>
+          <PayerBasic>
+            <CompanyName>Larlheinz 521 Testifirma OY</CompanyName>
+            <Language>1</Language>
+          </PayerBasic>
+          <Address>
+            <Street>Iidesranta 18 A 12</Street>
+            <PostalCode>33100</PostalCode>
+            <PostOffice>Tampere</PostOffice>
+            <CountryCode>FI</CountryCode>
+          </Address>
+          <PayerOther>
+            <PayerTypes>
+              <Code>3</Code>
+            </PayerTypes>
+          </PayerOther>
+        </Payer>
+        <Reports>
+          <Report>
+            <ReportData>
+              <ActionCode>1</ActionCode>
+              <ReportId>yksilöivätunniste 4398</ReportId>
+            </ReportData>
+            <IncomeEarner>
+              <IncomeEarnerIds>
+                <Id>
+                  <Type>2</Type>
+                  <Code>110849-882M</Code>
+                </Id>
+              </IncomeEarnerIds>
+              <IncomeEarnerBasic>
+                <LastName>Ohola</LastName>
+                <FirstName>Sirkka Liisa</FirstName>
+              </IncomeEarnerBasic>
+              <PensionInsurance>
+                <PensionActCode>1</PensionActCode>
+                <PensionProvIdCode>66</PensionProvIdCode>
+                <PensionPolicyNo>66-12345678</PensionPolicyNo>
+              </PensionInsurance>
+            </IncomeEarner>
+            <Transactions>
+              <Transaction>
+                <TransactionBasic>
+                  <TransactionCode>201</TransactionCode>
+                  <Amount>1500.0</Amount>
+                </TransactionBasic>
+              </Transaction>
+              <Transaction>
+                <TransactionBasic>
+                  <TransactionCode>402</TransactionCode>
+                  <Amount>200.0</Amount>
+                </TransactionBasic>
+              </Transaction>
+              <Transaction>
+                <TransactionBasic>
+                  <TransactionCode>413</TransactionCode>
+                  <Amount>35.5</Amount>
+                </TransactionBasic>
+              </Transaction>
+              <Transaction>
+                <TransactionBasic>
+                  <TransactionCode>414</TransactionCode>
+                  <Amount>5.89</Amount>
+                </TransactionBasic>
+              </Transaction>
+            </Transactions>
+          </Report>
+        </Reports>
+      </DeliveryData>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <DigestValue>36NjsjOA9A496ENpN2zjiSLsn5WtcBbWm4wE5hWqSCs=</DigestValue>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue>ZFAO9dwFj5DTEJlRXdw1Zl9nK7Hh0CEZW1P7k+oWHDuDfFnqFR63jwCVuiRy8/pNsDgtm/cItc7ilZC9aek9yly8x2RSguD30fEuTtGYZIRFNJiCd3+66bil6r3XfDD/SDX+dt/NsKZ9WtRvr9Zv6zsAdCi11uIReX50hCTTnZKuCKdnSoMH8SYlOiDOCBjof4oE8SAOBWJUSDmXwA71JBZatJC0al/Subbt22bUqTiYa/EWwL5fefyGToDYmiTQeMi1PsfjKiDgcQ3zSNrJIcq6n54P48QfXuZ4uDuK7wiVAYnaXxabUTxLz4oNtyvUijNa+2P29M+stGK29RnGfQ==</SignatureValue>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate>MIIFwTCCA6mgAwIBAgIIGKPW/22OQogwDQYJKoZIhvcNAQELBQAwUDEqMCgGA1UEAwwhRGF0YSBQcm92aWRlcnMgVGVzdCBJc3N1aW5nIENBIHYxMRUwEwYDVQQKDAxWZXJvaGFsbGludG8xCzAJBgNVBAYTAkZJMB4XDTIxMDQyNDE0NDExOFoXDTIzMDQyNDE0NDExOFowcjESMBAGA1UEAwwJNzAxNzIyOS03MSkwJwYDVQQFEyBGQ0E1MUE4QTQ3MDQxMUI4QTlBRTdEREJFMTdEODQ5RjEkMCIGA1UECgwbTGFybGhlaW56IDUyMSBUZXN0aWZpcm1hIE9ZMQswCQYDVQQGEwJGSTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANd12eKoftYTCmd2WzgWjmadqBuaojqOjIODo6ejyZ9Cs+/y1w+k/h8AjWlm9ZYpxgqo6JSYjNLL3+rOVD0SMc9GLNR8b5Qf46H9awsduXwbe77f6h4+EpjrzD2TmTtqZc2A9V4w9crlK+JxW4m9cYZKskkLVTYvUPAWA97fDQxkZhNlsHdGbQFVOIRaChq8cqaGsDcsZwatrh5/lbZi/iV4ItM0Cimjht5eyFxnOiL5f9v0SkulnkzZlk50aaIpVIMlHIkM/xVNgK9rQJWLm41mb/7HajPAe2zONQKUMsFdU7CZpkOEASxcCOBo211VzrbgGM2xwAPoRLEqnll1TWMCAwEAAaOCAXswggF3MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU/HBL1zmPybJX2rJ93TZLAgrYlRQwWAYIKwYBBQUHAQEETDBKMEgGCCsGAQUFBzAChjxodHRwOi8vY3JsLXRlc3RpLnZlcm8uZmkvY2EvRGF0YVByb3ZpZGVyc1Rlc3RJc3N1aW5nQ0F2MS5jZXIwEwYDVR0lBAwwCgYIKwYBBQUHAwIwgacGA1UdHwSBnzCBnDCBmaBBoD+GPWh0dHA6Ly9jcmwtdGVzdGkudmVyby5maS9jcmwvRGF0YVByb3ZpZGVyc1Rlc3RJc3N1aW5nQ0F2MS5jcmyiVKRSMFAxKjAoBgNVBAMMIURhdGEgUHJvdmlkZXJzIFRlc3QgSXNzdWluZyBDQSB2MTEVMBMGA1UECgwMVmVyb2hhbGxpbnRvMQswCQYDVQQGEwJGSTAdBgNVHQ4EFgQU09WN9CVvNEcCxkSnC0w7nJ04GuMwDgYDVR0PAQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4ICAQB1xjoBXmlo/6Qx1pCNzlGN4z8HveaSUXkgOoBS2jj/FffCOSDzVTnUmMLiO7GWPeXmMiET6uKA0dngOXlSBYs9h1dgi0k90RsWY2qIQQzq0WQf+W5FmiS9kiR8gUQ15smMEI9M4pqhlN90JZs8XXJJbD95Q4y327T88ZIuaipssf9hS1dGrdw9vhmnLXz+Zcurag+nt+/4216OGUcDQKHUP4hRYgS/KSMkMis4xvY9AYksOe5a1V/Lv7jwxhR1+NwuFURwSu3uEN0L1C4M13dAykh2jAk+fonY3ZI93ET72E5ztAPBaGtjqlJZ6U7CehSAqpTD2WktO3UGorMLiSQ+klC8RYVsxih0mi1J69lIGQKxr5Casi5tMx4q++CQj0FFe0slRr0mMUkTKYwOY0aNApGTuDJ/WEJ6p2gqw5qqYX7il6KabGyRiR9OgSzA8Pj10eMOKUZWEFMxtHYQxgJr9JmZ7qEfLZLJyIuhCsrkSmqlJjIFOfgDL0aHsdjYivKOLs+PoUruW7nT26k61oOF+aOtJhRF5FJcCFR0aj6CJLB+lP4pzcSXy3QB7q1uK63/p8eImJIlcvbITU7pDb/AeKUWM7F/xJ8hZtYqw9q26dY4I3J4NV7xPfRwo5t1RQga03oAGIyidszWK1xq+olDtdR7LIkqP2V7/JJ/u1pp5g==</X509Certificate>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </wrtir:WageReportRequestToIR>
+  </soap:Body>
+</soap:Envelope>

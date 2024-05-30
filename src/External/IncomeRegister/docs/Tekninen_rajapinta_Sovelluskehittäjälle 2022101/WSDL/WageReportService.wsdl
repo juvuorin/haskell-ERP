@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.tulorekisteri.fi/WageReportService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:srfir="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wrtir="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" xmlns:afir="http://www.tulorekisteri.fi/2017/1/AckFromIR" xmlns:stm="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" xmlns:wrtirt="http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes" name="WageReportService" targetNamespace="http://www.tulorekisteri.fi/WageReportService">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/AckFromIR" schemaLocation="AckFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" schemaLocation="StatusResponseFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" schemaLocation="WageReportsToIR.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="StatusResponseFromIRMessage">
+		<wsdl:part name="out" element="srfir:StatusResponseFromIR"/>
+	</wsdl:message>
+	<wsdl:message name="WageReportsToIRMessage">
+		<wsdl:part name="in" element="wrtir:WageReportsRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="WageReportToIRMessage">
+		<wsdl:part name="in" element="wrtir:WageReportRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="AckFromIR">
+		<wsdl:part name="out" element="afir:AckFromIR"/>
+	</wsdl:message>
+	<wsdl:portType name="WageReportPort">
+		<wsdl:operation name="SendWageReport">
+			<wsdl:input message="tns:WageReportToIRMessage"/>
+			<wsdl:output message="tns:StatusResponseFromIRMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendWageReports">
+			<wsdl:input message="tns:WageReportsToIRMessage"/>
+			<wsdl:output message="tns:AckFromIR"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WageReportSoap" type="tns:WageReportPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SendWageReport">
+			<soap:operation soapAction="SendWageReport" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SendWageReports">
+			<soap:operation soapAction="SendWageReports" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WageReportService">
+		<wsdl:port name="WageReportService" binding="tns:WageReportSoap">
+			<soap:address location="https://localhost/20170526/WageReportService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsFromIR" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:psrfir="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsFromIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:psrfirt="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsFromIRTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsFromIRTypes" schemaLocation="PayerSummaryReportsFromIRTypes.xsd"/>
+	<xs:element name="PayerSummaryReportsFromIR" type="psrfirt:PayerSummaryReportsFromIR"/>
+</xs:schema>

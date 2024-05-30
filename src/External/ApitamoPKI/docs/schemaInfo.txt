@@ -1,0 +1,2 @@
+https://apitesti.ilmoitin.fi/wsapp/apitamopki?wsdl
+https://www.w3.org/Submission/soap11mtom10/

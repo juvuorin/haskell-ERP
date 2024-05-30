@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wrsfirt="http://www.tulorekisteri.fi/2017/1/WageReportSummaryFromIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/WageReportSummaryFromIRTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:complexType name="AccidentInsurance">
+		<xs:sequence>
+			<xs:element name="AccInsProvId" type="wrsfirt:Id" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AccInsPolicyNo" type="irct:String20" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NoAccInsPolicyNo" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccidentInsuranceIncome">
+		<xs:sequence>
+			<xs:element name="SubToAccInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToAccInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccInsPolicyNumbersSummary">
+		<xs:sequence>
+			<xs:element name="AccInsPolicyNumberSummary" type="wrsfirt:AccInsPolicyNumberSummary" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccInsPolicyNumberSummary">
+		<xs:sequence>
+			<xs:element name="AccidentInsurance" type="wrsfirt:AccidentInsurance" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="AccidentInsuranceIncome" type="wrsfirt:AccidentInsuranceIncome" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Income">
+		<xs:sequence>
+			<xs:element name="IncomeTotal" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToPensionInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToAccInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToUnemploymentInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToHealthInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmployeePensionInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmployeeUnemploymentInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmployeeHealthInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Withholding" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TaxAtSource" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarner">
+		<xs:sequence>
+			<xs:element name="IncomeEarnerId" type="wrsfirt:Id" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MissingIdentification" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerIncome">
+		<xs:sequence>
+			<xs:element name="NoIncome" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeSummary" type="wrsfirt:IncomeSummary" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnersSummary">
+		<xs:sequence>
+			<xs:element name="IncomeEarnerSummary" type="wrsfirt:IncomeEarnerSummary" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerSummary">
+		<xs:sequence>
+			<xs:element name="IncomeEarner" type="wrsfirt:IncomeEarner" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeEarnerIncome" type="wrsfirt:IncomeEarnerIncome" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeSummary">
+		<xs:sequence>
+			<xs:element name="ReporterSubTypeIncome" type="wrsfirt:ReporterSubTypeIncome" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payer">
+		<xs:sequence>
+			<xs:element name="PayerId" type="wrsfirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubOrg" type="wrsfirt:SubOrg" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentDateSummary">
+		<xs:sequence>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="WageReportCount" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeTotal" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubToPensionInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubToAccInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubToUnemploymentInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubToHealthInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EmployeePensionInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EmployeeUnemploymentInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EmployeeHealthInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Withholding" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="TaxAtSource" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UnjustEnrichmentTotal" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoveryTotal" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToPensionInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToAccInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToUnemploymentInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToHealthInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeEarnersSummary" type="wrsfirt:IncomeEarnersSummary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PensionPolicyNumbersSummary" type="wrsfirt:PensionPolicyNumbersSummary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="AccInsPolicyNumbersSummary" type="wrsfirt:AccInsPolicyNumbersSummary" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PensionInsurance">
+		<xs:sequence>
+			<xs:element name="PensionProvIdCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PensionPolicyNo" type="irct:PensionPolicyNo" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NoPensionPolicyNo" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PensionInsuranceIncome">
+		<xs:sequence>
+			<xs:element name="SubToPensionInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RecoverySubToPensionInsContribution" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PensionPolicyNumbersSummary">
+		<xs:sequence>
+			<xs:element name="PensionPolicyNumberSummary" type="wrsfirt:PensionPolicyNumberSummary" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PensionPolicyNumberSummary">
+		<xs:sequence>
+			<xs:element name="PensionInsurance" type="wrsfirt:PensionInsurance" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PensionInsuranceIncome" type="wrsfirt:PensionInsuranceIncome" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Query">
+		<xs:sequence>
+			<xs:element name="IRQueryId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryTimestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Recovery">
+		<xs:sequence>
+			<xs:element name="RecoveryTotal" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoverySubToPensionInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoverySubToAccInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoverySubToUnemploymentInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoverySubToHealthInsContribution" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReporterSubTypeIncome">
+		<xs:sequence>
+			<xs:element name="ReporterSubType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Income" type="wrsfirt:Income" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnjustEnrichment" type="wrsfirt:UnjustEnrichment" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Recovery" type="wrsfirt:Recovery" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubOrg">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Subscription">
+		<xs:sequence>
+			<xs:element name="QueryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRMainSubscriptionId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRSubscriptionId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="MainSubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Summary">
+		<xs:sequence>
+			<xs:element name="NrOfReports" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnjustEnrichment">
+		<xs:sequence>
+			<xs:element name="UnjustEnrichmentTotal" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WageReportPaymentDatesSummary">
+		<xs:sequence>
+			<xs:element name="PaymentDateSummary" type="wrsfirt:PaymentDateSummary" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WageReportSummaryFromIR">
+		<xs:sequence>
+			<xs:element name="Subscription" type="wrsfirt:Subscription" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Query" type="wrsfirt:Query" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Summary" type="wrsfirt:Summary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Payer" type="wrsfirt:Payer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="WageReportPaymentDatesSummary" type="wrsfirt:WageReportPaymentDatesSummary" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

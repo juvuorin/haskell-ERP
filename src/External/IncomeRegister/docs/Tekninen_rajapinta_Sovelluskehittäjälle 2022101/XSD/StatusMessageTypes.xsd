@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:smt="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:complexType name="AckData">
+		<xs:complexContent>
+			<xs:extension base="smt:Message">
+				<xs:sequence>
+					<xs:element name="DeliveryDataStatus" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="IRDeliveryId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="MessageErrors" type="smt:MessageErrors" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="DeliveryErrors" type="smt:DeliveryErrors" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AckFromIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="smt:DeliveryData" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="AckData" type="smt:AckData" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryData">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Source" type="irct:String30" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FaultyControl" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryErrors">
+		<xs:sequence>
+			<xs:element name="ErrorInfo" type="smt:ErrorInfo" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ErrorInfo">
+		<xs:sequence>
+			<xs:element name="ErrorCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ErrorMessage" type="irct:String500" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ErrorDetails" type="irct:String500" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvalidItems">
+		<xs:sequence>
+			<xs:element name="Item" type="smt:Item" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Item">
+		<xs:sequence>
+			<xs:element name="ItemId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IRItemId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ItemVersion" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ItemErrors" type="smt:ItemErrors" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ItemErrors">
+		<xs:sequence>
+			<xs:element name="ErrorInfo" type="smt:ErrorInfo" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Message">
+		<xs:sequence>
+			<xs:element name="IRResponseId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRResponseTimestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MessageErrors">
+		<xs:sequence>
+			<xs:element name="ErrorInfo" type="smt:ErrorInfo" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StatusRequestToIR">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IRDeliveryId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="smt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StatusResponse">
+		<xs:complexContent>
+			<xs:extension base="smt:Message">
+				<xs:sequence>
+					<xs:element name="DeliveryDataStatus" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="IRDeliveryId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="ValidItems" type="smt:ValidItems" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="InvalidItems" type="smt:InvalidItems" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="MessageErrors" type="smt:MessageErrors" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="DeliveryErrors" type="smt:DeliveryErrors" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StatusResponseFromIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="smt:DeliveryData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StatusResponse" type="smt:StatusResponse" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ValidItems">
+		<xs:sequence>
+			<xs:element name="Item" type="smt:Item" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

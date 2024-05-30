@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:srfir="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" xmlns:smt="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" schemaLocation="StatusMessageTypes.xsd"/>
+	<xs:element name="StatusResponseFromIR" type="smt:StatusResponseFromIR"/>
+</xs:schema>

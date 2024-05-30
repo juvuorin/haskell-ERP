@@ -1,0 +1,536 @@
+-- By default this file is used by `persistFileWith` in Model.hs (which is imported by Foundation.hs)
+-- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
+--     ccoundBalanceIdentity      accountId compaAnyId
+
+
+AccessLog
+    time                UTCTime
+    userId              UserId  
+
+AccessRight json
+    right               Task
+    UniqueRight         right
+    description         Text
+
+AccessRightRole json
+    roleId              RoleId
+    accessRightId       AccessRightId
+    companyId           CompanyId
+
+ 
+WorkQueue json
+    documentId          Int64
+    userId              UserId
+    task                Task
+    taskcomplete        Bool
+    taskresult          Task Maybe
+    removed             Bool
+
+
+
+
+
+
+Account json
+    name                Text
+    code                Int
+    companyId           CompanyId 
+    balance             Double
+    vat                 Int Maybe
+--    vattype             VatType Maybe
+    taxtype             Text Maybe
+    propertyId          PropertyId Maybe
+    type                AccountType Maybe
+    defaultAccountType  DefaultAccountType Maybe
+    UniqueDefaultAccountType  defaultAccountType !force
+    deriving Show Generic
+
+AccountHierarchy json
+    parentId            AccountHierarchyId Maybe 
+    description         String Maybe
+    amount              Double Maybe
+    deriving Show Generic
+
+-- AccountCompany json
+--    accountId           AccountId
+--    companyId           CompanyId
+--    Primary             accountId companyId
+--    deriving (Show)
+-- 
+
+--AccountDefault json
+--    companyId           CompanyId
+--    accountDefaultFor   AccountDefaultFor
+--    accountId           AccountId
+--    Primary             companyId accountDefaultFor
+--    deriving Show Generic
+
+
+AccountingYear json
+    companyId           CompanyId
+    startDate           Day
+    endDate             Day
+    state               AccountingYearState   
+    deriving Show Generic
+
+-- AccountProperty
+--    property    Property
+--    value       String Maybe
+--    accountId   AccountId
+--    UniqueKey   property accountId 
+ 
+
+Asset
+    name              String
+    value             Double
+    acquisitionprice  Double
+    acquisitiondate   Double
+    depreciationtype  DepreciationType  
+    type              AssetType
+
+BankStatement json
+    companyId         CompanyId
+    date              Day
+    account           Text
+
+BankStatementItem json
+    bankStatementId   BankStatementId
+    transactionId     TransactionId Maybe
+    date              Day
+    amount            Double
+    archiveid         Text
+    referencenumber   Text Maybe
+    message           Text Maybe
+    payerOrReceiver   Text
+    transactionType   Text Maybe
+
+BankStatementItemPostingSuggestion json
+    bankStatementItemId   BankStatementItemId
+    entryId               EntryId
+
+ChartOfAccounts json
+    name                Text
+    type                ChartOfAccountsType
+    deriving (Show)
+
+
+Company json
+    name                Text 
+    companyid           Text 
+    tvmpercentage       Double  
+    savapercentage      Double 
+    tyelpercentage      Double  
+    email               Text 
+    address             Text 
+    zipcode             Text 
+    city                Text 
+    phone               Text
+    contact             Text  
+    pensionpolicyno     Text Maybe
+    employertype        EmployerType Maybe
+    transferid          Text Maybe
+    transferpassword    Text Maybe
+    deriving (Show)
+
+ConfigurationInfo json
+    configurationitem       ConfigurationItem
+    deriving (Show)
+
+Contract json
+    name
+    totalvalue
+    deriving (Show)
+
+--DefaultAccount json
+--    defaultaccount      DefaultAccount
+--    accountId           AccountId
+
+
+Deliveryterm json
+    term                Text Maybe
+    deriving (Show)
+
+Transaction json
+    date                Day
+    memo                Text Maybe
+   -- paid Bool Maybe
+    createdautomatically Bool Maybe
+    valid               Bool Maybe
+    companyId           CompanyId
+    debt                Bool Maybe
+    receivable          Bool Maybe
+    salary              Bool Maybe
+    payable             Bool Maybe
+    auto                Bool Maybe default=true
+    effectivefrom       Day Maybe
+    effectiveto         Day Maybe
+    type                TransactionType 
+    vatSaleId           VatSaleId Maybe  
+    vatPurchaseId       VatPurchaseId Maybe  
+
+    deriving (Show)
+
+
+
+Employee json
+    firstname                       Text
+    lastname                        Text
+    socialsecurityid                Text
+    savapercentage                  Double 
+    tyelpercentage                  Double 
+    tvmpercentage                   Double 
+    taxpercentage                   Double
+    savadailyallowancepercentage    Double
+    bankaccount                     Text Maybe
+    companyId                       CompanyId
+    type                            EmployeeType Maybe
+    statcode                        Text Maybe
+    deriving (Show)
+
+Email
+    email               Text
+    userId              UserId Maybe
+    verkey              Text Maybe
+    UniqueEmail         email
+    deriving (Show)
+
+Employment json
+    employeeId          EmployeeId
+    companyId           CompanyId 
+    deriving (Show)
+
+Entry json
+    amount              Double
+    accountId           AccountId 
+    transactionId       TransactionId    OnDeleteCascade 
+    automationslavekey  Text Maybe
+    automationmasterkey Text Maybe
+    memo                Text Maybe
+    vatpct              Double Maybe
+    propertyId          PropertyId Maybe 
+    vatPctId            VatPctId Maybe
+    vatSaleId           VatSaleId Maybe
+    vatPurchaseId       VatPurchaseId Maybe
+
+--    date                Day
+    deriving Show Eq Generic
+
+
+Event json
+    description             Text
+    time                    UTCTime
+    companyId               CompanyId Maybe
+    deriving (Show)
+
+
+FiscalYear json
+    startdate           Day
+    enddate             Day 
+    closed              Bool
+    companyId           CompanyId
+    deriving (Show)
+
+MonthlyBalance json
+    balance             Double
+    accountId           AccountId
+    date                Day
+    Primary             companyId accountId date
+    AccoundBalanceIdentity      companyId accountId date
+    companyId           CompanyId
+    deriving Show Eq
+
+
+Notification json
+    time                UTCTime
+    description         String
+    companyId           CompanyId
+    deriving Show
+
+
+Partner json
+    name                Text
+    phone               Text Maybe
+    email               Text Maybe
+    address             Text Maybe
+    zipcode             Text Maybe
+    city                Text Maybe
+    contact             Text Maybe
+    country             Text default='Suomi'
+    companyid           Text Maybe
+    vatnumber           Text Maybe
+    paymenttermpct      Double Maybe
+    paymenttermdays     Int Maybe
+    cashdiscountpct     Double Maybe 
+    cashdiscountdays    Int Maybe
+    paymentterms        Int Maybe
+
+--    type                CustomerType
+    deriving (Show)
+
+Payadjustmenttype json
+    name                    Text
+    code                    Text
+    incomeTypeForIR         Int Maybe              
+    type                    PayadjustmentType 
+    UniquePayAdjustmentType type
+    deriving (Show)
+
+Payadjustment json
+    amount              Double Maybe
+    payeventId          PayeventId        OnDeleteCascade
+    payadjustmenttypeId PayadjustmenttypeId
+    type                PayadjustmentType
+    deriving (Show)
+
+Payevent json
+    date                Day
+    startDate           Day
+    endDate             Day
+    gross               Double
+    info                Text Maybe
+    employeeId          EmployeeId
+    companyId           CompanyId
+    deriving Show
+
+PayeventExtraInfo json
+    type                PayeventExtraInfoType
+    description         Text 
+
+
+PayeventExtraInfoRow json
+    info                Text
+    payeventId          PayeventId
+    payeventInfoId      PayeventExtraInfoId
+    deriving (Show)
+
+
+
+PayeventNote json
+    description         Text
+    payeventId          PayeventId OnDeleteCascade
+    deriving (Show)
+
+
+Person json
+    firstname           Text
+    lastname            Text
+    phone               Text
+    email               Text
+    deriving (Show)
+
+Product json
+    name                Text
+    description         Text Maybe
+    price               Double
+    unitId              UnitId
+    vatPctId            VatPctId
+    companyId           CompanyId
+    deriving (Show)
+
+Project json
+    name                Text
+    startdate           Day
+    enddate             Day
+    contractId          ContractId
+    deriving (Show)
+
+ProjectTeam
+    projectId           ProjectId
+    personId            PersonId
+    deriving (Show)
+
+Property
+    property    PropertyType
+    value       String Maybe
+
+PaymentTerm
+    days        Int
+    percentage  Double Maybe
+
+
+
+PurchaseInvoiceProcessing
+  userId                UserId
+  purchaseInvoiceId     PurchaseInvoiceId
+  action                PurchaseInvoiceProcessingStatus
+  complete              Bool 
+
+PurchaseInvoice json
+    type                PurchaseInvoiceType             --Must be
+    transactionId       TransactionId Maybe 
+ --   vatPurchaseId       VatPurchaseId  
+    partnerId           PartnerId Maybe
+    companyId           CompanyId 
+    duedate             Day
+--    deliverydate        Day Maybe
+    date                Day
+    entrydate           Day 
+  --  paymenttermdays     Int Maybe         default=30
+  --  paymenttermpct      Double Maybe
+    paymentTermId       PaymentTermId Maybe
+    cashdiscountdate    Day Maybe
+    cashdiscountpct     Double Maybe 
+    bankreference       Text Maybe          -- should be fixed to RefNum tupe
+    bankmessage         Text Maybe
+    --deliverytermId      DeliverytermId Maybe
+    deliveryterms       Text Maybe
+    penaltyinterest     Double Maybe
+    notes               Text Maybe
+    noticeperiod        Int Maybe
+    paymentstatus       PurchaseInvoicePaymentStatus Maybe
+    processingStatus    PurchaseInvoiceProcessingStatus 
+    paidat              Day Maybe
+    creditedinvoicenumber Text Maybe
+    invoicenumber       Text Maybe
+    bankaccount         Text Maybe
+    bankbic             Text Maybe
+    currency            Text default ='EUR'
+    totalexcludingvat   Double Maybe   -- this is optional 
+    totalincludingvat   Double         -- this is not optional
+    ourreference        Text Maybe
+    yourreference       Text Maybe
+    deriving Show Eq Generic
+
+PurchaseInvoiceDetail json
+    purchaseInvoiceId   PurchaseInvoiceId   OnDeleteCascade
+    gross               Double
+    net                 Double
+    vatPctId            VatPctId
+    vatamount           Double
+    productname         Text Maybe
+    productId           ProductId Maybe
+    unitId              UnitId Maybe
+    quantity            Double Maybe
+    unitprice           Double Maybe
+    unitname            Text Maybe
+    deriving Show Eq Generic
+
+
+RecurringTransaction json
+    description         String
+    interval            Int    
+
+
+
+Role json      
+    name                Rolename
+    UniqueName          name
+    description         Text 
+    deriving Show Generic
+
+
+SalesInvoice json
+    transactionId          TransactionId Maybe 
+    transactiontype        TransactionType Maybe
+    vatSaleId           VatSaleId Maybe 
+    partnerId           PartnerId Maybe
+    companyId           CompanyId 
+    duedate             Day Maybe
+    deliverydate        Day Maybe
+    date                Day
+    total               Double Maybe
+    nettotal            Double Maybe
+    vattotal            Double Maybe
+    paymenttermdays     Int Maybe         default=30
+    paymenttermpct      Double Maybe
+    cashdiscountdays    Int Maybe
+    cashdiscountpct     Double Maybe 
+    referencenumber     Text Maybe          -- should be fixed to RefNum tupe
+    sellerreference     Text Maybe
+    buyerreference      Text Maybe
+    --deliverytermId      DeliverytermId Maybe
+    deliveryterms       Text Maybe
+    penaltyinterest     Double Maybe
+    notes               Text Maybe
+    noticeperiod        Int Maybe
+    status              SalesInvoiceStatus
+    deriving (Show)
+
+SalesInvoiceDetail json
+    salesInvoiceId      SalesInvoiceId    OnDeleteCascade
+    gross               Double
+    net                 Double
+    vatPctId            VatPctId
+    vatamount           Double
+    productname         Text
+    productId           ProductId 
+    unitId              UnitId
+    quantity            Double
+    unitprice           Double
+    unitname            Text
+    deriving (Show)
+
+
+
+
+
+--VatReportHistory
+--    type                    VatReportHistoryType    
+--    content                 Text
+
+SecurityInfo
+    companyId             CompanyId
+    currentprivatekey     ByteString Maybe
+    potentialprivatekey   ByteString Maybe
+    oldprivatekey         ByteString Maybe
+    certificate           ByteString Maybe
+    certificatevalid      UTCTime Maybe
+
+    deriving (Show)
+    
+Unit json
+    name                Text
+    deriving (Show)
+
+User
+    ident               Text
+    password            Text Maybe
+    UniqueUser          ident
+    deriving (Typeable)
+
+
+
+UserCompany json
+    companyId           CompanyId
+    userId              UserId
+
+UserRole
+    userId              UserId
+    roleId              RoleId
+    companyId           CompanyId
+
+--Vat json 
+--    percentage          Double
+
+--Vat json
+--    type                VatType
+---    description         String
+
+VatPurchase json
+    type                VatPurchaseType
+    description         String
+
+VatSale json
+    type                VatSaleType
+    description         String
+
+VatPct json
+    type                VatPctType
+    pct                 Double
+    description         String
+
+VatReport json
+    startdate           Day
+    enddate             Day
+    companyId           CompanyId
+
+ProcessedVatReport 
+    periodstart         Day
+    periodend           Day
+    datesent            UTCTime
+    companyId           CompanyId 
+
+VatReportTemplate json
+    code                Int
+    description         String
+

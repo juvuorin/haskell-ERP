@@ -1,0 +1,9 @@
+Skeeman nimiavaruudet ovat seuraavat: 
+Tiedoston nimi Prefix Namespace 
+
+
+xmlns:xs http://www.w3.org/2001/XMLSchema 
+WageReportsToIR.xsd xmlns:wrtir http://www.tulorekisteri.fi/2017/1/WageReportsToIR
+WageReportsToIRTypes.xsd xmlns:wrtirt http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes 
+IRCommonTypes.xsd xmlns:irct http://www.tulorekisteri.fi/2017/1/IRCommonTypes 
+xmldsig-core-schema.xsd xmlns:ds http://www.w3.org/2000/09/xmldsig#

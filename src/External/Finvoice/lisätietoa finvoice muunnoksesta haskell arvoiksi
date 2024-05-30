@@ -1,0 +1,5 @@
+paikalliset XML skeemat pitää muuttaa globaaleiksi, muuten haskell-työkalut eivät
+saa muunnettua XML skeemoja oikein. Esim. SubRowDefinitionDetails on ollut anonyymi, mutta se
+pitää muuttaa globaaliksi. Näin on muutamien tyyppien kohdalla. 
+
+vertaa official ja fixed versioita!

@@ -1,0 +1,11 @@
+{
+  //  "haskell.serverExecutablePath": "",
+    "haskell.manageHLS": "GHCup",
+    "haskell.formattingProvider": "fourmolu",
+    "files.watcherExclude": {
+      "**/.stack-work/**": true
+    },
+      "haskell.serverEnvironment": { "PATH": "${HOME}/.ghcup/bin:${PATH}" }
+  
+  
+  }

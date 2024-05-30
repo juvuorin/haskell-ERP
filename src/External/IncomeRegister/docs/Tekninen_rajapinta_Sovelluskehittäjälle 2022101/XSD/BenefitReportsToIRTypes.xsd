@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:brtirt="http://www.tulorekisteri.fi/2017/1/BenefitReportsToIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/BenefitReportsToIRTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:complexType name="Address">
+		<xs:sequence>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BenefitReportsToIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="brtirt:DeliveryData" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BenefitUnit">
+		<xs:sequence>
+			<xs:element name="UnitCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UnitAmount" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactPerson">
+		<xs:sequence>
+			<xs:element name="Name" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Telephone" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Email" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ResponsibilityCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactPersons">
+		<xs:sequence>
+			<xs:element name="ContactPerson" type="brtirt:ContactPerson" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Deduction">
+		<xs:sequence>
+			<xs:element name="DeductionTransactionCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeductionType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Amount" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="OrigBenefitEarningPeriod" type="brtirt:OrigBenefitEarningPeriod" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeBeneficiary" type="brtirt:IncomeBeneficiary" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RemittancePeriod" type="brtirt:RemittancePeriod" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Deductions">
+		<xs:sequence>
+			<xs:element name="Deduction" type="brtirt:Deduction" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryData">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Source" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="FaultyControl" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="brtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="brtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="brtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ContactPersons" type="brtirt:ContactPersons" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Payer" type="brtirt:Payer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Reports" type="brtirt:Reports" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EarningPeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeBeneficiary">
+		<xs:sequence>
+			<xs:element name="IncomeBeneficiaryIds" type="brtirt:IncomeBeneficiaryIds" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeBeneficiaryBasic" type="brtirt:IncomeBeneficiaryBasic" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Address" type="brtirt:Address" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeBeneficiaryBasic">
+		<xs:sequence>
+			<xs:element name="MissingId" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LastName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FirstName" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Gender" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeBeneficiaryType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeBeneficiaryIds">
+		<xs:sequence>
+			<xs:element name="Id" type="brtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarner">
+		<xs:sequence>
+			<xs:element name="IncomeEarnerIds" type="brtirt:IncomeEarnerIds" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeEarnerBasic" type="brtirt:IncomeEarnerBasic" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Address" type="brtirt:Address" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="InternationalData" type="brtirt:InternationalData" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerBasic">
+		<xs:sequence>
+			<xs:element name="MissingId" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LastName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FirstName" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Gender" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerIds">
+		<xs:sequence>
+			<xs:element name="Id" type="brtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Insurance">
+		<xs:sequence>
+			<xs:element name="InsuranceNo" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="InsurancePolicyHolder" type="brtirt:InsurancePolicyHolder" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsurancePolicyHolder">
+		<xs:sequence>
+			<xs:element name="InsurancePolicyHolderIds" type="brtirt:InsurancePolicyHolderIds" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="InsurancePolicyHolderBasic" type="brtirt:InsurancePolicyHolderBasic" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Address" type="brtirt:Address" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsurancePolicyHolderBasic">
+		<xs:sequence>
+			<xs:element name="MissingId" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LastName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FirstName" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Gender" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsurancePolicyHolderIds">
+		<xs:sequence>
+			<xs:element name="Id" type="brtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InternationalData">
+		<xs:sequence>
+			<xs:element name="NonResident" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NonResidentCountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NonResidentCountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToWithhold" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrigBenefitEarningPeriod">
+		<xs:sequence>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrigEarningPeriod">
+		<xs:sequence>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payer">
+		<xs:sequence>
+			<xs:element name="PayerIds" type="brtirt:PayerIds" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PayerBasic" type="brtirt:PayerBasic" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Address" type="brtirt:Address" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubOrgs" type="brtirt:SubOrgs" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerBasic">
+		<xs:sequence>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerIds">
+		<xs:sequence>
+			<xs:element name="Id" type="brtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecourseData">
+		<xs:sequence>
+			<xs:element name="RecoursePaymentDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecoveryData">
+		<xs:sequence>
+			<xs:element name="RecoveryDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Withhold" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TaxAtSource" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OrigEarningPeriod" type="brtirt:OrigEarningPeriod" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RemittancePeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Report">
+		<xs:sequence>
+			<xs:element name="ReportData" type="brtirt:ReportData" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeEarner" type="brtirt:IncomeEarner" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Transactions" type="brtirt:Transactions" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportData">
+		<xs:sequence>
+			<xs:element name="ActionCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRReportId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReportId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReportVersion" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Reports">
+		<xs:sequence>
+			<xs:element name="Report" type="brtirt:Report" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubOrgs">
+		<xs:sequence>
+			<xs:element name="SubOrg" type="brtirt:SubOrg" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubOrg">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Transaction">
+		<xs:sequence>
+			<xs:element name="TransactionBasic" type="brtirt:TransactionBasic" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EarningPeriod" type="brtirt:EarningPeriod" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BenefitUnit" type="brtirt:BenefitUnit" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TransactionOther" type="brtirt:TransactionOther" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoveryData" type="brtirt:RecoveryData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecourseData" type="brtirt:RecourseData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Insurance" type="brtirt:Insurance" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Deductions" type="brtirt:Deductions" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransactionBasic">
+		<xs:sequence>
+			<xs:element name="TransactionCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="RetroactiveTransactionCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Amount" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="TaxTreatment" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OneOff" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnjustEnrichment" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Recovery" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnpromptedRefund" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DelayIncrease" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Recourse" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaymentReallocation" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NoTaxEffect" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransactionOther">
+		<xs:sequence>
+			<xs:element name="NonresidentPensionBasis" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Transactions">
+		<xs:sequence>
+			<xs:element name="Transaction" type="brtirt:Transaction" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

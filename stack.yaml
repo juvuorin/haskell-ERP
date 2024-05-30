@@ -1,0 +1,61 @@
+allow-newer: true
+
+#resolver: lts-14.27
+resolver: lts-18.19
+
+packages:
+- .
+
+extra-deps:
+#- xml-prettify-text
+- conduit-extra-1.3.5
+- typed-process-0.2.6.0
+# - data-tree-print-0.1.0.2@sha256:d845e99f322df70e0c06d6743bf80336f5918d5423498528beb0593a2afc1703,1620
+#- tls-1.4.1@sha256:1b76f40f38016e622db7ea46fe162d299a16a6944862fda0f51b371b633d6062,6291
+- xml-conduit-parse-0.3.1.2@sha256:74c199e6155aa79a7108373ee35e34e3e6c97f6131360a7e13381b363ec9d64a,1800
+- xml-enumerator-0.4.4.1@sha256:18c0911f526fda4a4e7e2d837cc4ae5f53968b5ee7010503959e64e23dfb2030,4057
+- libxml-0.1.1@sha256:aa167fb817ef2d0a87e7ee64452939491cc151472e1150ced0e89dc954c4874e,922
+- c14n-0.1.0.1@sha256:c56a513c1363d126ee704656b59d2e2af1cfe878587a97cb69ab0122b82e2d4d,1371
+- DRBG-0.5.5@sha256:3b8040bed356e2b63927a27fb6d5adbd19d70c9e1d1bb66111bbeb33e56900eb,2259
+- cryptostore-0.2.1.0@sha256:9896e2984f36a1c8790f057fd5ce3da4cbcaf8aa73eb2d9277916886978c5b19,3881
+- cryptonite-0.29@sha256:147724f6a8e4394fcbd51bf52aba7a8b92d3fc8f42055cd6ca9486655e2ab614,18312
+- DrIFT-2.4.2@sha256:e09a0a4f683c4b72fed1296b1e39f28c4c4b446d3ac10f4b47f2f3746d57105e,3398
+- data-default-extra-0.1.0@sha256:93923f4b1678ee70888eae2ba5fc89cfd9748a2a9d64923cc1f827415543435a,5395
+
+- data-default-instances-bytestring-0.0.1@sha256:592075c7d9f5bde9fe98d31dd2b7412cdb4bb29158b49bee04379fe0895aed3e,2438
+- data-default-instances-case-insensitive-0.0.1@sha256:45a89ccc5e4e6dbca37c7c0826c1f1c75d774d49afa9ce94f0412edee53f1371,1757
+- data-default-instances-new-base-0.0.2@sha256:1f90fe762c978f9fd0fcbf6d4cb6cd191d261e25acf9308505b3444aef8c079f,3227
+- data-default-instances-text-0.0.1@sha256:5a8acbe0d420430c2cc2dc7865fa69d179c9ad43dda47aefcc6560fed72e2204,2121
+- data-default-instances-unordered-containers-0.0.1@sha256:fc2e79e605ef4fd67f222d11f43aaed40fbc08e3ca421cd29f5982a391f90ebe,1757
+- data-default-instances-vector-0.0.1@sha256:8a78beb491235231802c98fb1a58fea519359be1c9374b9f08d37feed34a385e,1791
+- thumbnail-0.8.0@sha256:577091029fc28fde80ea49da71e63e3e243e3eae7664061b5c9f6dfb7282c5a7,719
+
+- pdf-toolbox-document-0.1.2@sha256:4fb6512c5061d80970c3533e98cb609dc6df5982a0d79fa133319e8f210be175,2343
+- pdf-toolbox-content-0.1.1@sha256:44ddead09ea0fcfb578ffe94d8ff366534b3fb58a7fa62c1d1fb04bb9d432c40,2562
+- pdf-toolbox-core-0.1.1@sha256:9f3a9eea11420982f4f84addda9994d6ee756e9c9ed5c1691214ab0fcc80b6c0,3944
+- classy-prelude-yesod-1.4.0@sha256:2928c99abb90d133d6aff3026a069e1a049471f4c9e017741703f389cc747daf,1334
+- regex-tdfa-text-1.0.0.3@sha256:fb72123627eadf43dd5ca74a2896940d50aac291e61f62177960f0563f7d5c03,1180
+- strict-io-0.2.2@sha256:1cc96f9a123a919ff9ee479f740cbc9fa9edf7c8ac65334de3fdce07638949ed,1012
+- git: https://github.com/MrcJkb/xml-prettify-text.git
+  commit: a4e0ac52412a3cf58525b6ac0c3ffef55fd60a3b
+
+#- hexstring-0.11.1@sha256:95b680b5cf68c6ec098eef383343520ca8c8c4b5319592f6b93f7b2ee2bb0186,1833
+
+#- pdftotext-0.1.0.1@sha256:9499bf4baeb27f353b82c15c9cb7503ccf80e151afb91a744ac644d8cf43ce3e,2717
+#- thumbnail-plus-1.0.5@sha256:940fd4ab6ea255ca405920a5e5285b1934ec3f783a2fe004767422cfd9a6153e,2683
+#- transformers-either-0.1.2@sha256:e2ba24af49df7fa09794dcff6cb203d086d5c18e35b3cf10a8ecf7eb465fdedf,1677
+#- derive-2.6.5@sha256:41480f98be28ca5a942f137f1ce17c2fc5e67040c434e8d3f4c45459b8bc6cbb,3184
+
+# - aeson-1.3.1.1@sha256:1ab29743b4c4c9be7df57200ed2c8779048adda4cead075944b7b471e93ed4c3,6006
+# - classy-prelude-1.4.0@sha256:dbc8d87896640138fa45bbedc7c2affab28fda30f2c9bc13b0da2df06909c6bd,1952
+# - classy-prelude-conduit-1.4.0@sha256:b72754cb1376966eb38d0d0afb1e48395f0d6d3b77a99c656ccfc58fef2ecb91,1607
+# - classy-prelude-yesod-1.4.0@sha256:2928c99abb90d133d6aff3026a069e1a049471f4c9e017741703f389cc747daf,1334
+# - fast-logger-2.4.17@sha256:daef0284a3b5e24d1191f67d0c8f2e7972e2f086c490fe47fa5943405745afd4,2284
+# - persistent-2.8.2@sha256:d6c274b5bc0a003edf13276eee560b81ce239cfc3041e0a620fec7c7f0a8eff8,5064
+# - warp-3.2.28@sha256:b32fb8fed7ace4bd206fd897c388c00cdb915ec7e34ee61dc6397d518d9e651c,11186
+# - xml-conduit-parse-0.3.1.2@sha256:74c199e6155aa79a7108373ee35e34e3e6c97f6131360a7e13381b363ec9d64a,1800
+# - yaml-0.8.32@sha256:cb9e788e4c18f3c3579a950c1d53f89efb7e8871f6a00b5fabc37084c05cf04e,5452
+
+
+#ghc-options:
+#  "$everything": -haddock

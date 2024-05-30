@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:brfir="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIR" xmlns:brfirt="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" targetNamespace="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIR">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIRTypes" schemaLocation="BenefitReportsFromIRTypes.xsd"/>
+	<xs:element name="BenefitReportsFromIR" type="brfirt:BenefitReportsFromIR"/>
+</xs:schema>

@@ -1,0 +1,17 @@
+
+sisältökuva
+Kuinka toimitaan, jos yrittäjällä on YEL ja hänelle maksetaan palkkaa?
+YEL-vakuutetulle yrittäjälle määritettyä työtuloa ei ilmoiteta tulorekisteriin, mutta sen sijaan YEL- vakuutetulle yrittäjälle maksettu palkkatulo ilmoitetaan tulorekisteriin.
+a.    Osakeyhtiön omistajalle maksettu palkka ilmoitetaan tulorekisteriin (vastaten Verohallinnolle aiemmin tehtyä vuosi-ilmoitusta).
+b.    Toiminimen yksityisnostoja käsitellään toiminimen kirjanpidossa ja ilmoitetaan veroilmoituksella.
+
+Kun yrittäjien palkkoja ilmoitetaan palkkatietoilmoituksella, on tärkeää, että maksaja ilmoittaa, Tulonsaajan tiedot -kohdassa: Tieto työeläkevakuutuksesta: Yrittäjän eläkevakuutus (YEL).
+
+Tämän lisäksi ilmoitettava: Vakuuttamisen poikkeustilanteen tyyppi- kohdassa:
+•    Ei vakuuttamisvelvollisuutta (työeläkevakuutus)
+•    Ei vakuuttamisvelvollisuutta (työtapaturma- ja ammattitautivakuutus)
+•    Ei vakuuttamisvelvollisuutta (työttömyysvakuutus)
+
+Yrittäjän palkka merkitään sairasvakuutusmaksun piiriin kuuluvaksi, joten Vakuuttamisen poikkeustilanteen tyypiksi ei voi valita: Ei vakuuttamisvelvollisuutta (työeläke-, sairaus-, työttömyys- sekä työtapaturma- ja ammattitautivakuutus), koska tämä sulkee pois kaikki sosiaalivakuutusmaksut.
+
+YEL-vakuutusnumeroa, työeläkelaitoksen yhtiötunnusta ja eläkejärjestelynumeroa ei ilmoiteta tulorekisteriin.

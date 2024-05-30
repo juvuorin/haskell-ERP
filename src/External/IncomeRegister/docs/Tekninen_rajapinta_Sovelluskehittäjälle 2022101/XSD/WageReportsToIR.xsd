@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wrtir="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:wrtirt="http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes" targetNamespace="http://www.tulorekisteri.fi/2017/1/WageReportsToIR">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes" schemaLocation="WageReportsToIRTypes.xsd"/>
+	<xs:element name="WageReportRequestToIR" type="wrtirt:WageReportsToIR"/>
+	<xs:element name="WageReportsRequestToIR" type="wrtirt:WageReportsToIR"/>
+</xs:schema>

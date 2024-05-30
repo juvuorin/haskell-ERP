@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ldt="http://www.tulorekisteri.fi/2017/1/LogDataTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/LogDataTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:simpleType name="TargetItemType">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:complexType name="DeliveryTargetItem">
+		<xs:sequence>
+			<xs:element name="TargetItemType" type="ldt:TargetItemType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRDeliveryId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IdCodeTargetItem">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LogDataFromIR">
+		<xs:sequence>
+			<xs:element name="Subscription" type="ldt:Subscription" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Query" type="ldt:Query" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Summary" type="ldt:Summary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="LogEvents" type="ldt:LogEvents" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LogEvent">
+		<xs:sequence>
+			<xs:element name="ActivityType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRLogEventId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UIView" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryProfile" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UserIdCode" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UserOrganisation" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="TargetItems" type="ldt:TargetItems" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LogEvents">
+		<xs:sequence>
+			<xs:element name="LogEvent" type="ldt:LogEvent" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MainSubscriptionTargetItem">
+		<xs:sequence>
+			<xs:element name="MainSubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRMainSubscriptionId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MessageTargetItem">
+		<xs:sequence>
+			<xs:element name="MessageId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRMessageId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OtherTargetItem">
+		<xs:sequence>
+			<xs:element name="Name" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Value" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Query">
+		<xs:sequence>
+			<xs:element name="IRQueryId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryTimestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryTimespanStart" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryTimespanEnd" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QueryTargetItem">
+		<xs:sequence>
+			<xs:element name="TargetItemType" type="ldt:TargetItemType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRQueryId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportTargetItem">
+		<xs:sequence>
+			<xs:element name="TargetItemType" type="ldt:TargetItemType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ReportId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRReportId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ReportVersion" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Subscription">
+		<xs:sequence>
+			<xs:element name="QueryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRMainSubscriptionId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRSubscriptionId" type="irct:Guid" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="MainSubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Summary">
+		<xs:sequence>
+			<xs:element name="NrOfEvents" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TargetItem">
+		<xs:choice>
+			<xs:element name="IdCodeTargetItem" type="ldt:IdCodeTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReportTargetItem" type="ldt:ReportTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MessageTargetItem" type="ldt:MessageTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DeliveryTargetItem" type="ldt:DeliveryTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="QueryTargetItem" type="ldt:QueryTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MainSubscriptionTargetItem" type="ldt:MainSubscriptionTargetItem" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OtherTargetItem" type="ldt:OtherTargetItem" minOccurs="0" maxOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="TargetItems">
+		<xs:sequence>
+			<xs:element name="TargetItem" type="ldt:TargetItem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

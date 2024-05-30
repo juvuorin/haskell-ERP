@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.tulorekisteri.fi/BenefitReportQueryService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mst="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" xmlns:drtir="http://www.tulorekisteri.fi/2017/1/DataRequestToIR" xmlns:brfir="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIR" xmlns:brfirt="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIRTypes" xmlns:smt="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" name="BenefitReportQueryService" targetNamespace="http://www.tulorekisteri.fi/BenefitReportQueryService">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/DataRequestToIR" schemaLocation="DataRequestToIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/BenefitReportsFromIR" schemaLocation="BenefitReportsFromIR.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="BenefitReportsOneIncomeEarnerMessage">
+		<wsdl:part name="in" element="drtir:BenefitReportsOneIncomeEarnerRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="BenefitReportsOnePayerOneIncomeEarnerMessage">
+		<wsdl:part name="in" element="drtir:BenefitReportsOnePayerOneIncomeEarnerRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="BenefitReportsOneIRReportIdMessage">
+		<wsdl:part name="in" element="drtir:BenefitReportsOneIRReportIdRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="BenefitReportsFromIR">
+		<wsdl:part name="out" element="brfir:BenefitReportsFromIR"/>
+	</wsdl:message>
+	<wsdl:portType name="BenefitReportQueryPort">
+		<wsdl:operation name="GetBenefitReportsOneIncomeEarner">
+			<wsdl:input message="tns:BenefitReportsOneIncomeEarnerMessage"/>
+			<wsdl:output message="tns:BenefitReportsFromIR"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetBenefitReportsOnePayerOneIncomeEarner">
+			<wsdl:input message="tns:BenefitReportsOnePayerOneIncomeEarnerMessage"/>
+			<wsdl:output message="tns:BenefitReportsFromIR"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetBenefitReportsOneIRReportId">
+			<wsdl:input message="tns:BenefitReportsOneIRReportIdMessage"/>
+			<wsdl:output message="tns:BenefitReportsFromIR"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BenefitReportQuerySoap" type="tns:BenefitReportQueryPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetBenefitReportsOneIncomeEarner">
+			<soap:operation soapAction="GetBenefitReportsOneIncomeEarner" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetBenefitReportsOnePayerOneIncomeEarner">
+			<soap:operation soapAction="GetBenefitReportsOnePayerOneIncomeEarner" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetBenefitReportsOneIRReportId">
+			<soap:operation soapAction="GetBenefitReportsOneIRReportId" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="BenefitReportQueryService">
+		<wsdl:port name="BenefitReportQueryService" binding="tns:BenefitReportQuerySoap">
+			<soap:address location="https://localhost/20170526/BenefitReportQueryService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

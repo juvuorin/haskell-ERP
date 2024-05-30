@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.tulorekisteri.fi/WageReportQueryService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mst="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" xmlns:drtir="http://www.tulorekisteri.fi/2017/1/DataRequestToIR" xmlns:wrfir="http://www.tulorekisteri.fi/2017/1/WageReportsFromIR" xmlns:wrfirt="http://www.tulorekisteri.fi/2017/1/WageReportsFromIRTypes" xmlns:smt="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" name="WageReportQueryService" targetNamespace="http://www.tulorekisteri.fi/WageReportQueryService">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/DataRequestToIR" schemaLocation="DataRequestToIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/WageReportsFromIR" schemaLocation="WageReportsFromIR.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="WageReportsOneIncomeEarnerMessage">
+		<wsdl:part name="in" element="drtir:WageReportsOneIncomeEarnerRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="WageReportsOnePayerMessage">
+		<wsdl:part name="in" element="drtir:WageReportsOnePayerRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="WageReportsOnePolicyNoMessage">
+		<wsdl:part name="in" element="drtir:WageReportsOnePolicyNoRequestToIR"/>
+	</wsdl:message>
+  <wsdl:message name="WageReportsOnePayerOneIncomeEarnerMessage">
+    <wsdl:part name="in" element="drtir:WageReportsOnePayerOneIncomeEarnerRequestToIR"/>
+  </wsdl:message>
+	<wsdl:message name="WageReportsFromIR">
+		<wsdl:part name="out" element="wrfir:WageReportsFromIR"/>
+	</wsdl:message>
+	<wsdl:portType name="WageReportQueryPort">
+		<wsdl:operation name="GetWageReportsOneIncomeEarner">
+			<wsdl:input message="tns:WageReportsOneIncomeEarnerMessage"/>
+			<wsdl:output message="tns:WageReportsFromIR"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetWageReportsOnePayer">
+			<wsdl:input message="tns:WageReportsOnePayerMessage"/>
+			<wsdl:output message="tns:WageReportsFromIR"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetWageReportsOnePolicyNo">
+			<wsdl:input message="tns:WageReportsOnePolicyNoMessage"/>
+			<wsdl:output message="tns:WageReportsFromIR"/>
+		</wsdl:operation>
+    <wsdl:operation name="GetWageReportsOnePayerOneIncomeEarner">
+      <wsdl:input message="tns:WageReportsOnePayerOneIncomeEarnerMessage"/>
+      <wsdl:output message="tns:WageReportsFromIR"/>
+    </wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WageReportQuerySoap" type="tns:WageReportQueryPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetWageReportsOneIncomeEarner">
+			<soap:operation soapAction="GetWageReportsOneIncomeEarner" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetWageReportsOnePayer">
+			<soap:operation soapAction="GetWageReportsOnePayer" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+    <wsdl:operation name="GetWageReportsOnePayerOneIncomeEarner">
+      <soap:operation soapAction="GetWageReportsOnePayerOneIncomeEarner" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+		<wsdl:operation name="GetWageReportsOnePolicyNo">
+			<soap:operation soapAction="GetWageReportsOnePolicyNo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WageReportQueryService">
+		<wsdl:port name="WageReportQueryService" binding="tns:WageReportQuerySoap">
+			<soap:address location="https://localhost/20170526/WageReportQueryService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

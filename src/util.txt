@@ -1,0 +1,6 @@
+DrIFT "AckFromIR_.hs" -o "AckFromIR.hs" &
+DrIFT "IRCommonTypes_.hs" -o "IRCommonTypes.hs" &
+DrIFT "StatusMessageTypes_.hs" -o "StatusMessageTypes.hs" &
+DrIFT "WageReportsToIRTypes_.hs" -o "WageReportsToIRTypes.hs" &
+DrIFT "WageReportsToIR_.hs" -o "WageReportsToIR.hs" &
+DrIFT "Xmldsigcoreschema_.hs" -o "Xmldsigcoreschema.hs"

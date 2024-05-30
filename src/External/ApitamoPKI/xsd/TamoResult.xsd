@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tns="http://www.vero.fi/xmlschema/TaMoResult"
+  targetNamespace="http://www.vero.fi/xmlschema/TaMoResult"
+  elementFormDefault="qualified">
+
+  <xs:element name="TamoResult">
+    <xs:annotation>
+      <xs:documentation xml:lang="fi">
+        <![CDATA[Elementin sisällä luetellaan mukana olleet ilmoitukset ja niissä mahdollisesti olleet virheet.]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:CheckupResult" />
+        <xs:element name="Forms" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Aineiston ilmoitukset]]>
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="tns:Form" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="CheckupResult">
+    <xs:annotation>
+      <xs:documentation xml:lang="fi">
+        <![CDATA[Koko aineiston tarkistuksen tulos. Elementin arvot ovat joko 'Ok' tai 'Error'.]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="filing" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Alkuperäisen aineiston nimi.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="reports" type="xs:int">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Ilmoitusten lukumäärä aineistossa.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="correct" type="xs:int">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Oikeellisten ilmoitusten lukumäärä aineistossa.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="errors" type="xs:int">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Virheellisten ilmoitusten lukumäärä aineistossa.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="remarks" type="xs:int">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Huomautusten lukumäärä aineistossa.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Form">
+    <xs:annotation>
+      <xs:documentation xml:lang="fi">
+        <![CDATA[Ilmoituksen tietue.]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Errors" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Lomakkeelta löytyneet virheet.]]>
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="tns:Error" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Remarks" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Lomakkeelta löytyneet huomautukset.]]>
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="tns:Remark" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="customer" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomakkeen asiakastunnus, y-tunnus tai henkilötunnus.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="sequence" type="xs:int">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomakkeen järjestysnumero aineistossa.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="filingType" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomaketunnus.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="definition" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomakkeen selväkielinen nimi.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="status">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomakkeen tarkastuksen tila. Arvot Ok tai Error.]]>
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Ok" />
+            <xs:enumeration value="Error" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="year" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Lomakkeen vuosi. Tyhjä jos vuosiriippumaton ilmoituslaji.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Error">
+    <xs:annotation>
+      <xs:documentation xml:lang="fi">
+        <![CDATA[Lomakkeelta löytynyt virhe.]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Data" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Virheellinen tieto.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Comment" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Virheen kuvaus.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attributeGroup ref="tns:ErrorAttrs" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Remark">
+    <xs:annotation>
+      <xs:documentation xml:lang="fi">
+        <![CDATA[Lomakkeelta löytynyt huomautus.]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Data" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Virheellinen tieto.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Comment" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Virheen kuvaus.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attributeGroup ref="tns:ErrorAttrs" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attributeGroup name="ErrorAttrs">
+    <xs:attribute name="sequence" type="xs:int">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Virheen järjestysnumero.]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Virhelaji.]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="line" type="xs:int">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Virheen rivinumero aineistossa.]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="column" type="xs:int">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Virheen rivinumero aineistossa.]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="label" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Tunnus jossa virheellinen tieto.]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="errorType">
+      <xs:annotation>
+        <xs:documentation xml:lang="fi">
+          <![CDATA[Virheellisen tiedon tyyppi. Tyyppejä on kahdenlaisia: järjestelmävirheitä (arvo 0) ja substanssi- eli sisältövirheitä (arvo 1).]]>
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int">
+          <xs:enumeration value="0" />
+          <xs:enumeration value="1" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+</xs:schema>

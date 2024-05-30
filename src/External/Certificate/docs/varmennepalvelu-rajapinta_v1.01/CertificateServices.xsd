@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://certificates.vero.fi/2017/10/certificateservices" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ser="http://certificates.vero.fi/2017/10/certificateservices" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:complexType name="SignNewCertificateRequest">
+		<xs:sequence>
+			<xs:element name="Environment" type="ser:EnvironmentTypes" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerId" type="ser:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerName" type="ser:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TransferId" type="ser:String32" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="TransferPassword" type="ser:String16" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CertificateRequest" type="ser:CertificateRequestType" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RenewCertificateRequest">
+		<xs:sequence>
+			<xs:element name="Environment" type="ser:EnvironmentTypes" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerId" type="ser:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerName" type="ser:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CertificateRequest" type="ser:CertificateRequestType" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SignNewCertificateResponse">
+		<xs:sequence>
+			<xs:element name="RetrievalId" type="ser:String32" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Result" type="ser:Result" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RenewCertificateResponse">
+		<xs:sequence>
+			<xs:element name="RetrievalId" type="ser:String32" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Result" type="ser:Result" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GetCertificateRequest">
+		<xs:sequence>
+			<xs:element name="Environment" type="ser:EnvironmentTypes" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerId" type="ser:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerName" type="ser:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RetrievalId" type="ser:String32" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GetCertificateResponse">
+		<xs:sequence>
+			<xs:element name="Certificate" type="ser:CertificateType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Result" type="ser:Result" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="CertificateRequestType">
+		<xs:restriction base="xs:base64Binary">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="10240"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CertificateType">
+		<xs:restriction base="xs:base64Binary">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="32768"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="SignNewCertificateRequest" type="ser:SignNewCertificateRequest"/>
+	<xs:element name="RenewCertificateRequest" type="ser:RenewCertificateRequest"/>
+	<xs:element name="GetCertificateRequest" type="ser:GetCertificateRequest"/>
+	<xs:element name="SignNewCertificateResponse" type="ser:SignNewCertificateResponse"/>
+	<xs:element name="RenewCertificateResponse" type="ser:RenewCertificateResponse"/>
+	<xs:element name="GetCertificateResponse" type="ser:GetCertificateResponse"/>
+	<xs:complexType name="ErrorType">
+		<xs:sequence>
+			<xs:element name="ErrorCode" type="ser:String16" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ErrorMessage" type="ser:String255" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Result">
+		<xs:sequence>
+			<xs:element name="Status" type="ser:ResultTypes" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ErrorInfo" type="ser:ErrorType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="String100">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String16">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="16"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String255">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String30">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String32">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EnvironmentTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRODUCTION"/>
+			<xs:enumeration value="TEST"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ResultTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FAIL"/>
+			<xs:enumeration value="OK"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

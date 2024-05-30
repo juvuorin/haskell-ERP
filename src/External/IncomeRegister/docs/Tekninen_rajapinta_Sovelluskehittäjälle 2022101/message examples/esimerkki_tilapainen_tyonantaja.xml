@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wrtir:WageReportRequestToIR xmlns:wrtir="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tulorekisteri.fi/2017/1/WageReportsToIR WageReportsToIR.xsd">
+	<DeliveryData>
+		<Timestamp>2001-12-17T09:30:47Z</Timestamp>
+		<Source>Palkkaohjelmisto</Source>
+		<DeliveryDataType>100</DeliveryDataType>
+		<DeliveryId>aineistoviite-2020-01-01-abc</DeliveryId>
+		<!-- virheellisten käsittely 1 = vain virheelliset ilmoitukset hylätään, 2 = koko aineisto hylätään -->
+		<FaultyControl>1</FaultyControl>
+		<ProductionEnvironment>true</ProductionEnvironment>
+		<DeliveryDataOwner>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>8765432-1</Code>
+		</DeliveryDataOwner>
+		<DeliveryDataCreator>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>1234567-8</Code>
+		</DeliveryDataCreator>
+		<DeliveryDataSender>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>1234567-8</Code>
+		</DeliveryDataSender>
+		<PaymentPeriod>
+			<PaymentDate>2020-12-01</PaymentDate>
+			<StartDate>2020-12-01</StartDate>
+			<EndDate>2020-12-31</EndDate>
+		</PaymentPeriod>
+		<ContactPersons>
+			<ContactPerson>
+				<Name>Etunimi Sukunimi</Name>
+				<Telephone>040-1234567</Telephone>
+				<!-- Sisällölliset asiat = 1 -->
+				<ResponsibilityCode>1</ResponsibilityCode>
+			</ContactPerson>
+		</ContactPersons>
+		<Payer>
+			<PayerIds>
+				<Id>
+					<!-- y-tunnus = 1 -->
+					<Type>1</Type>
+					<Code>8765432-1</Code>
+				</Id>
+			</PayerIds>
+			<PayerBasic>
+				<CompanyName>Yritys Oy</CompanyName>
+				<!-- suomi = 1 -->
+				<Language>1</Language>
+			</PayerBasic>
+			<Address>
+				<Street>Katu 1</Street>
+				<PostalCode>00000</PostalCode>
+				<PostOffice>Kaupunki</PostOffice>
+				<CountryCode>FI</CountryCode>
+			</Address>
+			<PayerOther>
+				<PayerTypes>
+					<!-- Tilapäinen työnantaja = 3 -->
+					<Code>3</Code>
+				</PayerTypes>
+			</PayerOther>
+		</Payer>
+		<Reports>
+			<Report>
+				<ReportData>
+					<!-- uusi ilmoitus = 1 -->
+					<ActionCode>1</ActionCode>
+					<ReportId>ilmoituksen-yksiloiva-viite-01</ReportId>
+				</ReportData>
+				<IncomeEarner>
+					<IncomeEarnerIds>
+						<Id>
+							<!-- henkilötunnus suomalainen = 2 -->
+							<Type>2</Type>
+							<Code>010101-1111</Code>
+						</Id>
+					</IncomeEarnerIds>
+					<IncomeEarnerBasic>
+						<LastName>Sukunimi</LastName>
+						<FirstName>Etunimi</FirstName>
+					</IncomeEarnerBasic>
+					<Professions>
+						<Profession>
+							<!-- Tilastokeskuksen ammattiluokitus (TK10) = 1 -->
+							<Type>1</Type>
+							<!-- Tk10-koodistosta: Kotiapulaiset ja -siivoojat = 91110 -->
+							<Code>91110</Code>
+						</Profession>
+					</Professions>
+
+					<PensionInsurance>
+						<!-- Työntekijän työeläkevakuutus = 1 -->
+						<PensionActCode>1</PensionActCode>
+						<!-- esim.  Keskinäinen Eläkevakuutustyhtiö Eläke = 66 -->
+						<PensionProvIdCode>66</PensionProvIdCode>
+						<!-- eläkejärjestelynumero -->
+						<PensionPolicyNo>66-12345678</PensionPolicyNo>
+					</PensionInsurance>
+
+				</IncomeEarner>
+				<Transactions>
+					<Transaction>
+						<TransactionBasic>
+							<!-- aikapalkka = 201 -->
+							<TransactionCode>201</TransactionCode>
+							<Amount>470.00</Amount>
+						</TransactionBasic>
+					</Transaction>
+					<Transaction>
+						<TransactionBasic>
+							<!-- Ennakonpidätys = 402 -->
+							<TransactionCode>402</TransactionCode>
+							<Amount>125.00</Amount>
+						</TransactionBasic>
+					</Transaction>
+					<Transaction>
+						<TransactionBasic>
+							<!-- Työntekijän työeläkevakuutus = 413  -->
+							<TransactionCode>413</TransactionCode>
+							<Amount>33.60</Amount>
+						</TransactionBasic>
+					</Transaction>
+					<Transaction>
+						<TransactionBasic>
+							<!-- Työntekijän työttömyysvakuutus = 414  -->
+							<TransactionCode>414</TransactionCode>
+							<Amount>5.87</Amount>
+						</TransactionBasic>						
+					</Transaction>
+				</Transactions>				
+			</Report>
+		</Reports>
+	</DeliveryData>	
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>G7Zy1pcOL0/3qPh0f7NDDtcvaQvI/Jg+0vKZB8dWDhI=</DigestValue></Reference></SignedInfo><SignatureValue>bHZh6I+J7FWvA9n2V+obOrYVb9cCnfB0+U1xF3opq58mVYdjxeLkc8Jr/AijZ0C7N9qie3E1VCWA
+dXodSM8FDT35rOinXqDKMq0hcQ7g0coQqbIsAwPcDzuXdlvvNL9ZmRPFbBtmlUc7ku7+5UNO33Hp
+Lg0nv1WwVYsUWB2cf79kFx7R07I4Fr85keKcv8mMTFK/xEcurVKNkMJwO+fiP0SQqOAbBCyh7vPm
+X7qfIzSsz2M7X9EN+An8bewKgiTlcgoWoYO6530qdt+fvgen5J9oElpDZD5tmz1ZANi9rzUOv//D
+QhEreS0pU94uhSWR+rTC/XONEsSFsgkyv65vYQ==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>lgrPcZvtRU1/toLkGJU77kOu0xZnKoANkqdnU+YsLmx74w3Tj+Ted4nhNw6ba5GkL038D9JFJHMH
+tHVzTOXjtAiyH/VTgDRw6lPmSLphIasfVdUiXrxg+3Brnh7Omj0msBZAunSK6nGS4FeZ4V3c4cKL
+k+8Ja/NNE41NcB0z9BxZ3au6+aOfP7+lRaxmXfhXfgpfFy7Stdy0OFDXzebBoRLqqeCniIj+7koY
+9xuVw2vdacEjWzVaMgdh2VT7I50/U7z19bTO7cSHophjOT/JLFBzEt6qkAvaOjSid4/YFtZ7hScu
+Inn6uhZt4PGj2V93SIUimyBNGwfh1KBlfxpWrw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509SubjectName>C=FI, O=Sontus 315 Testifirma Verotusy, SERIALNUMBER=D41D62311CEC136E41B0E22CE5ACD794, CN=7013454-9</X509SubjectName><X509Certificate>MIIFxDCCA6ygAwIBAgIIJPl4GBYXgJgwDQYJKoZIhvcNAQELBQAwUDEqMCgGA1UEAwwhRGF0YSBQ
+cm92aWRlcnMgVGVzdCBJc3N1aW5nIENBIHYxMRUwEwYDVQQKDAxWZXJvaGFsbGludG8xCzAJBgNV
+BAYTAkZJMB4XDTIwMDQyMzA2MzU0OFoXDTIyMDQyMzA2MzU0OFowdTESMBAGA1UEAwwJNzAxMzQ1
+NC05MSkwJwYDVQQFEyBENDFENjIzMTFDRUMxMzZFNDFCMEUyMkNFNUFDRDc5NDEnMCUGA1UECgwe
+U29udHVzIDMxNSBUZXN0aWZpcm1hIFZlcm90dXN5MQswCQYDVQQGEwJGSTCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAJYKz3Gb7UVNf7aC5BiVO+5DrtMWZyqADZKnZ1PmLC5se+MN04/k
+3neJ4TcOm2uRpC9N/A/SRSRzB7R1c0zl47QIsh/1U4A0cOpT5ki6YSGrH1XVIl68YPtwa54ezpo9
+JrAWQLp0iupxkuBXmeFd3OHCi5PvCWvzTRONTXAdM/QcWd2ruvmjnz+/pUWsZl34V34KXxcu0rXc
+tDhQ183mwaES6qngp4iI/u5KGPcblcNr3WnBI1s1WjIHYdlU+yOdP1O89fW0zu3Eh6KYYzk/ySxQ
+cxLeqpAL2jo0oneP2BbWe4UnLiJ5+roWbeDxo9lfd0iFIpsgTRsH4dSgZX8aVq8CAwEAAaOCAXsw
+ggF3MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU/HBL1zmPybJX2rJ93TZLAgrYlRQwWAYIKwYB
+BQUHAQEETDBKMEgGCCsGAQUFBzAChjxodHRwOi8vY3JsLXRlc3RpLnZlcm8uZmkvY2EvRGF0YVBy
+b3ZpZGVyc1Rlc3RJc3N1aW5nQ0F2MS5jZXIwEwYDVR0lBAwwCgYIKwYBBQUHAwIwgacGA1UdHwSB
+nzCBnDCBmaBBoD+GPWh0dHA6Ly9jcmwtdGVzdGkudmVyby5maS9jcmwvRGF0YVByb3ZpZGVyc1Rl
+c3RJc3N1aW5nQ0F2MS5jcmyiVKRSMFAxKjAoBgNVBAMMIURhdGEgUHJvdmlkZXJzIFRlc3QgSXNz
+dWluZyBDQSB2MTEVMBMGA1UECgwMVmVyb2hhbGxpbnRvMQswCQYDVQQGEwJGSTAdBgNVHQ4EFgQU
+k1tNd0QZWov/3bYaGUT6tMlYtQswDgYDVR0PAQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4ICAQAY
+a0TCH/I5JIgTHSF93n1zR6h155cgMuXtukrDwHZc4c8wQrQH9zb6jff/AIwfiskK1JUOCm9rvwTd
+sE9Rv1W8PrDqw6q2UnieRkZz5HjW4wFNnEkGGLTpo9C0a7eIOS0D0L5Szu+ZEUjazXwl6yFMOEJK
+XKGja11OcoqwSFZV0admMVR4id0ZI12U91wYRAx8YUIqfPHfnmzHDwFuNzsUwRC7GCKqPGv6lNFs
+yRYHr5m7VgB6Z8f1VuAzirr8vmgZTkEMnNmqjx6T/NR9rXivvijdOfIwKTnLqfk4R80FWnAtSoJ5
+uCEATF22g2uJTZYv6G2WGNMYcldi5r+A0cf3pbRiIUij3goIywH8DcH5lquPF/NnCGZ2j3iCuVsQ
+2KuZ6YKyGXD3O2BfZzUENxS9gZ1zPgeCNDz8+A4jkkFMFf5MQyiGyv8ViLziVvNRgmly0cPiW+fn
+4rKBai3ezVXS62lVCKiKHTt8QpK4jwjbbiJ3qPhNP+9JrIfCBhw7rR2jk0JhNNSMAUav+dtGAcrY
+qaSrKAj9jTkcxwFqxQYeNyx4zq4/HxrpHrAE7NYG9uWrsfOkNsrJZxN9XqTKFvSKTz6RbmQ1UMB/
+GoFX+NQBhEV83aYPIbUkfv+BEDv0sIgVqxvdawujiOvzBOG7vos4X87JzKqnDBng/PpboPOyBg==</X509Certificate></X509Data></KeyInfo></Signature></wrtir:WageReportRequestToIR>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mst="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:simpleType name="Day">
+		<xs:restriction base="mst:DaysType"/>
+	</xs:simpleType>
+	<xs:simpleType name="DaysType">
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="28"/>
+			<xs:enumeration value="29"/>
+			<xs:enumeration value="30"/>
+			<xs:enumeration value="31"/>
+			<xs:enumeration value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Month">
+		<xs:restriction base="irct:MonthsType"/>
+	</xs:simpleType>
+	<xs:complexType name="CodeItem">
+		<xs:sequence>
+			<xs:element name="IdType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IdCode" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IdCountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubscriptionParameters" type="mst:SubscriptionParameters" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CodeItems">
+		<xs:sequence>
+			<xs:element name="CodeItem" type="mst:CodeItem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DailySchedule">
+		<xs:sequence>
+			<xs:element name="QueryStartTime" type="mst:QueryStartTime" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataRequestToIR">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryProfile" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncludeAllVersions" type="irct:trueOrFalse" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DataRequestParameters" type="mst:DataRequestParameters" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataRequestParameters">
+		<xs:sequence>
+			<xs:element name="ValueParameter" type="mst:ValueParameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimespanParameter" type="mst:TimespanParameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimespanTimeParameter" type="mst:TimespanTimeParameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="IdCodeParameter" type="mst:IdCodeParameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubscriptionsToIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="mst:DeliveryData" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Days">
+		<xs:sequence>
+			<xs:element name="Day" type="mst:Day" minOccurs="1" maxOccurs="32"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryData">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="mst:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="MainSubscription" type="mst:MainSubscription" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliverySchedule">
+		<xs:sequence>
+			<xs:element name="QueryStartTime" type="mst:QueryStartTime" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IdCodeList">
+		<xs:sequence>
+			<xs:element name="CodeListType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CodeItems" type="mst:CodeItems" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IdCodeParameter">
+		<xs:sequence>
+			<xs:element name="ParameterType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IdType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IdCode" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IdCountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MainSubscription">
+		<xs:sequence>
+			<xs:element name="MainSubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryChannelCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SubscriptionType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ValidFrom" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ValidUntil" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ModifiedTimespanStart" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ModifiedTimespanEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PartyType" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Subscriptions" type="mst:Subscriptions" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Schedule" type="mst:Schedule" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MonthlySchedule">
+		<xs:complexContent>
+			<xs:extension base="mst:DeliverySchedule">
+				<xs:sequence>
+					<xs:element name="Days" type="mst:Days" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Months" type="mst:Months" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Months">
+		<xs:sequence>
+			<xs:element name="Month" type="mst:Month" minOccurs="1" maxOccurs="12"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OnetimeDeliverySchedule">
+		<xs:sequence>
+			<xs:element name="Time" type="xs:time" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QueryStartTime">
+		<xs:sequence>
+			<xs:element name="Time" type="xs:time" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecurringDeliverySchedule">
+		<xs:choice>
+			<xs:element name="MonthlySchedule" type="mst:MonthlySchedule" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="WeeklySchedule" type="mst:WeeklySchedule" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DailySchedule" type="mst:DailySchedule" minOccurs="1" maxOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Schedule">
+		<xs:choice>
+			<xs:element name="RecurringDeliverySchedule" type="mst:RecurringDeliverySchedule" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="OnetimeDeliverySchedule" type="mst:OnetimeDeliverySchedule" minOccurs="1" maxOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Subscription">
+		<xs:sequence>
+			<xs:element name="SubscriptionId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="QueryProfile" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncludeAllVersions" type="irct:trueOrFalse" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="QueryDataSchemaVersion" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubscriptionParameters" type="mst:SubscriptionParameters" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IdCodeList" type="mst:IdCodeList" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubscriptionParameters">
+		<xs:sequence>
+			<xs:element name="TimespanParameter" type="mst:TimespanParameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="IdCodeParameter" type="mst:IdCodeParameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ValueParameter" type="mst:ValueParameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Subscriptions">
+		<xs:sequence>
+			<xs:element name="Subscription" type="mst:Subscription" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimespanParameter">
+		<xs:sequence>
+			<xs:element name="ParameterType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimespanTimeParameter">
+		<xs:sequence>
+			<xs:element name="ParameterType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ValueParameter">
+		<xs:sequence>
+			<xs:element name="ParameterType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Value" type="irct:String100" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeeklySchedule">
+		<xs:complexContent>
+			<xs:extension base="mst:DeliverySchedule">
+				<xs:sequence>
+					<xs:element name="Monday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Tuesday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Wednesday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Thursday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Friday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Saturday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Sunday" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:stir="http://www.tulorekisteri.fi/2017/1/SubscriptionsToIR" xmlns:mst="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" targetNamespace="http://www.tulorekisteri.fi/2017/1/SubscriptionsToIR">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" schemaLocation="MainSubscriptionTypes.xsd"/>
+	<xs:element name="SubscriptionsRequestToIR" type="mst:SubscriptionsToIR"/>
+	<xs:element name="SubscriptionsRequestToIRAsync" type="mst:SubscriptionsToIR"/>
+</xs:schema>

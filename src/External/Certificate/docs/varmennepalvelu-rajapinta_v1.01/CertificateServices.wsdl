@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://certificates.vero.fi/2017/10/certificateservices" xmlns:ser="http://certificates.vero.fi/2017/10/certificateservices" targetNamespace="http://certificates.vero.fi/2017/10/certificateservices">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import schemaLocation="CertificateServices.xsd" namespace="http://certificates.vero.fi/2017/10/certificateservices"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="SignNewCertificateRequestMessage">
+		<wsdl:part name="in" element="ser:SignNewCertificateRequest"/>
+	</wsdl:message>
+	<wsdl:message name="SignNewCertificateResponseMessage">
+		<wsdl:part name="out" element="ser:SignNewCertificateResponse"/>
+	</wsdl:message>
+	<wsdl:message name="RenewCertificateRequestMessage">
+		<wsdl:part name="in" element="ser:RenewCertificateRequest"/>
+	</wsdl:message>
+	<wsdl:message name="RenewCertificateResponseMessage">
+		<wsdl:part name="out" element="ser:RenewCertificateResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetCertificateRequestMessage">
+		<wsdl:part name="in" element="ser:GetCertificateRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetCertificateResponseMessage">
+		<wsdl:part name="out" element="ser:GetCertificateResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="CertificateServicesPortType">
+		<wsdl:operation name="signNewCertificate">
+			<wsdl:input message="tns:SignNewCertificateRequestMessage"/>
+			<wsdl:output message="tns:SignNewCertificateResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="renewCertificate">
+			<wsdl:input message="tns:RenewCertificateRequestMessage"/>
+			<wsdl:output message="tns:RenewCertificateResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getCertificate">
+			<wsdl:input message="tns:GetCertificateRequestMessage"/>
+			<wsdl:output message="tns:GetCertificateResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CertificateServicesSoap" type="tns:CertificateServicesPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="signNewCertificate">
+			<soap:operation soapAction="signNewCertificate" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="renewCertificate">
+			<soap:operation soapAction="renewCertificate" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getCertificate">
+			<soap:operation soapAction="getCertificate" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CertificateServices">
+		<wsdl:port name="CertificateCervicesPort" binding="tns:CertificateServicesSoap">
+			<soap:address location="https://localhost/2017/10/CertificateServices"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

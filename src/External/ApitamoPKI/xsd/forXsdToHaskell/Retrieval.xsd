@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tns="http://www.vero.fi/xmlschema/ApiTaMo"
+  targetNamespace="http://www.vero.fi/xmlschema/ApiTaMo"
+  elementFormDefault="qualified"
+  xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  version="1.0">
+
+  <xs:simpleType name="LanguageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="fi"/>
+      <xs:enumeration value="sv"/>
+      <xs:enumeration value="en"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StatusType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Ok"/>
+      <xs:enumeration value="Wait"/>
+      <xs:enumeration value="Error"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:complexType name="Result">
+    <xs:sequence>
+      <xs:element name="Accepted" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Elementissä kerrotaan onko ilmoitusten vastaanotto onnistunut (true) vai epäonnistunut (false).]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Information" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="fi">
+            <![CDATA[Elementissä kerrotaan syy mahdolliseen ilmoitusten hylkäämiseen.]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Aineiston nouto -->
+  <xs:element name="DeliveryDataRetrievalRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Language" type="tns:LanguageType" default="fi">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Vastaussanomassa käytettävä kieli (fi=suomi, sv=ruotsi, en=englanti).]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="RetrievalId" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementin sisällä lähetetään kyselyä lähetettäessä saatu noutotunniste.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ResultId" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementin sisällä lähetetään kyselyä lähetettäessä saatu tulostunniste taustakäsittelyyn jätetyn aineiston tarkastustuloksesta.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DeliveryDataRetrievalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Filing" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementti sisltää lähetetyn aineiston nimen.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Timestamp" type="xs:dateTime">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementin sisällä on noudon aikaleiman. Esim. 2018-10-13T11:05:15.522+03:00]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Status" type="tns:StatusType">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementissä kerrotaan onko noutopyyntö onnistunut (Ok), aineisto tai tarkastustulos ole ei vielä noudettavissa (Wait) tai epäonnistunut (Error).]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Information" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementti on joko tyhjä tai sislätää esim. tiedon 'Aineisto ei vielä noudettavissa' tai 'Tuntematon noutotunniste'.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="RetrievalId" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementti kertoo käytetyn ilmoitusaineiston noutotunnisteen.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ResultId" type="xs:string" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementti kertoo käytetyn taustakäsittelyyn jätetyn ilmoitusaineiston tarkastustuloksen tulostunnisteen.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Result" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Taustakäsittelyyn jätetyn aineiston tarkastustuloksen tila.]]>
+            </xs:documentation>
+          </xs:annotation>
+         
+        </xs:element>
+        <xs:element name="DeliveryData" type="xs:base64Binary" minOccurs="0" xmime:expectedContentTypes="application/octet-stream">
+          <xs:annotation>
+            <xs:documentation xml:lang="fi">
+              <![CDATA[Elementin sisällä on lähetyserässä olleet ilmoitukset täydennettynä Verohallinnon vastaustiedoilla tai taustakäsittelyyn jätetyn aineiston tarkastustuloksen MTOM/XOP-liitetiedostona.]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="FaultInfo" type="xs:string" />
+</xs:schema>

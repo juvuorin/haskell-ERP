@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+				  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+				  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+				  xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+				  xmlns:tns="http://www.vero.fi/xmlschema/ApiTaMo"
+				  targetNamespace="http://www.vero.fi/xmlschema/ApiTaMo">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				   xmlns:tns="http://www.vero.fi/xmlschema/ApiTaMo"
+				   targetNamespace="http://www.vero.fi/xmlschema/ApiTaMo"
+				   elementFormDefault="qualified"
+				   version="1.0">
+
+			<xs:simpleType name="LanguageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="fi"/>
+					<xs:enumeration value="sv"/>
+					<xs:enumeration value="en"/>
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:simpleType name="StatusType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Ok"/>
+					<xs:enumeration value="Wait"/>
+					<xs:enumeration value="Error"/>
+				</xs:restriction>
+			</xs:simpleType>
+
+			<!-- Aineiston lähetys -->
+			<xs:element name="DeliveryDataSendRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Language" type="tns:LanguageType" default="fi">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Vastaussanomassa käytettävä kieli (fi=suomi, sv=ruotsi, en=englanti).]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BackgroundProcessing" type="xs:boolean" minOccurs="0" default="false">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Aineiston taustakäsittely (false=normaali käsittely, true=taustakäsittely). Jos ei annettu suoritetaan normaali käsittely.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Emails" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="16">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä voi antaa sähköpostiosoitteen tai -osoitteita, lähetettäessä sellaisia aineistoja, joihin odotetaan vastausaineistoja.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ReportingMaterial" type="xs:base64Binary" minOccurs="0" xmime:expectedContentTypes="application/octet-stream">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää varsinainen ilmoituksen MTOM/XOP-liitteenä. Alkuperäisen tiedoston nimen on oltava mukana elementin sisällä.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Attachments" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää ilmoituksen tuloveroliitetiedostot.]]></xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Attachment" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded" xmime:expectedContentTypes="application/octet-stream">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää tuloveroliitetiedoston MTOM/XOP-liitteenä. Alkuperäisen tiedoston nimen on oltava mukana elementin sisällä.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="DeliveryDataSendResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Result">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementin sisälle on koottu tiedot lähetyserän vastaanoton onnistumisesta tai epäonnistumisesta.]]></xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Filing" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisltää lähetetyn aineiston nimen.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Accepted" type="xs:boolean">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan onko ilmoitusten vastaanotto onnistunut (true) vai epäonnistunut (false).]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Timestamp" type="xs:dateTime">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan lähetyksen aikaleiman. Esim. 2018-10-13T11:05:15.522+02:00]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Information" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan syy mahdolliseen ilmoitusten hylkäämiseen.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CheckSum" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää SHA1-tarkistussumman ilmoitusaineiston sisällöstä.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DeliveryId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä on sisältöä vain jos on lähetetty rakentamisen tiedonantomenettelyyn (Raksi) liittyviä perusilmoituksia. Tällöin elementin sisältönä on perusilmoituksen yksilöivä ilmoitustunniste.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RetrievalId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää tunnisteen, jolla vastausaineisto voidaan noutaa.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ResultId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää taustakäsittelyyn jätetyn ilmoitusaineiston tarkastustuloksen noutotunnisteen.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Attachments" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää tiedot lähetetyistä liitetiedostoista.]]></xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Attachment" minOccurs="0" maxOccurs="16">
+													<xs:annotation>
+														<xs:documentation xml:lang="fi"><![CDATA[Elementti sisältää tiedot lähetetystä tuloveroliitetiedostosta.]]></xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="FileName" type="xs:string">
+																<xs:annotation>
+																	<xs:documentation xml:lang="fi"><![CDATA[Elementti kertoo lähetetyn liitetiedoston nimen.]]></xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="Accepted" type="xs:boolean">
+																<xs:annotation>
+																	<xs:documentation xml:lang="fi"><![CDATA[Elementti kertoo onko tiedosto otettu vastaan (true) vai hylätty (false).]]></xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="Information" type="xs:string" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation xml:lang="fi"><![CDATA[Elementti kertoo syyn liitteen hylkäämiseen.]]></xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CheckupResult" type="xs:base64Binary" minOccurs="0" xmime:expectedContentTypes="application/octet-stream">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Ilmoitusaineiston tarkastustulos MTOM/XOP-liitetiedostona.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<!-- Aineiston nouto -->
+			<xs:element name="DeliveryDataRetrievalRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Language" type="tns:LanguageType" default="fi">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Vastaussanomassa käytettävä kieli (fi=suomi, sv=ruotsi, en=englanti).]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetrievalId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementin sisällä lähetetään kyselyä lähetettäessä saatu noutotunniste.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ResultId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementin sisällä lähetetään kyselyä lähetettäessä saatu tulostunniste taustakäsittelyyn jätetyn aineiston tarkastustuloksesta.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="DeliveryDataRetrievalResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Filing" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti sisltää lähetetyn aineiston nimen.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Timestamp" type="xs:dateTime">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementin sisällä on noudon aikaleiman. Esim. 2018-10-13T11:05:15.522+03:00]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Status" type="tns:StatusType">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan onko noutopyyntö onnistunut (Ok), aineisto tai tarkastustulos ole ei vielä noudettavissa (Wait) tai epäonnistunut (Error).]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Information" type="xs:string">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti on joko tyhjä tai sislätää esim. tiedon 'Aineisto ei vielä noudettavissa' tai 'Tuntematon noutotunniste'.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetrievalId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti kertoo käytetyn ilmoitusaineiston noutotunnisteen.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ResultId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementti kertoo käytetyn taustakäsittelyyn jätetyn ilmoitusaineiston tarkastustuloksen tulostunnisteen.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Result" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Taustakäsittelyyn jätetyn aineiston tarkastustuloksen tila.]]></xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Accepted" type="xs:boolean" default="false">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan onko ilmoitusten vastaanotto onnistunut (true) vai epäonnistunut (false).]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Information" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation xml:lang="fi"><![CDATA[Elementissä kerrotaan syy mahdolliseen ilmoitusten hylkäämiseen.]]></xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DeliveryData" type="xs:base64Binary" minOccurs="0" xmime:expectedContentTypes="application/octet-stream">
+							<xs:annotation>
+								<xs:documentation xml:lang="fi"><![CDATA[Elementin sisällä on lähetyserässä olleet ilmoitukset täydennettynä Verohallinnon vastaustiedoilla tai taustakäsittelyyn jätetyn aineiston tarkastustuloksen MTOM/XOP-liitetiedostona.]]></xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="FaultInfo" type="xs:string"/>
+		</xs:schema>
+	</wsdl:types>
+
+	<!-- Aineiston lähetys -->
+	<wsdl:message name="SendRequestMessage">
+		<wsdl:part name="parameters" element="tns:DeliveryDataSendRequest"/>
+	</wsdl:message>
+	<wsdl:message name="SendResponseMessage">
+		<wsdl:part name="response" element="tns:DeliveryDataSendResponse"/>
+	</wsdl:message>
+	<!-- Aineiston nouto -->
+	<wsdl:message name="RetrievalRequestMessage">
+		<wsdl:part name="parameters" element="tns:DeliveryDataRetrievalRequest"/>
+	</wsdl:message>
+	<wsdl:message name="RetrievalResponseMessage">
+		<wsdl:part name="response" element="tns:DeliveryDataRetrievalResponse"/>
+	</wsdl:message>
+	<!-- SoapFault -->
+	<wsdl:message name="FaultMessage">
+		<wsdl:part name="fault" element="tns:FaultInfo"/>
+	</wsdl:message>
+
+	<wsdl:portType name="ApitamopkiType">
+		<!-- Aineiston lähetys -->
+		<wsdl:operation name="SendOperation">
+			<wsdl:input name="SendRequest" message="tns:SendRequestMessage"/>
+			<wsdl:output name="SendResponse" message="tns:SendResponseMessage"/>
+			<wsdl:fault name="FaultResponse" message="tns:FaultMessage"/>
+		</wsdl:operation>
+		<!-- Aineiston nouto -->
+		<wsdl:operation name="RetrievalOperation">
+			<wsdl:input name="RetrievalRequest" message="tns:RetrievalRequestMessage"/>
+			<wsdl:output name="RetrievalResponse" message="tns:RetrievalResponseMessage"/>
+			<wsdl:fault name="FaultResponse" message="tns:FaultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="ApitamopkiBinding" type="tns:ApitamopkiType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<!-- Aineiston lähetys -->
+		<wsdl:operation name="SendOperation">
+			<soap:operation soapAction="SendAction" style="document"/>
+			<wsdl:input name="SendRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="SendResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="FaultResponse">
+				<soap:fault name="SoapFault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<!-- Aineiston nouto -->
+		<wsdl:operation name="RetrievalOperation">
+			<soap:operation soapAction="RetrievalAction" style="document"/>
+			<wsdl:input name="RetrievalRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="RetrievalResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="FaultResponse">
+				<soap:fault name="SoapFault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="ApitamopkiService">
+		<wsdl:port name="ApitamopkiPort" binding="tns:ApitamopkiBinding">
+			<soap:address location="https://api.ilmoitin.fi/wsapp/apitamopki"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

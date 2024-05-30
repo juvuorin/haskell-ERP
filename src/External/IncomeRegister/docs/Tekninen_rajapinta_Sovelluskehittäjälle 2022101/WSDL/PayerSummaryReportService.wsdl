@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.tulorekisteri.fi/PayerSummaryReportService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:srfir="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:afir="http://www.tulorekisteri.fi/2017/1/AckFromIR" xmlns:psrtirt="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsToIRTypes" xmlns:smt="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" xmlns:psrtir="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsToIR" name="PayerSummaryReportService" targetNamespace="http://www.tulorekisteri.fi/PayerSummaryReportService">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/AckFromIR" schemaLocation="AckFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsFromIR" schemaLocation="PayerSummaryReportsFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/PayerSummaryReportsToIR" schemaLocation="PayerSummaryReportsToIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" schemaLocation="StatusResponseFromIR.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="StatusResponseFromIRMessage">
+		<wsdl:part name="out" element="srfir:StatusResponseFromIR"/>
+	</wsdl:message>
+	<wsdl:message name="PayerSummaryReportToIRMessage">
+		<wsdl:part name="in" element="psrtir:PayerSummaryReportRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="PayerSummaryReportsToIRMessage">
+		<wsdl:part name="in" element="psrtir:PayerSummaryReportsRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="AckFromIR">
+		<wsdl:part name="out" element="afir:AckFromIR"/>
+	</wsdl:message>
+	<wsdl:portType name="PayerSummaryReportPort">
+		<wsdl:operation name="SendPayerSummaryReport">
+			<wsdl:input message="tns:PayerSummaryReportToIRMessage"/>
+			<wsdl:output message="tns:StatusResponseFromIRMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendPayerSummaryReports">
+			<wsdl:input message="tns:PayerSummaryReportsToIRMessage"/>
+			<wsdl:output message="tns:AckFromIR"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PayerSummaryReportSoap" type="tns:PayerSummaryReportPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SendPayerSummaryReport">
+			<soap:operation soapAction="SendPayerSummaryReport" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SendPayerSummaryReports">
+			<soap:operation soapAction="SendPayerSummaryReports" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PayerSummaryReportService">
+		<wsdl:port name="PayerSummaryReportService" binding="tns:PayerSummaryReportSoap">
+			<soap:address location="https://localhost/20170526/PayerSummaryReportService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

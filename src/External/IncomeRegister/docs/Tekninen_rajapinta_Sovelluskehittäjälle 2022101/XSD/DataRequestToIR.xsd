@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:drtir="http://www.tulorekisteri.fi/2017/1/DataRequestToIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:mst="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" targetNamespace="http://www.tulorekisteri.fi/2017/1/DataRequestToIR">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/MainSubscriptionTypes" schemaLocation="MainSubscriptionTypes.xsd"/>
+	<xs:element name="MessagesRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="PayerSummaryReportsOnePayerRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="PayerSummaryReportsOnePolicyNoRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="WageReportsOneIncomeEarnerRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="WageReportsOnePayerRequestToIR" type="mst:DataRequestToIR"/>
+  <xs:element name="WageReportsOnePayerOneIncomeEarnerRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="WageReportsOnePolicyNoRequestToIR" type="mst:DataRequestToIR"/>
+ 	<xs:element name="BenefitReportsOneIncomeEarnerRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="BenefitReportsOnePayerOneIncomeEarnerRequestToIR" type="mst:DataRequestToIR"/>
+	<xs:element name="BenefitReportsOneIRReportIdRequestToIR" type="mst:DataRequestToIR"/>
+</xs:schema>

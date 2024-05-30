@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:itirt="http://www.tulorekisteri.fi/2017/1/InvalidationsToIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/InvalidationsToIRTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:complexType name="DeliveryData">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Source" type="irct:String30" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="FaultyControl" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="itirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="itirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="itirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Items" type="itirt:Items" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvalidationsToIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="itirt:DeliveryData" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Item">
+		<xs:sequence>
+			<xs:element name="IRItemId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ItemId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ItemVersion" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Items">
+		<xs:sequence>
+			<xs:element name="Item" type="itirt:Item" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

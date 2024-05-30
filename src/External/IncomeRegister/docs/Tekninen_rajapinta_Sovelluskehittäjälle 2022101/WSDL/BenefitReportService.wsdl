@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.tulorekisteri.fi/BenefitReportService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:srfir="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:brtir="http://www.tulorekisteri.fi/2017/1/BenefitReportsToIR" xmlns:afir="http://www.tulorekisteri.fi/2017/1/AckFromIR" xmlns:stm="http://www.tulorekisteri.fi/2017/1/StatusMessageTypes" xmlns:brtirt="http://www.tulorekisteri.fi/2017/1/BenefitReportsToIRTypes" name="BenefitReportService" targetNamespace="http://www.tulorekisteri.fi/BenefitReportService">
+	<wsdl:types>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/AckFromIR" schemaLocation="AckFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/StatusResponseFromIR" schemaLocation="StatusResponseFromIR.xsd"/>
+		</xs:schema>
+		<xs:schema>
+			<xs:import namespace="http://www.tulorekisteri.fi/2017/1/BenefitReportsToIR" schemaLocation="BenefitReportsToIR.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="StatusResponseFromIRMessage">
+		<wsdl:part name="out" element="srfir:StatusResponseFromIR"/>
+	</wsdl:message>
+	<wsdl:message name="BenefitReportsToIRMessage">
+		<wsdl:part name="in" element="brtir:BenefitReportsRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="BenefitReportToIRMessage">
+		<wsdl:part name="in" element="brtir:BenefitReportRequestToIR"/>
+	</wsdl:message>
+	<wsdl:message name="AckFromIR">
+		<wsdl:part name="out" element="afir:AckFromIR"/>
+	</wsdl:message>
+	<wsdl:portType name="BenefitReportPort">
+		<wsdl:operation name="SendBenefitReport">
+			<wsdl:input message="tns:BenefitReportToIRMessage"/>
+			<wsdl:output message="tns:StatusResponseFromIRMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendBenefitReports">
+			<wsdl:input message="tns:BenefitReportsToIRMessage"/>
+			<wsdl:output message="tns:AckFromIR"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BenefitReportSoap" type="tns:BenefitReportPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SendBenefitReport">
+			<soap:operation soapAction="SendBenefitReport" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SendBenefitReports">
+			<soap:operation soapAction="SendBenefitReports" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="BenefitReportService">
+		<wsdl:port name="BenefitReportService" binding="tns:BenefitReportSoap">
+			<soap:address location="https://localhost/20170526/BenefitReportService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

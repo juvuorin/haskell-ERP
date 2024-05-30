@@ -1,0 +1,270 @@
+-- By default this file is used by `parseRoutesFile` in Foundation.hs
+-- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Static files 
+/static StaticR Static appStatic
+--/auth   AuthR   Auth   getAuth
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Testing
+
+/testing/addTestCredentials                                                                              AddTestCredsR            POST
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Authentication and registration 
+
+/auth/register                                                     UsersRegisterR         POST
+/auth/login                                                        UsersLoginR            POST
+--/user                                                            UserR                  GET PUT
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Banking Authentication  
+
+/banking/authenticate                                                          AuthenticateR GET
+
+/banking/authcallback                                                          AuthCallbackR GET
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Certificate signing and renewal
+
+-- sign a new certificate
+-- /certSign/#CompanyId                                                        CertSignR POST
+!/company/#CompanyId/certSign                                                  CertSignR POST
+
+
+-- renew a signed certiicate
+!/company/#CompanyId/certRenew                                                 CertRenewR POST
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | Reports to income register
+                                                         
+-- send wage report 
+!/company/#CompanyId/sendReportToIR/#PayeventId                                ReportToIR POST
+
+-- send payer summary report (company health insurance payment)
+!/company/#CompanyId/sendPayerSummaryReportToIR                                PayerSummaryReportToIR POST
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+-- | External events' log 
+!/company/#CompanyId/events                                                    EventsR GET 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Bookkeeping basic operations 
+
+-- Fetch all accounts or add a new account for a acompany
+/company/#CompanyId/bookkeeping/accounts                                       AccountsR GET POST
+
+-- remove, fetch or change individual account
+/company/#CompanyId/bookkeeping/accounts/#AccountId                            AccountR DELETE PUT GET
+
+-- Fetch transactions by month
+/company/#CompanyId/bookkeeping/transactionsByMonth/#Int/#Integer              TransactionsByMonthR' GET
+
+-- Get and post entries related to a transaction
+/company/#CompanyId/bookkeeping/transactions/#TransactionId/entries            TransactionEntriesR GET 
+
+-- remove, fetch and change individual transaction
+/company/#CompanyId/bookkeeping/transactions/#TransactionId                    TransactionR DELETE GET
+
+-- change or delete entry
+/company/#CompanyId/bookkeeping/entries/#EntryId                               EntriesR DELETE
+
+-- add a new bookkeeping transaction
+/company/#CompanyId/bookkeeping/transactions                                   TransactionsR POST
+
+-- delete orphan entries that were created by entry automation 
+-- /company/#CompanyId/bookkeeping/deleteorphanentries/#EntryId                   TransactionDeleteOrphanEntriesR POST 
+
+-- update a transaction and all its entries 
+!/company/#CompanyId/bookkeeping/transactions/transactional/#TransactionId                                       TransactionUpdateR PUT 
+
+-- fetch all accounting years of a company
+/company/#CompanyId/bookkeeping/accountingyears                                AccountingYearsR GET
+
+-- fetch all accounting years of a company
+/company/#CompanyId/bookkeeping/expenseDeferral/#TransactionId                 ExpenseDeferralR POST
+
+-- get a pdf document
+/company/#CompanyId/bookkeeping/htmltopdf/#String                                                                  HtmlToPdfR POST
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Company information 
+
+-- add new companies and get a list of companies of the system
+/company/companies                                                             CompaniesR POST GET
+
+-- remove, change or fetch an individual company
+/company/companies/#CompanyId                                                  CompanyR DELETE PUT GET
+
+-- get a list of partners of a company
+/company/#CompanyId/partner/partners                                           PartnersR POST GET
+
+-- remove, change or fetch a company
+/company/#CompanyId/partner/partners/#PartnerId                                PartnerR DELETE PUT GET
+
+-- Settings for different vats 
+/company/#CompanyId/settings/salesinvoicevats                                  SalesInvoiceVatsR GET
+
+-- Settings for different vats 
+/company/#CompanyId/settings/purchaseinvoicevats                               PurchaseInvoiceVatsR GET
+
+-- Settings for different units (kg, h, kpl etc.)
+/company/#CompanyId/settings/units                                             UnitsR GET
+
+-- Get vattypes
+/company/#CompanyId/settings/vatpcts                                           VatPctsR GET
+
+-- Get invoicetypes
+-- /company/#CompanyId/settings/invoicetypes                                   SalesInvoiceTypesR GET
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| File handling
+
+-- Add new bank statement file (pdf)
+-- /filestore/uploadBankStatement                                              BankStatementFilesR POST
+
+-- Add new bank statement file (pdf)
+/filestore/#CompanyId/uploadBankStatement                                      BankStatementFilesR POST
+
+-- Add new bank statement file (pdf)
+/filestore/#CompanyId/uploadBankStatements                                     BankStatementFilesR'' POST
+
+-- Add new file to document
+/filestore/#CompanyId/upload                                                   FilesR POST
+
+-- Add new file to document
+/filestore/#CompanyId/uploadMonthly                                            FilesMonthlyR POST
+
+-- Download a file
+/filestore/#CompanyId/#EntityType/#EntityId/fetchfiles                         FilesFetchR POST
+
+-- Delete a file from the server
+/filestore/#CompanyId/#EntityType/#EntityId/files/#FileName                    FilesR2 DELETE
+
+-- List all files by entity type
+/filestore/#CompanyId/#EntityType/#EntityId/files                              FileListR2 GET
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Payroll 
+
+-- get a list of employees and add a new employee to a company
+/company/#CompanyId/payroll/employees                                          EmployeesR GET POST
+
+-- remove, fetch and change individual document
+/company/#CompanyId/payroll/employees/#EmployeeId                              EmployeeR  DELETE GET PUT
+
+-- Fetch payevents of an employee
+/company/#CompanyId/payroll/employees/#EmployeeId/payevents                    PayeventsR GET POST
+
+-- remove, fetch and change individual payevent
+/company/#CompanyId/payroll/employees/#EmployeeId/payevents/#PayeventId        PayeventR  DELETE GET PUT
+
+-- add and fetch pauadjustments of a payevent
+/company/#CompanyId/payroll/employees/#EmployeeId/payevents/#PayeventId/payadjustments     PayadjustmentsR  POST GET
+
+-- fetch payadjustment types
+/company/#CompanyId/payroll/payadjustmenttypes                                 PayadjustmenttypesR GET
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Bookkeeping reports 
+
+-- VAT report
+/company/#CompanyId/bookkeeping/vatReport                                      VatReportR POST
+
+-- income statement
+/company/#CompanyId/bookkeeping/incomeStatement                                IncomeStatementR POST
+
+-- balance sheet
+/company/#CompanyId/bookkeeping/balanceSheet                                   BalanceSheetR POST
+
+-- general ledger
+/company/#CompanyId/bookkeeping/generalLedger                                  GeneralLedgerR POST
+
+-- journal
+/company/#CompanyId/bookkeeping/journal                                        JournalR POST
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Sales Invoicing 
+
+-- Fetch all invoices or add a new invoice for a acompany
+/company/#CompanyId/sales/invoices                                             SalesInvoicesR GET POST
+
+-- remove, fetch or change individual invoice
+/company/#CompanyId/sales/invoices/#SalesInvoiceId                             SalesInvoiceR DELETE PUT GET
+
+-- Fetch or add new invoice detail
+/company/#CompanyId/sales/invoicedetails/#SalesInvoiceDetailId                 SalesInvoiceDetailR PUT DELETE
+
+-- remove, fetch or change individual account
+/company/#CompanyId/sales/invoices/#SalesInvoiceId/invoicedetails              SalesInvoiceDetailsR GET POST
+
+-- Fetch transactions by month
+/company/#CompanyId/sales/documentsByMonth/#Int/#Integer                       SalesInvoicesByMonthR GET
+
+-- Fetch all products
+/company/#CompanyId/sales/products                                             ProductsR GET
+
+-- Fetch all paymentterms
+/company/#CompanyId/sales/deliveryterms                                        DeliverytermsR GET
+
+/company/#CompanyId/sales/sendInvoice/#SalesInvoiceId                          SendSalesInvoiceR POST 
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Purchase Invoicing 
+
+-- Verify purchase invoice
+!/company/#CompanyId/purchases/invoices/verify/#PurchaseInvoiceId              VerifyInvoiceR POST
+
+-- Approve purchase invoice
+!/company/#CompanyId/purchases/invoices/approve/#PurchaseInvoiceId             ApproveInvoiceR POST
+
+-- Fetch all invoices or add a new invoice for a acompany
+/company/#CompanyId/purchases/invoices                                         PurchaseInvoicesR GET POST
+
+-- remove, fetch or change individual invoice
+/company/#CompanyId/purchases/invoices/#PurchaseInvoiceId                      PurchaseInvoiceR DELETE PUT GET
+
+-- Fetch or add new invoice detail
+/company/#CompanyId/purchases/invoicedetails/#PurchaseInvoiceDetailId          PurchaseInvoiceDetailR PUT DELETE
+
+-- remove, fetch or change individual account
+/company/#CompanyId/purchases/invoices/#PurchaseInvoiceId/invoicedetails       PurchaseInvoiceDetailsR GET POST
+
+-- Fetch transactions by month
+/company/#CompanyId/purchases/documentsByMonth/#Int/#Integer                PurchaseInvoicesByMonthR GET
+
+-- Post to ledger
+/company/#CompanyId/purchases/invoicepost/#PurchaseInvoiceId                   PostToLedgerR GET
+
+-- update a transaction and all its entries 
+!/company/#CompanyId/purchases/transactional/#PurchaseInvoiceId                PurchaseUpdateR PUT 
+
+
+-- Fetch all products
+--/company/#CompanyId/purchases/products                                                                     ProductsR GET
+
+-- Fetch all paymentterms
+--/company/#CompanyId/purchases/deliveryterms                                                                DeliverytermsR GET
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Recalculate balances 
+
+/company/#CompanyId/actions/recalcBalances                                     RecalcBalancesR POST
+
+/company/#CompanyId/actions/makeTestTransactionsAndEntries                     MakeTestTransactionsAndEntries POST
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Bank statements 
+/company/#CompanyId/bankstatement/bankstatements                               BankStatementsR GET
+
+/company/#CompanyId/bankstatement/bankstatement/#BankStatementId/items         BankStatementItemsWithPostingSuggestionsR GET
+
+/company/#CompanyId/bankstatement/bankstatementsByMonth/#Int/#Integer          BankStatementsByMonthR GET
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--| Chart Tree 
+!/company/#CompanyId/chart                                                      ChartR GET 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.tulorekisteri.fi/2017/1/InvalidationsToIR" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:itir="http://www.tulorekisteri.fi/2017/1/InvalidationsToIR" xmlns:itirt="http://www.tulorekisteri.fi/2017/1/InvalidationsToIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/InvalidationsToIRTypes" schemaLocation="InvalidationsToIRTypes.xsd"/>
+	<xs:element name="InvalidationRequestToIR" type="itirt:InvalidationsToIR"/>
+	<xs:element name="InvalidationsRequestToIR" type="itirt:InvalidationsToIR"/>
+</xs:schema>

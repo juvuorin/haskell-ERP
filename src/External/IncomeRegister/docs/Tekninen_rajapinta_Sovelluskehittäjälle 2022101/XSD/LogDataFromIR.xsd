@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ldfir="http://www.tulorekisteri.fi/2017/1/LogDataFromIR" xmlns:ldt="http://www.tulorekisteri.fi/2017/1/LogDataTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" targetNamespace="http://www.tulorekisteri.fi/2017/1/LogDataFromIR">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/LogDataTypes" schemaLocation="LogDataTypes.xsd"/>
+	<xs:element name="LogDataFromIR" type="ldt:LogDataFromIR"/>
+</xs:schema>

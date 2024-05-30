@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wrtirt="http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes" xmlns:irct="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.tulorekisteri.fi/2017/1/WageReportsToIRTypes">
+	<xs:import namespace="http://www.tulorekisteri.fi/2017/1/IRCommonTypes" schemaLocation="IRCommonTypes.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:simpleType name="AllowanceCode">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="BenefitCode">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="ExceptionCode">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="FormCode">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="IncomeEarnerType">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="PaymentType">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="RemunerationCode">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="WorkMunicipality">
+		<xs:restriction base="irct:String200"/>
+	</xs:simpleType>
+	<xs:complexType name="Absence">
+		<xs:sequence>
+			<xs:element name="AbsenceRepStartDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AbsenceRepEndDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnpaidAbsence" type="wrtirt:UnpaidAbsence" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaidAbsence" type="wrtirt:PaidAbsence" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccidentInsurance">
+		<xs:sequence>
+			<xs:element name="AccInsProvId" type="wrtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="AccInsPolicyNo" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Address">
+		<xs:sequence>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Addresses">
+		<xs:sequence>
+			<xs:element name="TypedAddress" type="wrtirt:TypedAddress" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CarBenefit">
+		<xs:sequence>
+			<xs:element name="CarBenefitCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="AgeGroupCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Kilometers" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmissionsValue" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactPerson">
+		<xs:sequence>
+			<xs:element name="Name" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Telephone" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Email" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ResponsibilityCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactPersons">
+		<xs:sequence>
+			<xs:element name="ContactPerson" type="wrtirt:ContactPerson" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DailyAllowance">
+		<xs:sequence>
+			<xs:element name="AllowanceCode" type="wrtirt:AllowanceCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryData">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Source" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryId" type="irct:String40" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="FaultyControl" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ProductionEnvironment" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataOwner" type="wrtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataCreator" type="wrtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DeliveryDataSender" type="wrtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PaymentPeriod" type="wrtirt:PaymentPeriod" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ContactPersons" type="wrtirt:ContactPersons" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Payer" type="wrtirt:Payer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Reports" type="wrtirt:Reports" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EarningPeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EarningPeriods">
+		<xs:sequence>
+			<xs:element name="EarningPeriod" type="wrtirt:EarningPeriod" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmployeeMax183d">
+		<xs:sequence>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Employment">
+		<xs:sequence>
+			<xs:element name="Employed" type="irct:trueOrFalse" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmploymentCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TermCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PartTime" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="HoursPerWeek" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaymentTypes" type="wrtirt:PaymentTypes" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmploymentPeriods" type="wrtirt:EmploymentPeriods" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmploymentEndings" type="wrtirt:EmploymentEndings" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmploymentEnding">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmploymentEndings">
+		<xs:sequence>
+			<xs:element name="EmploymentEnding" type="wrtirt:EmploymentEnding" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmploymentPeriods">
+		<xs:sequence>
+			<xs:element name="Period" type="wrtirt:Period" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmploymentReg">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EmploymentRegs">
+		<xs:sequence>
+			<xs:element name="EmploymentReg" type="wrtirt:EmploymentReg" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FinServiceRecipient">
+		<xs:sequence>
+			<xs:element name="FinServiceRecipientIds" type="wrtirt:FinServiceRecipientIds" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FinServiceRecipientIds">
+		<xs:sequence>
+			<xs:element name="Id" type="wrtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ForeignLeasedWork">
+		<xs:sequence>
+			<xs:element name="Representative" type="wrtirt:Representative" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EstAmount" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FinServiceRecipient" type="wrtirt:FinServiceRecipient" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Id">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String30" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarner">
+		<xs:sequence>
+			<xs:element name="IncomeEarnerIds" type="wrtirt:IncomeEarnerIds" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeEarnerBasic" type="wrtirt:IncomeEarnerBasic" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Addresses" type="wrtirt:Addresses" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubOrgs" type="wrtirt:SubOrgs" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Employment" type="wrtirt:Employment" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Professions" type="wrtirt:Professions" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EmploymentRegs" type="wrtirt:EmploymentRegs" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PlaceOfBusiness" type="wrtirt:PlaceOfBusiness" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PensionInsurance" type="wrtirt:PensionInsurance" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AccidentInsurance" type="wrtirt:AccidentInsurance" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="InsuranceExceptions" type="wrtirt:InsuranceExceptions" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="InternationalData" type="wrtirt:InternationalData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeEarnerOther" type="wrtirt:IncomeEarnerOther" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerBasic">
+		<xs:sequence>
+			<xs:element name="MissingId" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LastName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FirstName" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Gender" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerIds">
+		<xs:sequence>
+			<xs:element name="Id" type="wrtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerOther">
+		<xs:sequence>
+			<xs:element name="CBACode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="IncomeEarnerTypes" type="wrtirt:IncomeEarnerTypes" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Payments" type="wrtirt:Payments" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IncomeEarnerTypes">
+		<xs:sequence>
+			<xs:element name="IncomeEarnerType" type="wrtirt:IncomeEarnerType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsuranceData">
+		<xs:sequence>
+			<xs:element name="TransactionInclusion" type="wrtirt:TransactionInclusion" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsuranceExceptions">
+		<xs:sequence>
+			<xs:element name="ExceptionCode" type="wrtirt:ExceptionCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InternationalData">
+		<xs:sequence>
+			<xs:element name="PostedCertCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NonResident" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NonResidentCountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NonResidentCountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubToWithhold" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TaxTreatyCountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkForm" type="wrtirt:WorkForm" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="KmAllowance">
+		<xs:sequence>
+			<xs:element name="Kilometers" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MealBenefit">
+		<xs:sequence>
+			<xs:element name="TaxValue" type="irct:true" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NT1Address">
+		<xs:sequence>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrigPaymentPeriod">
+		<xs:sequence>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrigPaymentPeriods">
+		<xs:sequence>
+			<xs:element name="OrigPaymentPeriod" type="wrtirt:OrigPaymentPeriod" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OtherBenefit">
+		<xs:sequence>
+			<xs:element name="BenefitCode" type="wrtirt:BenefitCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaidAbsence">
+		<xs:sequence>
+			<xs:element name="PaidAbsencePeriods" type="wrtirt:PaidAbsencePeriods" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaidAbsencePeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AbsenceDays" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AbsenceUntil" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CauseCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Amount" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ReimbApp" type="wrtirt:ReimbApp" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaidAbsencePeriodInfo" type="irct:String850" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaidAbsencePeriods">
+		<xs:sequence>
+			<xs:element name="PaidAbsencePeriod" type="wrtirt:PaidAbsencePeriod" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payer">
+		<xs:sequence>
+			<xs:element name="PayerIds" type="wrtirt:PayerIds" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PayerBasic" type="wrtirt:PayerBasic" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Address" type="wrtirt:Address" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubOrgs" type="wrtirt:SubOrgs" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PayerOther" type="wrtirt:PayerOther" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SubstitutePayer" type="wrtirt:SubstitutePayer" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerBasic">
+		<xs:sequence>
+			<xs:element name="MissingId" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CompanyName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LastName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FirstName" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Language" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerIds">
+		<xs:sequence>
+			<xs:element name="Id" type="wrtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerOther">
+		<xs:sequence>
+			<xs:element name="PayerTypes" type="wrtirt:PayerTypes" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayerTypes">
+		<xs:sequence>
+			<xs:element name="Code" type="xs:int" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payment">
+		<xs:sequence>
+			<xs:element name="PaymentType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PaymentRef" type="irct:String50" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaymentSpecifier" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentPeriod">
+		<xs:sequence>
+			<xs:element name="PaymentDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payments">
+		<xs:sequence>
+			<xs:element name="Payment" type="wrtirt:Payment" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentTypes">
+		<xs:sequence>
+			<xs:element name="PaymentType" type="wrtirt:PaymentType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PensionInsurance">
+		<xs:sequence>
+			<xs:element name="PensionActCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PensionProvIdCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PensionPolicyNo" type="irct:PensionPolicyNo" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Period">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PlaceOfBusiness">
+		<xs:sequence>
+			<xs:element name="Code" type="irct:String20" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Profession">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Title" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Professions">
+		<xs:sequence>
+			<xs:element name="Profession" type="wrtirt:Profession" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecoveryData">
+		<xs:sequence>
+			<xs:element name="RecoveryDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Withhold" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TaxAtSource" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OrigPaymentPeriods" type="wrtirt:OrigPaymentPeriods" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReimbApp">
+		<xs:sequence>
+			<xs:element name="ReimbPayment" type="wrtirt:ReimbPayment" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReimbPayment">
+		<xs:sequence>
+			<xs:element name="PaymentType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PaymentRef" type="irct:String50" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PaymentSpecifier" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Remunerations">
+		<xs:sequence>
+			<xs:element name="RemunerationCode" type="wrtirt:RemunerationCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Report">
+		<xs:sequence>
+			<xs:element name="ReportData" type="wrtirt:ReportData" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IncomeEarner" type="wrtirt:IncomeEarner" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Transactions" type="wrtirt:Transactions" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ForeignLeasedWork" type="wrtirt:ForeignLeasedWork" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StayPeriodsInFinland" type="wrtirt:StayPeriodsInFinland" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkPeriodsInFinland" type="wrtirt:WorkPeriodsInFinland" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkCountries" type="wrtirt:WorkCountries" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Absence" type="wrtirt:Absence" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportData">
+		<xs:sequence>
+			<xs:element name="ActionCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IRReportId" type="irct:Guid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReportId" type="irct:String40" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReportVersion" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Reports">
+		<xs:sequence>
+			<xs:element name="Report" type="wrtirt:Report" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Representative">
+		<xs:sequence>
+			<xs:element name="RepresentativeIds" type="wrtirt:RepresentativeIds" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Name" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Address" type="wrtirt:Address" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RepresentativeReports" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RepresentativeIds">
+		<xs:sequence>
+			<xs:element name="Id" type="wrtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SailorIncome">
+		<xs:sequence>
+			<xs:element name="SailorIncome" type="irct:true" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CrossTradeTime" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WithdrawalPeriod" type="wrtirt:WithdrawalPeriod" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceRecipient">
+		<xs:sequence>
+			<xs:element name="ServiceRecipientIds" type="wrtirt:ServiceRecipientIds" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Name" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ServiceRecipientAddress" type="wrtirt:ServiceRecipientAddress" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceRecipientAddress">
+		<xs:sequence>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceRecipientIds">
+		<xs:sequence>
+			<xs:element name="Id" type="wrtirt:Id" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SixMonthRule">
+		<xs:sequence>
+			<xs:element name="Applicable" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StayPeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StayPeriodsAbroad">
+		<xs:sequence>
+			<xs:element name="Period" type="wrtirt:StayPeriod" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StayPeriodsInFinland">
+		<xs:sequence>
+			<xs:element name="NoStayPeriods" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Period" type="wrtirt:StayPeriod" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubOrg">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Code" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubOrgs">
+		<xs:sequence>
+			<xs:element name="SubOrg" type="wrtirt:SubOrg" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubstitutePayer">
+		<xs:sequence>
+			<xs:element name="Acts" type="irct:true" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EmployerId" type="wrtirt:Id" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EmployerName" type="irct:String200" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WageSec" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Transaction">
+		<xs:sequence>
+			<xs:element name="TransactionBasic" type="wrtirt:TransactionBasic" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="InsuranceData" type="wrtirt:InsuranceData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EarningPeriods" type="wrtirt:EarningPeriods" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnitWages" type="wrtirt:UnitWages" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CarBenefit" type="wrtirt:CarBenefit" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MealBenefit" type="wrtirt:MealBenefit" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OtherBenefit" type="wrtirt:OtherBenefit" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SailorIncome" type="wrtirt:SailorIncome" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="RecoveryData" type="wrtirt:RecoveryData" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DailyAllowance" type="wrtirt:DailyAllowance" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="KmAllowance" type="wrtirt:KmAllowance" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SixMonthRule" type="wrtirt:SixMonthRule" minOccurs="0" maxOccurs="1"/>
+			<!-- <xs:element name="EmployeeMax183d" type="wrtirt:EmployeeMax183d" minOccurs="0" maxOccurs="1"/> -->
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransactionBasic">
+		<xs:sequence>
+			<xs:element name="TransactionCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Amount" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="NoMoney" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OneOff" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="UnjustEnrichment" type="irct:true" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Recovery" type="irct:true" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransactionInclusion">
+		<xs:sequence>
+			<xs:element name="InsuranceCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Included" type="irct:trueOrFalse" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Transactions">
+		<xs:sequence>
+			<xs:element name="Transaction" type="wrtirt:Transaction" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TypedAddress">
+		<xs:sequence>
+			<xs:element name="AddressType" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnitWage">
+		<xs:sequence>
+			<xs:element name="UnitPrice" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UnitAmount" type="irct:decimal2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UnitCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnitWages">
+		<xs:sequence>
+			<xs:element name="UnitWage" type="wrtirt:UnitWage" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnpaidAbsence">
+		<xs:sequence>
+			<xs:element name="UnpaidAbsencePeriods" type="wrtirt:UnpaidAbsencePeriods" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnpaidAbsencePeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AbsenceDays" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CauseCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UnpaidAbsencePeriods">
+		<xs:sequence>
+			<xs:element name="UnpaidAbsencePeriod" type="wrtirt:UnpaidAbsencePeriod" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WageReportsToIR">
+		<xs:sequence>
+			<xs:element name="DeliveryData" type="wrtirt:DeliveryData" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WithdrawalPeriod">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkCountries">
+		<xs:sequence>
+			<xs:element name="WorkCountry" type="wrtirt:WorkCountry" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkCountry">
+		<xs:sequence>
+			<xs:element name="WorkCountryCode" type="irct:String2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="WorkCountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkMunicipalities" type="wrtirt:WorkMunicipalities" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkCountryAddress" type="wrtirt:WorkCountryAddress" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ServiceRecipient" type="wrtirt:ServiceRecipient" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StayPeriodsAbroad" type="wrtirt:StayPeriodsAbroad" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkPeriodsAbroad" type="wrtirt:WorkPeriodsAbroad" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TaxingRight" type="irct:trueOrFalse" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="BurdensResultOfPE" type="irct:trueOrFalse" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WagePerMonth" type="irct:decimal2" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Remunerations" type="wrtirt:Remunerations" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkCountryAddress">
+		<xs:sequence>
+			<xs:element name="Co" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Street" type="irct:String100" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="POBox" type="irct:String10" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="irct:String20" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostOffice" type="irct:String200" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryCode" type="irct:String2" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CountryName" type="irct:String70" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkForm">
+		<xs:sequence>
+			<xs:element name="FormCode" type="wrtirt:FormCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkMunicipalities">
+		<xs:sequence>
+			<xs:element name="WorkMunicipality" type="wrtirt:WorkMunicipality" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkPeriodInFinland">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="WorkDays" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkPeriodsAbroad">
+		<xs:sequence>
+			<xs:element name="Period" type="wrtirt:Period" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WorkPeriodsInFinland">
+		<xs:sequence>
+			<xs:element name="WorkPeriodInFinland" type="wrtirt:WorkPeriodInFinland" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wrtir:WageReportRequestToIR xmlns:wrtir="http://www.tulorekisteri.fi/2017/1/WageReportsToIR" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tulorekisteri.fi/2017/1/WageReportsToIR WageReportsToIR.xsd">
+	<DeliveryData>
+		<Timestamp>2001-12-17T09:30:47Z</Timestamp>
+		<Source>Ohjelmiston nimi</Source>
+		<!-- palkkatietoilmoitus = 100 -->
+		<DeliveryDataType>100</DeliveryDataType>
+		<DeliveryId>oma-aineiston-yksiloiva-id-01</DeliveryId>
+		<!-- 1=vain virheelliset ilmoitukset hylätään, 2=koko aineisto hylätään -->
+		<FaultyControl>1</FaultyControl>
+		<ProductionEnvironment>true</ProductionEnvironment>
+		<DeliveryDataOwner>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>8765432-1</Code>
+		</DeliveryDataOwner>
+		<DeliveryDataCreator>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>1234567-8</Code>
+		</DeliveryDataCreator>
+		<DeliveryDataSender>
+			<!-- y-tunnus = 1 -->
+			<Type>1</Type>
+			<Code>1234567-8</Code>
+		</DeliveryDataSender>
+		<PaymentPeriod>
+			<PaymentDate>2020-07-31</PaymentDate>
+			<StartDate>2020-07-15</StartDate>
+			<EndDate>2020-07-31</EndDate>
+		</PaymentPeriod>
+		<ContactPersons>
+			<ContactPerson>
+				<Name>Etunimi Sukunimi</Name>
+				<Telephone>040-11223344</Telephone>
+				<!-- Tekniset asiat = 2 -->
+				<ResponsibilityCode>2</ResponsibilityCode>
+			</ContactPerson>
+		</ContactPersons>
+		<Payer>
+			<PayerIds>
+				<Id>
+					<!-- y-tunnus = 1 -->
+					<Type>1</Type>
+					<Code>1234588-9</Code>
+				</Id>
+			</PayerIds>
+			<SubOrgs>
+				<SubOrg>
+					<!-- Maksajan oma koodisto = 2 -->
+					<Type>2</Type>
+					<Code>KEMI_456</Code>
+				</SubOrg>
+			</SubOrgs>
+		</Payer>
+		<Reports>
+			<Report>
+				<ReportData>
+					<!-- uusi ilmoitus = 1 -->
+					<ActionCode>1</ActionCode>
+					<ReportId>20200731_00841</ReportId>
+				</ReportData>
+				<IncomeEarner>
+					<IncomeEarnerIds>
+						<Id>
+							<!-- henkilötunnus suomalainen = 2 -->
+							<Type>2</Type>
+							<Code>010101-1111</Code>
+						</Id>
+					</IncomeEarnerIds>
+					<IncomeEarnerBasic>
+						<LastName>Sukunimi</LastName>
+						<FirstName>Etunimi</FirstName>
+					</IncomeEarnerBasic>
+					<Addresses>
+						<TypedAddress>
+							<!-- Osoite kotivaltiossa  = 1 -->
+							<AddressType>1</AddressType>
+							<Street>Katu 1</Street>
+							<PostalCode>00000</PostalCode>
+							<PostOffice>Kaupunki</PostOffice>
+						</TypedAddress>
+					</Addresses>
+
+					<Employment>
+						<Employed>true</Employed>
+						<!-- kokoaikainen = 1 -->
+						<EmploymentCode>1</EmploymentCode>
+						<!-- palvelusuhteenkesto Toistaiseksi voimassa oleva = 1 -->
+						<TermCode>1</TermCode>
+						<HoursPerWeek>40.00</HoursPerWeek>
+						<PaymentTypes>
+							<!-- kuukausipalkka = 1 -->
+							<PaymentType>1</PaymentType>
+						</PaymentTypes>	
+						<EmploymentPeriods>
+							<Period>
+								<StartDate>1999-06-01</StartDate>
+							</Period>
+						</EmploymentPeriods>
+
+					</Employment>
+					<Professions>
+						<Profession>
+							<!-- Tilastokeskuksen ammattiluokitus (TK10) = 1 -->
+							<Type>1</Type>
+							<!-- Tk10-koodistosta: Hälytyspäivystäjät = 42291 -->
+							<Code>42291</Code>
+						</Profession>
+					</Professions>	
+					<PlaceOfBusiness>
+						<Street>Pfad 1</Street>
+						<PostalCode>00000</PostalCode>
+						<PostOffice>Stadt</PostOffice>
+						<!-- Saksa = DE -->
+						<CountryCode>DE</CountryCode>
+					</PlaceOfBusiness>
+					<PensionInsurance>
+						<!-- Työntekijän työeläkevakuutus = 1 -->
+						<PensionActCode>1</PensionActCode>
+						<!-- esim.  Keskinäinen Eläkevakuutustyhtiö Eläke = 66 -->
+						<PensionProvIdCode>66</PensionProvIdCode>
+						<!-- eläkejärjestelynumero -->
+						<PensionPolicyNo>66-12345678</PensionPolicyNo>
+					</PensionInsurance>
+					<AccidentInsurance>
+						<AccInsProvId>
+							<!-- tyyppi ytunnus = 1 -->
+							<Type>1</Type>
+							<!-- y-tunnus -->
+							<Code>1234567-7</Code>
+						</AccInsProvId>
+						<!-- Työtapaturmavakuutuksen vakuutusnumero  -->
+						<AccInsPolicyNo>12345677</AccInsPolicyNo>					
+					</AccidentInsurance>
+					<InternationalData>
+						<!-- Suomesta A1-todistus tai sopimus = 1 -->
+						<PostedCertCode>1</PostedCertCode>
+						<WorkForm>
+							<!-- NT2 = 2 -->
+							<FormCode>2</FormCode>
+						</WorkForm>
+					</InternationalData>
+					<IncomeEarnerOther>
+						<!-- sovellettava työehtosopimus: Öljy-, maakaasu- ja petrokemianteollisuuden työehtosopimus = 193 -->
+						<CBACode>193</CBACode>
+					</IncomeEarnerOther>
+				</IncomeEarner>
+				<Transactions>
+					<Transaction>
+						<TransactionBasic>
+							<!-- Vakuutuspalkka  = 352 -->
+							<TransactionCode>352</TransactionCode>
+							<Amount>6500.00</Amount>							
+						</TransactionBasic>		
+						<SixMonthRule>
+							<!-- 6kk:n sääntö soveltuu -->
+							<Applicable>true</Applicable>
+							<CountryCode>DE</CountryCode>
+						</SixMonthRule>
+					</Transaction>
+					<Transaction>	
+						<TransactionBasic>
+							<!-- Työntekijän työeläkevakuutus = 413  -->
+							<TransactionCode>413</TransactionCode>
+							<Amount>399.75</Amount>
+						</TransactionBasic>
+					</Transaction>
+					<Transaction>	
+						<TransactionBasic>
+							<!-- Työntekijän työttömyysvakuutus = 414  -->
+							<TransactionCode>414</TransactionCode>
+							<Amount>104.00</Amount>
+						</TransactionBasic>							
+					</Transaction>	
+				</Transactions>
+
+				<WorkCountries>
+					<WorkCountry>
+						<!-- Saksa = DE -->
+						<WorkCountryCode>DE</WorkCountryCode>
+						<WorkMunicipalities>
+							<!-- Työskentelypaikkakunnat -->
+							<WorkMunicipality>Köln</WorkMunicipality>
+							<WorkMunicipality>Dortmund</WorkMunicipality>
+						</WorkMunicipalities>
+
+						<WorkCountryAddress>                          
+							<Street>Strasse 1</Street>
+							<PostalCode>00000</PostalCode>
+							<PostOffice>Stadt</PostOffice>
+							<CountryCode>DE</CountryCode>
+						</WorkCountryAddress>
+
+						<StayPeriodsAbroad>
+							<!-- Oleskelujakso työskentelyvaltiossa  -->
+							<Period>
+								<StartDate>2019-03-29</StartDate>
+								<EndDate>2019-12-23</EndDate>
+							</Period>
+							<Period>
+								<StartDate>2020-01-03</StartDate>
+								<EndDate>2020-06-30</EndDate>
+							</Period>
+							<Period>
+								<StartDate>2020-07-10</StartDate>
+								<EndDate>2020-07-14</EndDate>
+							</Period>
+						</StayPeriodsAbroad>
+
+						<!-- työskentelyjaksot työskentelyvaltiossa :-->
+						<WorkPeriodsAbroad>
+							<!-- työskentelyjakso työskentelyvaltiossa  -->
+							<Period>
+								<StartDate>2019-03-29</StartDate>
+								<EndDate>2019-12-23</EndDate>
+							</Period>
+							<Period>
+								<StartDate>2020-01-03</StartDate>
+								<EndDate>2020-06-30</EndDate>
+							</Period>
+							<Period>
+								<StartDate>2020-07-10</StartDate>
+								<EndDate>2020-07-14</EndDate>
+							</Period>
+						</WorkPeriodsAbroad>
+
+
+						<!-- Verotusoikeus työskentelyvaltiolla  -->
+						<TaxingRight>true</TaxingRight>
+						<!-- Palkka rasittaa työnantajan työskentelyvaltiossa olevan kiinteän toimipaikan tulosta  -->
+						<BurdensResultOfPE>false</BurdensResultOfPE>
+						<WagePerMonth>7000.00</WagePerMonth>
+						<!-- Muut korvaukset ja edut -->
+						<Remunerations>
+							<!-- Päiväraha = 1 -->
+							<RemunerationCode>1</RemunerationCode>
+							<!-- Muu etu = 4 -->
+							<RemunerationCode>4</RemunerationCode>
+						</Remunerations>
+					</WorkCountry>
+				</WorkCountries>
+
+			</Report>
+		</Reports>
+	</DeliveryData>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>NdOQEpBq/AENbPIUXapNaiUA0FMeSjgwg3AlLdUKQTg=</DigestValue></Reference></SignedInfo><SignatureValue>EdF7zw5C50BXoAOZ8Xf8e2aKj90DcO0naElfVJrfEl+Wk5CdJIv7nFvhNAXC3CnxXo5DrT2a2Kgw
+ySmRUad9SoaiBSSvTRC6nsXUCF0Q49Ed5L1GpjLXOQle1AvkJfO86/u7XM1YSG1ZPeAWd42fDItE
+uwoEARhSmD1AzmAJ2eOzpF2Tb0YXaop/tTB3oGkCU0Or5cNPU09u2BDRuCU58BHIXyLY1O8swu/x
+9Tg+NCh89QLoTZiGkWoxPgOJOV6oc8/qCdd23xGwt1YN+Bt6DieWfOkXMChNcdNKNg12xOwdeaLO
+bFyrUJX7z0mggaYS7UCUBqmcvj/Wbm99eV+L7A==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>lgrPcZvtRU1/toLkGJU77kOu0xZnKoANkqdnU+YsLmx74w3Tj+Ted4nhNw6ba5GkL038D9JFJHMH
+tHVzTOXjtAiyH/VTgDRw6lPmSLphIasfVdUiXrxg+3Brnh7Omj0msBZAunSK6nGS4FeZ4V3c4cKL
+k+8Ja/NNE41NcB0z9BxZ3au6+aOfP7+lRaxmXfhXfgpfFy7Stdy0OFDXzebBoRLqqeCniIj+7koY
+9xuVw2vdacEjWzVaMgdh2VT7I50/U7z19bTO7cSHophjOT/JLFBzEt6qkAvaOjSid4/YFtZ7hScu
+Inn6uhZt4PGj2V93SIUimyBNGwfh1KBlfxpWrw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509SubjectName>C=FI, O=Sontus 315 Testifirma Verotusy, SERIALNUMBER=D41D62311CEC136E41B0E22CE5ACD794, CN=7013454-9</X509SubjectName><X509Certificate>MIIFxDCCA6ygAwIBAgIIJPl4GBYXgJgwDQYJKoZIhvcNAQELBQAwUDEqMCgGA1UEAwwhRGF0YSBQ
+cm92aWRlcnMgVGVzdCBJc3N1aW5nIENBIHYxMRUwEwYDVQQKDAxWZXJvaGFsbGludG8xCzAJBgNV
+BAYTAkZJMB4XDTIwMDQyMzA2MzU0OFoXDTIyMDQyMzA2MzU0OFowdTESMBAGA1UEAwwJNzAxMzQ1
+NC05MSkwJwYDVQQFEyBENDFENjIzMTFDRUMxMzZFNDFCMEUyMkNFNUFDRDc5NDEnMCUGA1UECgwe
+U29udHVzIDMxNSBUZXN0aWZpcm1hIFZlcm90dXN5MQswCQYDVQQGEwJGSTCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAJYKz3Gb7UVNf7aC5BiVO+5DrtMWZyqADZKnZ1PmLC5se+MN04/k
+3neJ4TcOm2uRpC9N/A/SRSRzB7R1c0zl47QIsh/1U4A0cOpT5ki6YSGrH1XVIl68YPtwa54ezpo9
+JrAWQLp0iupxkuBXmeFd3OHCi5PvCWvzTRONTXAdM/QcWd2ruvmjnz+/pUWsZl34V34KXxcu0rXc
+tDhQ183mwaES6qngp4iI/u5KGPcblcNr3WnBI1s1WjIHYdlU+yOdP1O89fW0zu3Eh6KYYzk/ySxQ
+cxLeqpAL2jo0oneP2BbWe4UnLiJ5+roWbeDxo9lfd0iFIpsgTRsH4dSgZX8aVq8CAwEAAaOCAXsw
+ggF3MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU/HBL1zmPybJX2rJ93TZLAgrYlRQwWAYIKwYB
+BQUHAQEETDBKMEgGCCsGAQUFBzAChjxodHRwOi8vY3JsLXRlc3RpLnZlcm8uZmkvY2EvRGF0YVBy
+b3ZpZGVyc1Rlc3RJc3N1aW5nQ0F2MS5jZXIwEwYDVR0lBAwwCgYIKwYBBQUHAwIwgacGA1UdHwSB
+nzCBnDCBmaBBoD+GPWh0dHA6Ly9jcmwtdGVzdGkudmVyby5maS9jcmwvRGF0YVByb3ZpZGVyc1Rl
+c3RJc3N1aW5nQ0F2MS5jcmyiVKRSMFAxKjAoBgNVBAMMIURhdGEgUHJvdmlkZXJzIFRlc3QgSXNz
+dWluZyBDQSB2MTEVMBMGA1UECgwMVmVyb2hhbGxpbnRvMQswCQYDVQQGEwJGSTAdBgNVHQ4EFgQU
+k1tNd0QZWov/3bYaGUT6tMlYtQswDgYDVR0PAQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4ICAQAY
+a0TCH/I5JIgTHSF93n1zR6h155cgMuXtukrDwHZc4c8wQrQH9zb6jff/AIwfiskK1JUOCm9rvwTd
+sE9Rv1W8PrDqw6q2UnieRkZz5HjW4wFNnEkGGLTpo9C0a7eIOS0D0L5Szu+ZEUjazXwl6yFMOEJK
+XKGja11OcoqwSFZV0admMVR4id0ZI12U91wYRAx8YUIqfPHfnmzHDwFuNzsUwRC7GCKqPGv6lNFs
+yRYHr5m7VgB6Z8f1VuAzirr8vmgZTkEMnNmqjx6T/NR9rXivvijdOfIwKTnLqfk4R80FWnAtSoJ5
+uCEATF22g2uJTZYv6G2WGNMYcldi5r+A0cf3pbRiIUij3goIywH8DcH5lquPF/NnCGZ2j3iCuVsQ
+2KuZ6YKyGXD3O2BfZzUENxS9gZ1zPgeCNDz8+A4jkkFMFf5MQyiGyv8ViLziVvNRgmly0cPiW+fn
+4rKBai3ezVXS62lVCKiKHTt8QpK4jwjbbiJ3qPhNP+9JrIfCBhw7rR2jk0JhNNSMAUav+dtGAcrY
+qaSrKAj9jTkcxwFqxQYeNyx4zq4/HxrpHrAE7NYG9uWrsfOkNsrJZxN9XqTKFvSKTz6RbmQ1UMB/
+GoFX+NQBhEV83aYPIbUkfv+BEDv0sIgVqxvdawujiOvzBOG7vos4X87JzKqnDBng/PpboPOyBg==</X509Certificate></X509Data></KeyInfo></Signature></wrtir:WageReportRequestToIR>
