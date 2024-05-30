@@ -1,7 +1,8 @@
 ## HASKELLERP
 A Simple demo ERP application for learning Haskell. The SW cannot be run as such as there is a great deal of configuration information missing relating to the services accessed. I have used this SW in teaching Haskell and type safe programming in general since 2022. 
 
-* What is demonstrated and what you could learn while dealing with this piece of software? 
+What is demonstrated and what you could learn while dealing with this piece of software? 
+
 * Creating and maintaining SQL data using Persistent ORM
 * Using transactions for data integrity 
 * Designing maintainable SQL databases and exploiting ORM if it is feasable
