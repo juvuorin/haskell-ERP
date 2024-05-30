@@ -31,7 +31,9 @@ What is demonstrated and what you could learn while dealing with this piece of s
 * Learning about the ergonomics of Haskell and the lack of it, too
 * Using haskell toolchain and VSCode for Haskell development
 * Using typeclasses at basic level to define interfaces
-* In general you will learn to rely on the type checker and learn to have fun with Haskell!
+* Parsing Alandsbanken pdf formatted bank statements  ... and many other things! 
+
+In general you will learn to rely on the type checker and learn to have fun with Haskell!
 
 
 ## Directory structure
