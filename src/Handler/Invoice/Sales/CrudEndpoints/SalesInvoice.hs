@@ -389,9 +389,7 @@ getSalesInvoiceDetailsR companyId invoiceId = do
                     False -> return []
     putStrLn (pack $ show files)
    -}
-
     entries <- runDB $ selectList [SalesInvoiceDetailSalesInvoiceId==.invoiceId] [Asc SalesInvoiceDetailId] :: Handler [Entity SalesInvoiceDetail]
-  
     return $ object ["rows" .= entries]
 
 
@@ -401,4 +399,3 @@ deleteSalesInvoiceR companyId docId = do
     let filePath =  ("companies"</>(show companyId)</>"invoices"</>(show docId))
     removeDirectoryIfExists filePath
     sendResponseStatus status200 ("DELETED" :: Text)
-

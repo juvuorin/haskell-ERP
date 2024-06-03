@@ -72,7 +72,6 @@ addproperties =
               Nothing -> return heterogenousEntry
     )
 
-
 updateBookkeepingTransactionAndInsertOrUpdateEntries ::
   CompanyId -> TransactionId ->
   TransactionWithNewAndExistingEntries ->
@@ -80,7 +79,7 @@ updateBookkeepingTransactionAndInsertOrUpdateEntries ::
 
 updateBookkeepingTransactionAndInsertOrUpdateEntries companyId transactionId transactionWithEntries = do
   let entriesFromClient' = entries transactionWithEntries
-  mapM_ (\x->print $ show x) entriesFromClient'
+  mapM_ print entriesFromClient'
   let (entriesToInsert, entriesToUpdate) =
         foldl
           ( \acc item -> do
@@ -219,12 +218,10 @@ putTransactionUpdateR companyId transactionId = do
   entryIds <- runDB $ updateParentAndInsertOrUpdateChildren transactionId transactionWithEntries
   sendResponseStatus status201 $ show $ map fromSqlKey entryIds
 
-
 getTransactionR :: CompanyId -> TransactionId -> Handler Value
 getTransactionR companyId transactionId = do
 
   checkTransactionBelongsToCompany transactionId companyId
-
   transaction <- runDB $ selectFirst [TransactionCompanyId ==. companyId, TransactionId ==. transactionId] []
   case transaction of
     Just (Entity _ value) -> return $ object ["transaction" .= Entity transactionId value]

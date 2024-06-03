@@ -133,7 +133,7 @@ data AppSettings = AppSettings
     
     , appMySetting :: String
 
-    , appMmaventa_client_id :: String
+    , appMaventa_client_id :: String
     , appMaventa_client_secret :: String 
     , appMaventa_vendor_api_key :: String
 

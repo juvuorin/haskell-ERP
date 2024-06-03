@@ -8,7 +8,7 @@ module Handler.Partner.Partner where
 import Import
 import Data.Text (Text)
 
-getPartnerR :: CompanyId->PartnerId -> Handler Value
+getPartnerR :: CompanyId -> PartnerId -> Handler Value
 getPartnerR cid id = do
     partner <- runDB $ get404 id
     returnJson partner

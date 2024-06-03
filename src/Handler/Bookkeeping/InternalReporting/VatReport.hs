@@ -347,16 +347,19 @@ postVatReportR companyId' = do
     --let (year, month, day) = toGregorian last
 --    let endDate = getEndDate last 
     let diff = diffDays (lastdate info) (firstdate info)
-    if diff > 31 then sendResponseStatus status404 ("Vat period length must be 31 days of less"::Text)
-      else if diff==0 then sendResponseStatus status404 ("Vat period length must be greater than 0 days"::Text)
-      else if diff < 0 then sendResponseStatus status404 ("Vat period lenght cannot be negative"::Text) 
+    if diff > 31 then sendResponseStatus status404 ("Vat period length must be 31 days or less"::Text)
+      else if diff==0 then sendResponseStatus status404 ("Vat period must be greater than 0 days"::Text)
+      else if diff < 0 then sendResponseStatus status404 ("Vat period cannot be negative"::Text) 
       else return ()
 
     vatTransactions <- selectList [TransactionDate >=. firstdate info,
           TransactionDate <=. lastdate info,
           TransactionCompanyId ==. companyid info,
           TransactionType ==. TypeVatStatement][]
-    mapM_ (\transaction-> deleteTransaction $ entityKey transaction) vatTransactions
+    
+    
+    -- FIXME: Should not delete, but "reverse" the transaction
+    --mapM_ (\transaction-> deleteTransaction $ entityKey transaction) vatTransactions
 
     processedReport <- selectList [ProcessedVatReportPeriodstart ==. (firstdate info),
                                       ProcessedVatReportPeriodstart ==. (lastdate info),

@@ -10,6 +10,8 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedLabels #-}
+
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -17,6 +19,9 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Common where
 
@@ -81,7 +86,7 @@ import Data.Time
   )
 import qualified Data.Vector as V
 import Database.Persist.Postgresql (fromSqlKey)
-import Database.Persist.Sql (ConnectionPool, fromSqlKey, runSqlPool, toSqlKey)
+import Database.Persist.Sql (ConnectionPool, fromSqlKey, runSqlPool, toSqlKey, Update, SqlWriteBackend)
 import Foundation
 import GHC.Exts
 import qualified GHC.Generics
@@ -99,30 +104,116 @@ import Data.Map (elems)
 import Network.Wai
 import Prelude (read)
 import Data.Time.Calendar
-
-
+import Database.Persist.Compatible (Compatible)
+import Data.Kind (Type)
+import qualified GHC.OverloadedLabels
 
 
 now :: IO Day
 now = liftIO currentDay
 
+hasAccess :: ReaderT SqlBackend Handler CompanyId 
+hasAccess = do
+  companyId <- liftHandler $ getCompanyId
+  user <- liftHandler $ getAuthenticatedUser  
+  access <- exists [UserCompanyUserId ==. entityKey user, UserCompanyCompanyId ==. companyId]
+  if access then return companyId else sendResponseStatus status403 ("The user has no access to this company" :: Text)
+
+selectList'
+    :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+    =>  [Filter record] 
+    -> [SelectOpt record]
+    -> ReaderT SqlBackend Handler [Entity record]
+
+selectList' filters options = do
+    companyId <- hasAccess
+    selectList ((#company_id ==. companyId) : filters) options
+
+
+test3 :: ReaderT SqlBackend Handler ()
+test3 = do
+  
+  i <- selectFirst [][] :: ReaderT SqlBackend Handler (Maybe (Entity Transaction))
+  --_ <- delete' i 
+  ent <- case i of
+    Just x -> do
+        getEntity' (entityKey x)
+      
+    Nothing -> sendResponseStatus status404 ("The record does not exist" :: Text)
+  return ()
+
+getEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler (Maybe (Entity record))
+getEntity' key = do
+  getEntity key
+    
+get404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler record
+get404' key = do
+  get404 key
+
+delete' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler ()
+delete' key = do
+  companyId <- hasAccess
+  r <- get404' key
+  if #company_id r == companyId then 
+    delete key        
+  else sendResponseStatus status404 ("The record does not belongs to the company in context" :: Text)
+
+update' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend,GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company)) 
+  => Key record 
+  -> [Update record] 
+  -> ReaderT SqlBackend Handler ()
+update' key updates = do
+  companyId <- hasAccess
+  r <- get404' key
+  if #company_id r == companyId then 
+      update key updates
+  else sendResponseStatus status404 ("The record does not belongs to the company in context" :: Text)
+
+
+
+
+-- If the application has several clients lodging in one database we need to be able to access
+-- the data securely over different tables -> need to add company_id to SQL queries
+
+instance SymbolToField "company_id" AccessRightRole CompanyId where symbolToField = AccessRightRoleCompanyId
+instance SymbolToField "company_id" Account CompanyId where symbolToField = AccountCompanyId
+instance SymbolToField "company_id" AccountingYear CompanyId where symbolToField = AccountingYearCompanyId
+instance SymbolToField "company_id" BankStatement CompanyId where symbolToField = BankStatementCompanyId
+instance SymbolToField "company_id" Transaction CompanyId where symbolToField = TransactionCompanyId
+instance SymbolToField "company_id" Employee CompanyId where symbolToField = EmployeeCompanyId
+instance SymbolToField "company_id" Employment CompanyId where symbolToField = EmploymentCompanyId
+instance SymbolToField "company_id" FiscalYear CompanyId where symbolToField = FiscalYearCompanyId
+instance SymbolToField "company_id" MonthlyBalance CompanyId where symbolToField = MonthlyBalanceCompanyId
+instance SymbolToField "company_id" Notification CompanyId where symbolToField = NotificationCompanyId
+instance SymbolToField "company_id" Payevent CompanyId where symbolToField = PayeventCompanyId
+instance SymbolToField "company_id" Product CompanyId where symbolToField = ProductCompanyId
+instance SymbolToField "company_id" PurchaseInvoice CompanyId where symbolToField = PurchaseInvoiceCompanyId
+instance SymbolToField "company_id" SalesInvoice CompanyId where symbolToField = SalesInvoiceCompanyId
+instance SymbolToField "company_id" SecurityInfo CompanyId where symbolToField = SecurityInfoCompanyId
+instance SymbolToField "company_id" UserCompany CompanyId where symbolToField = UserCompanyCompanyId
+instance SymbolToField "company_id" UserRole CompanyId where symbolToField = UserRoleCompanyId
+instance SymbolToField "company_id" VatReport CompanyId where symbolToField = VatReportCompanyId
+instance SymbolToField "company_id" ProcessedVatReport CompanyId where symbolToField = ProcessedVatReportCompanyId
 
 
 selectListSecure
     :: forall record backend . (PersistQueryRead backend, PersistRecordBackend record backend)
-    => EntityField record (Key Company) -> [Filter record]
+    => EntityField record (Key Company) 
+    -> [Filter record]
     -> [SelectOpt record]
     -> ReaderT backend Handler [Entity record]
 
 selectListSecure tenantIdField filts opts = do
-
     c <- liftHandler getCompanyId
     let g =  Filter    { filterField  = tenantIdField
                        , filterValue  = FilterValue  c
                        , filterFilter = Eq }
     selectList (g:filts) opts 
 
-
+{- 
 selectList''
     :: forall record backend . (PersistQueryRead backend, PersistRecordBackend record SqlBackend, PersistEntity record)
     => EntityField record (Key Company) -> [Filter record]
@@ -135,9 +226,9 @@ selectList'' tenantIdField filts opts = do
     let g =  Filter    { filterField  = tenantIdField
                        , filterValue  = FilterValue  c
                        , filterFilter = Eq }
-    items <- runDB $ selectList (g:filts) opts
-    return items
-    --srcRes <- selectSourceRes (g:filts) opts
+    runDB $ selectList (g:filts) opts
+    
+ -}    --srcRes <- selectSourceRes (g:filts) opts
     --liftIO $ with srcRes (\src -> runConduit $ src .| CL.consume
 
 
@@ -685,7 +776,7 @@ removeDirectoryIfExists fileName =
       | isDoesNotExistError e = return ()
       | otherwise = throwIO e
 
-deleteTransaction :: Key Transaction -> DB ()
+deleteTransaction :: TransactionId -> DB ()
 deleteTransaction transactionId = do
   keys <- selectKeysList ([EntryTransactionId ==. transactionId]) []
   transaction <- get404 transactionId
@@ -694,7 +785,7 @@ deleteTransaction transactionId = do
   print keys
   print date
   mapM_ (\item-> delete item) keys
---  deleteEntries keys date
+  --_ <- deleteEntries keys date
   delete transactionId
   print "OKOKOK"
 
@@ -703,7 +794,7 @@ deleteTransaction transactionId = do
             </> (show $ fromSqlKey transactionId)
         )
   liftHandler $ removeDirectoryIfExists filePath
-
+ 
 deleteEntries :: CompanyId -> [EntryId] -> Day -> DB ()
 deleteEntries companyId entryIds transactionDate = do
   updateMonthlyBalancesForEntriesToBeDeleted companyId entryIds transactionDate
