@@ -7,12 +7,15 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE PartialTypeSignatures #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# LANGUAGE InstanceSigs #-}
 
 module Handler.Invoice.Purchase.CrudEndpoints.PurchaseInvoices where
 
 import Data.Aeson
 import Database.Persist.Sql (
-  fromSqlKey,
+  fromSqlKey, toSqlKey,
  )
 import GHC.Exts
 import Import
@@ -56,17 +59,70 @@ data PurchaseInvoiceProcessingStatus' (status :: PurchaseInvoiceProcessingStatus
   PurchaseInvoiceOpen :: Entity PurchaseInvoice -> PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen
   PurchaseInvoicePaid :: Entity PurchaseInvoice -> PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoicePaid
 
+doSomethingWithInvoice :: PurchaseInvoiceProcessingStatus' a -> Handler (PurchaseInvoiceProcessingStatus' a)
+doSomethingWithInvoice = undefined
+
+data Installment = Installment {amount::Double, dueDate::Day}
+data PurchaseInvoicePaymentType (typ::PaymentInstallmentType) where
+  PurchaseInvoiceWithoutInstallments :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen -> PurchaseInvoicePaymentType 'WithoutInstallments
+  PurchaseInvoiceWithInstallments :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen -> [Installment]-> PurchaseInvoicePaymentType 'WithInstallments
+
+data PaymentInstallmentType = WithInstallments | WithoutInstallments
+
+data SomeInvoice where
+  SomeInvoice :: PurchaseInvoicePaymentType a -> SomeInvoice
+
+invoicesForPayment :: DB ()
+invoicesForPayment = do
+  companyId <- liftHandler $ getCompanyId
+  openInvoices <- (invoices companyId :: PurchaseInvoicesOpen)
+  let openInvoicesWithoutInstallments = map PurchaseInvoiceWithoutInstallments openInvoices 
+  let someInvoices = map SomeInvoice openInvoicesWithoutInstallments
+  liftHandler $ payInvoices someInvoices
+  return ()
+
+payInvoices :: [SomeInvoice] -> Handler ({- PurchaseInvoiceProcessingStatus' PurchaseInvoiceProcessingStatusInvoicePaid -})
+payInvoices [SomeInvoice (PurchaseInvoiceWithoutInstallments (PurchaseInvoiceOpen (Entity key invoice)))] =
+    runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+
+payInvoices [SomeInvoice (PurchaseInvoiceWithInstallments (PurchaseInvoiceOpen (Entity key invoice)) installments)] =
+    runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+    
+
+soSomethingWithSomeInvoices :: [SomeInvoice] ->Handler [SomeInvoice] 
+soSomethingWithSomeInvoices = undefined
+  --runDB $ do
+    -- run payment side effects here
+   -- update (entityKey invoice) [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+   -- return $ PurchaseInvoicePaid invoice 
+
+{- payInvoices [SomeInvoice (PurchaseInvoiceWithInstallments ent@(Entity key invoice) installments)] =
+  runDB $ do
+    -- run payment side effects here
+    update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+    return $ PurchaseInvoicePaid ent
+
+ -} 
+{- payInvoice ([SomeInvoice (PurchaseInvoiceSplit invoice installments)]) =  
+  runDB $ do
+    update (entityKey invoice) [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+    return $ PurchaseInvoicePaid invoice
+ -}
+
+
 class Monad m => MonadInvoice m a where
-  invoices :: CompanyId -> m a
+  invoices :: CompanyId -> m [a]
   invoice :: CompanyId -> Key PurchaseInvoice -> m a
 
 type PurchaseInvoicesDue = DB [PurchaseInvoicePaymentStatus' 'PurchaseInvoicePaymentStatusInvoiceDue]
-type PurchaseInvoicesOpen = DB [PurchaseInvoicePaymentStatus' 'PurchaseInvoicePaymentStatusInvoiceOpen]
 
 type PurchaseInvoiceInVerificationTx = DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification)
 type PurchaseInvoiceVerifiedTx = DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceVerified)
 type PurchaseInvoiceInApprovalTx = DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInApproval)
 type PurchaseInvoiceApprovedTx = DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceApproved)
+type PurchaseInvoiceOpenTx = DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen)
+type PurchaseInvoicesOpenTx = DB [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen]
+type PurchaseInvoicesOpen = DB [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen]
 
 type PurchaseInvoicesInVerificationTx = DB [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification]
 type PurchaseInvoicesVerifiedTx = DB [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceVerified]
@@ -76,7 +132,7 @@ type PurchaseInvoicesApprovedTx = DB [PurchaseInvoiceProcessingStatus' 'Purchase
 type Created = [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceCreated]
 type PurchaseInvoicesCreatedTx = DB Created
 
-instance MonadInvoice Handler [PurchaseInvoicePaymentStatus' 'PurchaseInvoicePaymentStatusInvoiceDue] where
+instance MonadInvoice Handler (PurchaseInvoicePaymentStatus' 'PurchaseInvoicePaymentStatusInvoiceDue) where
   invoices companyId = do
     invoices <- runDB $ selectList [PurchaseInvoiceCompanyId ==. companyId, PurchaseInvoicePaymentstatus ==. Just PurchaseInvoicePaymentStatusInvoiceDue] [] :: Handler [Entity PurchaseInvoice]
     return $ map PurchaseInvoiceDue invoices
@@ -93,11 +149,16 @@ instance MonadInvoice DB [PurchaseInvoicePaymentStatus' 'PurchaseInvoicePaymentS
     invoices <- selectList [PurchaseInvoiceCompanyId ==. companyId, PurchaseInvoicePaymentstatus ==. Just PurchaseInvoicePaymentStatusInvoiceDue] [] :: DB [Entity PurchaseInvoice]
     return $ map PurchaseInvoiceDue invoices
  -}
-instance MonadInvoice DB [PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification] where
+{- instance MonadInvoice DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification) where
+  invoices :: CompanyId
+-> DB
+     [[PurchaseInvoiceProcessingStatus'
+         'PurchaseInvoiceProcessingStatusInvoiceInVerification]]
   invoices companyId = do
     invoices <- selectList [PurchaseInvoiceCompanyId ==. companyId, PurchaseInvoiceProcessingStatus ==. PurchaseInvoiceProcessingStatusInvoiceInVerification] [] :: DB [Entity PurchaseInvoice]
     return $ map PurchaseInvoiceInVerification invoices
 
+ -}
 instance MonadInvoice DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification) where
   invoice companyId invoiceId = do
     invoice <- selectFirst [PurchaseInvoiceId ==. invoiceId, PurchaseInvoiceCompanyId ==. companyId, PurchaseInvoiceProcessingStatus ==. PurchaseInvoiceProcessingStatusInvoiceInVerification] [] -- :: DB (Maybe (Entity PurchaseInvoice))
@@ -111,6 +172,12 @@ instance MonadInvoice DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProce
     case invoice of
       Just invoice -> return $ PurchaseInvoiceInApproval invoice
       Nothing -> sendResponseStatus status404 ("Invoice not found" :: Text)
+
+
+instance MonadInvoice DB (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen) where
+  invoices companyId = do
+    invoices_ <- selectList [PurchaseInvoiceCompanyId ==. companyId, PurchaseInvoiceProcessingStatus ==. PurchaseInvoiceProcessingStatusInvoiceOpen] [] -- :: DB (Maybe (Entity PurchaseInvoice))
+    return $ map PurchaseInvoiceOpen invoices_
 
 getVerifiableInvoice :: (PersistQueryRead backend, MonadHandler m,  BaseBackend backend ~ SqlBackend) => CompanyId -> PurchaseInvoiceId -> ReaderT backend m (PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification)
 getVerifiableInvoice companyId invoiceId = do
@@ -158,19 +225,19 @@ postRejectInvoiceR companyId invoiceId = do
 
 verify :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInVerification -> DB ()
 verify (PurchaseInvoiceInVerification invoice) = do
-  processTasks invoice PurchaseInvoiceProcessingTaskVerified PurchaseInvoiceProcessingStatusInvoiceVerified 
+  processTasks invoice PurchaseInvoiceProcessingTaskVerified PurchaseInvoiceProcessingStatusInvoiceVerified
 
 verify' :: Entity PurchaseInvoice -> DB ()
 verify' invoice = do
-  processTasks invoice PurchaseInvoiceProcessingTaskVerified PurchaseInvoiceProcessingStatusInvoiceVerified 
+  processTasks invoice PurchaseInvoiceProcessingTaskVerified PurchaseInvoiceProcessingStatusInvoiceVerified
 
 approve :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInApproval -> DB ()
 approve (PurchaseInvoiceInApproval invoice) = do
-  processTasks invoice PurchaseInvoiceProcessingTaskApproved PurchaseInvoiceProcessingStatusInvoiceApproved 
+  processTasks invoice PurchaseInvoiceProcessingTaskApproved PurchaseInvoiceProcessingStatusInvoiceApproved
 
 reject :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceInApproval -> DB ()
 reject (PurchaseInvoiceInApproval invoice) = do
-  processTasks invoice PurchaseInvoiceProcessingTaskRejected PurchaseInvoiceProcessingStatusInvoiceRejected 
+  processTasks invoice PurchaseInvoiceProcessingTaskRejected PurchaseInvoiceProcessingStatusInvoiceRejected
 
 test :: CompanyId -> Handler ()
 test companyId = runDB $ do
@@ -228,7 +295,7 @@ putPurchaseInvoiceDetailR companyId purchaseInvoiceDetailId = do
           =. purchaseInvoiceDetailVatPctId invoicedetail
       , PurchaseInvoiceDetailProductname
           =. purchaseInvoiceDetailProductname invoicedetail
-      , 
+      ,
         PurchaseInvoiceDetailProductId
           =. purchaseInvoiceDetailProductId invoicedetail
       ]

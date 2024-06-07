@@ -22,6 +22,7 @@ import Database.Persist.Postgresql (toSqlKey)
 import Database.Persist.Quasi
 import Types
 
+
 --import Foundation (Handler)
 --import Handler.Invoice.Purchase.CrudEndpoints.PurchaseInvoices
 --import AccountType
@@ -33,6 +34,14 @@ type EntityType = Text
 type EntityId = Int64
 
 type FileName = Text
+
+
+
+
+
+
+
+
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities

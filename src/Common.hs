@@ -22,6 +22,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedLabels #-}
 
 module Common where
 
@@ -112,73 +113,8 @@ import qualified GHC.OverloadedLabels
 now :: IO Day
 now = liftIO currentDay
 
-hasAccess :: ReaderT SqlBackend Handler CompanyId 
-hasAccess = do
-  companyId <- liftHandler $ getCompanyId
-  user <- liftHandler $ getAuthenticatedUser  
-  access <- exists [UserCompanyUserId ==. entityKey user, UserCompanyCompanyId ==. companyId]
-  if access then return companyId else sendResponseStatus status403 ("The user has no access to this company" :: Text)
-
-selectList'
-    :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
-    =>  [Filter record] 
-    -> [SelectOpt record]
-    -> ReaderT SqlBackend Handler [Entity record]
-
-selectList' filters options = do
-    companyId <- hasAccess
-    selectList ((#company_id ==. companyId) : filters) options
-
-
-test3 :: ReaderT SqlBackend Handler ()
-test3 = do
-  
-  i <- selectFirst [][] :: ReaderT SqlBackend Handler (Maybe (Entity Transaction))
-  --_ <- delete' i 
-  ent <- case i of
-    Just x -> do
-        getEntity' (entityKey x)
-      
-    Nothing -> sendResponseStatus status404 ("The record does not exist" :: Text)
-  return ()
-
-getEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
-  => Key record -> ReaderT SqlBackend Handler (Maybe (Entity record))
-getEntity' key = do
-  getEntity key
-    
-get404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
-  => Key record -> ReaderT SqlBackend Handler record
-get404' key = do
-  get404 key
-
-delete' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company))
-  => Key record -> ReaderT SqlBackend Handler ()
-delete' key = do
-  companyId <- hasAccess
-  r <- get404' key
-  if #company_id r == companyId then 
-    delete key        
-  else sendResponseStatus status404 ("The record does not belongs to the company in context" :: Text)
-
-update' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend,GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company)) 
-  => Key record 
-  -> [Update record] 
-  -> ReaderT SqlBackend Handler ()
-update' key updates = do
-  companyId <- hasAccess
-  r <- get404' key
-  if #company_id r == companyId then 
-      update key updates
-  else sendResponseStatus status404 ("The record does not belongs to the company in context" :: Text)
-
-
-
-
--- If the application has several clients lodging in one database we need to be able to access
--- the data securely over different tables -> need to add company_id to SQL queries
-
-instance SymbolToField "company_id" AccessRightRole CompanyId where symbolToField = AccessRightRoleCompanyId
+instance SymbolToField "company_id" AccessRightRole CompanyId where symbolToField :: EntityField AccessRightRole CompanyId
+                                                                    symbolToField = AccessRightRoleCompanyId
 instance SymbolToField "company_id" Account CompanyId where symbolToField = AccountCompanyId
 instance SymbolToField "company_id" AccountingYear CompanyId where symbolToField = AccountingYearCompanyId
 instance SymbolToField "company_id" BankStatement CompanyId where symbolToField = BankStatementCompanyId
@@ -197,6 +133,134 @@ instance SymbolToField "company_id" UserCompany CompanyId where symbolToField = 
 instance SymbolToField "company_id" UserRole CompanyId where symbolToField = UserRoleCompanyId
 instance SymbolToField "company_id" VatReport CompanyId where symbolToField = VatReportCompanyId
 instance SymbolToField "company_id" ProcessedVatReport CompanyId where symbolToField = ProcessedVatReportCompanyId
+
+                    
+instance GHC.OverloadedLabels.IsLabel "company_id" (AccessRightRole -> Key Company) where 
+    fromLabel = accessRightRoleCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Account -> Key Company) where 
+    fromLabel = accountCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (AccountingYear -> Key Company) where 
+    fromLabel = accountingYearCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (BankStatement -> Key Company) where 
+    fromLabel = bankStatementCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Transaction -> Key Company) where 
+    fromLabel = transactionCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Employee -> Key Company) where 
+    fromLabel = employeeCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Employment -> Key Company) where 
+    fromLabel = employmentCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (FiscalYear -> Key Company) where 
+    fromLabel = fiscalYearCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (MonthlyBalance -> Key Company) where 
+    fromLabel = monthlyBalanceCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Notification -> Key Company) where 
+    fromLabel = notificationCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Payevent -> Key Company) where 
+    fromLabel = payeventCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (Product -> Key Company) where 
+    fromLabel = productCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (PurchaseInvoice -> Key Company) where 
+    fromLabel = purchaseInvoiceCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (SalesInvoice -> Key Company) where 
+    fromLabel = salesInvoiceCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (SecurityInfo -> Key Company) where 
+    fromLabel = securityInfoCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (UserCompany -> Key Company) where 
+    fromLabel = userCompanyCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (UserRole -> Key Company) where 
+    fromLabel = userRoleCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (VatReport -> Key Company) where 
+    fromLabel = vatReportCompanyId 
+
+instance GHC.OverloadedLabels.IsLabel "company_id" (ProcessedVatReport -> Key Company) where 
+    fromLabel = processedVatReportCompanyId 
+
+
+
+hasAccess :: ReaderT SqlBackend Handler CompanyId 
+hasAccess = do
+  companyId <- liftHandler $ getCompanyId
+  user <- liftHandler $ getAuthenticatedUser  
+  access <- exists [UserCompanyUserId ==. entityKey user, UserCompanyCompanyId ==. companyId]
+  if access then return companyId else sendResponseStatus status403 ("The user has no access to this company" :: Text)
+
+
+
+test3 :: ReaderT SqlBackend Handler ()
+test3 = do
+  
+  i <- selectList' [][] :: ReaderT SqlBackend Handler [Entity Transaction]
+  --_ <- delete' i 
+  ent <- case i of
+    (x:xs) -> do
+        --e<-getEntity' (entityKey x)
+        --case e of
+          --Just x -> do
+            _ <- delete' (entityKey x)
+            update' (entityKey x) [TransactionType =. TypeSalesInvoice]
+    _ -> sendResponseStatus status404 ("The record does not exist" :: Text)
+  return ()
+
+selectList' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+    =>  [Filter record] 
+    -> [SelectOpt record]
+    -> ReaderT SqlBackend Handler [Entity record]
+
+selectList' filters options = do
+    companyId <- hasAccess
+    selectList ((#company_id ==. companyId) : filters) options
+
+getEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler (Maybe (Entity record))
+getEntity' key = do
+  getEntity key
+    
+get404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler record
+get404' key = do
+  get404 key
+
+delete' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler ()
+delete' key = do
+  companyId <- hasAccess
+  r <- get404' key
+  if #company_id r == companyId then 
+    delete key        
+  else sendResponseStatus status404 ("The record does not belong to the company in context" :: Text)
+
+update' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend,GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company)) 
+  => Key record 
+  -> [Update record] 
+  -> ReaderT SqlBackend Handler ()
+update' key updates = do
+  companyId <- hasAccess
+  r <- get404' key
+  if #company_id r == companyId then 
+      update key updates
+  else sendResponseStatus status404 ("The record does not belong to the company in context" :: Text)
+
+
+-- If the application has several clients lodging in one database we need to be able to access
+-- the data securely over different tables -> need to add company_id to SQL queries
+
 
 
 selectListSecure
@@ -332,8 +396,6 @@ monthsBetween startDate endDate =
   in length months
   where
     (year, month, _) = toGregorian startDate
-
-
 
 data GenericAccount = DeferredExpenses  
                     | AdvancePayment
