@@ -8,7 +8,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE PartialTypeSignatures #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 {-# LANGUAGE InstanceSigs #-}
 
 module Handler.Invoice.Purchase.CrudEndpoints.PurchaseInvoices where
@@ -63,33 +62,70 @@ doSomethingWithInvoice :: PurchaseInvoiceProcessingStatus' a -> Handler (Purchas
 doSomethingWithInvoice = undefined
 
 data Installment = Installment {amount::Double, dueDate::Day}
+
 data PurchaseInvoicePaymentType (typ::PaymentInstallmentType) where
   PurchaseInvoiceWithoutInstallments :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen -> PurchaseInvoicePaymentType 'WithoutInstallments
   PurchaseInvoiceWithInstallments :: PurchaseInvoiceProcessingStatus' 'PurchaseInvoiceProcessingStatusInvoiceOpen -> [Installment]-> PurchaseInvoicePaymentType 'WithInstallments
 
 data PaymentInstallmentType = WithInstallments | WithoutInstallments
 
-data SomeInvoice where
-  SomeInvoice :: PurchaseInvoicePaymentType a -> SomeInvoice
+data PayableInvoice where
+  SomeInvoice :: PurchaseInvoicePaymentType a -> PayableInvoice
 
 invoicesForPayment :: DB ()
 invoicesForPayment = do
   companyId <- liftHandler $ getCompanyId
-  openInvoices <- (invoices companyId :: PurchaseInvoicesOpen)
+  --openInvoices <- (invoices companyId :: PurchaseInvoicesOpen)
+  let openInvoices = map (\invoice->PurchaseInvoiceOpen (Entity (toSqlKey 1) invoice) ) [defPurchaseInvoice, defPurchaseInvoice]
   let openInvoicesWithoutInstallments = map PurchaseInvoiceWithoutInstallments openInvoices 
   let someInvoices = map SomeInvoice openInvoicesWithoutInstallments
-  liftHandler $ payInvoices someInvoices
+  --liftHandler $ payInvoices someInvoices
   return ()
 
-payInvoices :: [SomeInvoice] -> Handler ({- PurchaseInvoiceProcessingStatus' PurchaseInvoiceProcessingStatusInvoicePaid -})
-payInvoices [SomeInvoice (PurchaseInvoiceWithoutInstallments (PurchaseInvoiceOpen (Entity key invoice)))] =
-    runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+invoicesForPayment' :: IO ()
+invoicesForPayment' = do
+  --companyId <- liftHandler $ getCompanyId
+  --openInvoices <- (invoices companyId :: PurchaseInvoicesOpen)
+  let openInvoices = map (PurchaseInvoiceOpen . Entity (toSqlKey 1)) [defPurchaseInvoice, defPurchaseInvoice]
+  let openInvoicesWithoutInstallments = map PurchaseInvoiceWithoutInstallments openInvoices 
+  let someInvoices = map SomeInvoice openInvoicesWithoutInstallments
+  payInvoices' someInvoices
+  
+payInvoices' :: [PayableInvoice] -> IO ({- PurchaseInvoiceProcessingStatus' PurchaseInvoiceProcessingStatusInvoicePaid -})
+payInvoices' invoices = do
+    mapM_ payInvoice' invoices
+payInvoices' [] = undefined
 
-payInvoices [SomeInvoice (PurchaseInvoiceWithInstallments (PurchaseInvoiceOpen (Entity key invoice)) installments)] =
-    runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+    --runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+
+--payInvoices' [] = return ()
+
+payInvoice' entityInvoice =
+    
+    -- check if the invoice is open
+    -- check if the invoice has installments
+    -- implement code to pay an invoice with installments (PurchaseInvoice could have hasInstallments flag etc.)
+    -- implement code to pay an invoice without installments
+    
+    --runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+    undefined
+
+
+payInvoice :: PayableInvoice -> Handler ()
+payInvoice (SomeInvoice (PurchaseInvoiceWithoutInstallments (PurchaseInvoiceOpen (Entity key invoice)))) =
+    undefined
+    --runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+
+payInvoice (SomeInvoice (PurchaseInvoiceWithInstallments (PurchaseInvoiceOpen (Entity key invoice)) installments)) =
+    undefined
+    --runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
     
 
-soSomethingWithSomeInvoices :: [SomeInvoice] ->Handler [SomeInvoice] 
+--payInvoices' :: Entity Invoice -> Handler ({- PurchaseInvoiceProcessingStatus' PurchaseInvoiceProcessingStatusInvoicePaid -})
+--payInvoices' antities)))] =
+--    runDB $ update key [PurchaseInvoiceProcessingStatus =. PurchaseInvoiceProcessingStatusInvoicePaid]
+
+soSomethingWithSomeInvoices :: [PayableInvoice] ->Handler [PayableInvoice] 
 soSomethingWithSomeInvoices = undefined
   --runDB $ do
     -- run payment side effects here
