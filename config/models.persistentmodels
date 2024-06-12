@@ -26,11 +26,6 @@ WorkQueue json
     taskresult          Task Maybe
     removed             Bool
 
-
-
-
-
-
 Account json
     name                Text
     code                Int
@@ -113,7 +108,6 @@ ChartOfAccounts json
     type                ChartOfAccountsType
     deriving (Show)
 
-
 Company json
     name                Text 
     companyid           Text 
@@ -145,7 +139,6 @@ Contract json
 --    defaultaccount      DefaultAccount
 --    accountId           AccountId
 
-
 Deliveryterm json
     term                Text Maybe
     deriving (Show)
@@ -169,8 +162,6 @@ Transaction json
     vatPurchaseId       VatPurchaseId Maybe  
 
     deriving (Show)
-
-
 
 Employee json
     firstname                       Text
@@ -292,10 +283,13 @@ Payevent json
     companyId           CompanyId
     deriving Show
 
+PartnerInfo
+    partnerId           PartnerId
+    status              GenericStatus 
+
 PayeventExtraInfo json
     type                PayeventExtraInfoType
     description         Text 
-
 
 PayeventExtraInfoRow json
     info                Text
@@ -391,6 +385,11 @@ PurchaseInvoice json
     yourreference       Text Maybe
     deriving Show Eq Generic
 
+PurchaseInvoiceInstallment json
+    purchaseInvoiceId   PurchaseInvoiceId
+    dueDate             Day
+    amount              Double
+
 PurchaseInvoiceDetail json
     purchaseInvoiceId   PurchaseInvoiceId   OnDeleteCascade
     gross               Double
@@ -405,12 +404,9 @@ PurchaseInvoiceDetail json
     unitname            Text Maybe
     deriving Show Eq Generic
 
-
 RecurringTransaction json
     description         String
     interval            Int    
-
-
 
 Role json      
     name                Rolename
@@ -459,9 +455,6 @@ SalesInvoiceDetail json
     unitprice           Double
     unitname            Text
     deriving (Show)
-
-
-
 
 
 --VatReportHistory

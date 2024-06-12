@@ -8,6 +8,8 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE GADTs #-}
 module Types (module Types)  where
 import Data.Tree
 import Data.Text hiding (map, filter, concatMap)
@@ -20,11 +22,14 @@ import Data.PayerSummaryReportsToIRTypes (DeliveryData)
 import Database.Persist.TH
 import Data.Time
 import Data.Int (Int64)
-import Database.Persist.Postgresql (fromSqlKey, toSqlKey)
-import ClassyPrelude.Yesod (PathPiece)
+import Database.Persist.Postgresql (fromSqlKey, toSqlKey, SqlBackend, PersistQueryWrite)
+import ClassyPrelude.Yesod (PathPiece, PersistEntity (PersistEntityBackend), PersistQueryRead, PersistRecordBackend, SymbolToField, ToBackendKey)
 import Yesod.Core (PathPiece(..))
 import qualified Data.Text as T
 import Data.Data
+import ClassyPrelude.Yesod (Entity)
+import qualified GHC.OverloadedLabels
+--import Import (Company)
 
 --import Import (Account)
 --import qualified Types
@@ -700,4 +705,32 @@ instance FromJSON ReportType
 instance ToJSON ReportType
 
 derivePersistField "ReportType"
+ -}
+
+data GenericStatus = A_ | B_ | C_ | D_ | E_
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON GenericStatus
+instance ToJSON GenericStatus
+derivePersistField "GenericStatus"
+
+data GenericGADT (s::GenericStatus) where
+  MkDocument  :: 
+                
+--                  GHC.OverloadedLabels.IsLabel "status" (record -> GenericStatus)
+--                , SymbolToField "status" record GenericStatus
+                 (PersistEntity record,PersistEntityBackend record ~ SqlBackend,
+                  PersistRecordBackend record SqlBackend,
+                  SymbolToField "status" record GenericStatus,
+                  GHC.OverloadedLabels.IsLabel "status" (record -> GenericStatus),
+                  ToBackendKey SqlBackend record) =>
+                  
+                
+                 { entityDocument :: Entity record } -> GenericGADT s
+
+{-         , PersistEntityBackend entity ~ SqlBackend
+                , GHC.OverloadedLabels.IsLabel "status" (record -> GenericStatus)
+                , SymbolToField "status" record GenericStatus
+                , ToBackendKey SqlBackend record
+                , PersistEntity record)
+                => { entityDocument :: Entity record } -> GenericGADT s
  -}

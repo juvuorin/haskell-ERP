@@ -99,7 +99,7 @@ import Types
   ( Code,
     DefaultAccountType (DefaultAccountTypeInterestNonTax),
     TransactionType (TypePurchaseInvoice, TypeSalesInvoice),
-    round', currentDay,
+    round', currentDay, GenericStatus,
   )
 import Data.Map (elems)
 import Network.Wai
@@ -134,7 +134,24 @@ instance SymbolToField "company_id" UserRole CompanyId where symbolToField = Use
 instance SymbolToField "company_id" VatReport CompanyId where symbolToField = VatReportCompanyId
 instance SymbolToField "company_id" ProcessedVatReport CompanyId where symbolToField = ProcessedVatReportCompanyId
 
-                    
+
+
+{- SymbolToField "status" record GenericStatus,
+instance GHC.OverloadedLabels.IsLabel "status" (record -> GenericStatus),
+    fromLabel = partnerInfoStatus 
+ -}
+
+
+--instance SymbolToField "status" PartnerInfo GenericStatus where symbolToField = PartnerInfoStatus
+instance GHC.OverloadedLabels.IsLabel "status" (PartnerInfo -> GenericStatus) where 
+    fromLabel = partnerInfoStatus 
+
+
+instance GHC.OverloadedLabels.IsLabel "id" (Entity record -> Key record) where 
+    fromLabel = entityKey
+
+
+
 instance GHC.OverloadedLabels.IsLabel "company_id" (AccessRightRole -> Key Company) where 
     fromLabel = accessRightRoleCompanyId 
 
@@ -232,6 +249,14 @@ getEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBacke
 getEntity' key = do
   getEntity key
     
+getEntity404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+  => Key record -> ReaderT SqlBackend Handler (Entity record)
+getEntity404' key = do
+  entity <- getEntity key
+  case entity of
+    Just x-> return x
+    Nothing ->sendResponseStatus status404 ("Entity cannot be found"::Text)
+
 get404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
   => Key record -> ReaderT SqlBackend Handler record
 get404' key = do

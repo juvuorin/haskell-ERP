@@ -15,6 +15,7 @@ import Database.Persist.Sql (
   toSqlKey, fromSqlKey,
  )
 import Import
+import qualified GHC.OverloadedLabels
 
 type DocumentId = Int64
 
@@ -120,6 +121,17 @@ removeTask documentId task = do
     then update (entityKey taskEntity) [WorkQueueRemoved =. True]
     else sendResponseStatus status400 ("Task must be completed before it can be removed" :: Text)
 
+instance SymbolToField "purchase_invoice_processing_status" PurchaseInvoice PurchaseInvoiceProcessingStatus where symbolToField = PurchaseInvoiceProcessingStatus
+--instance SymbolToField "id" Association AssociationId where symbolToField = AssociationId
+
+{- instance GHC.OverloadedLabels.IsLabel "id" (Association -> Key Association) where
+    fromLabel = 
+ -}
+
+instance GHC.OverloadedLabels.IsLabel "purchase_invoice_processing_status" (PurchaseInvoice -> PurchaseInvoiceProcessingStatus) where
+    fromLabel = purchaseInvoiceProcessingStatus
+
+
 processTasks :: (ToBackendKey SqlBackend a) => Entity a -> Task -> PurchaseInvoiceProcessingStatus -> DB ()
 processTasks entity task status = do
   let documentId = fromSqlKey $ entityKey entity
@@ -136,6 +148,28 @@ processTasks entity task status = do
       update (toSqlKey documentId) [PurchaseInvoiceProcessingStatus =. status]
       return ()
     else return ()
+
+
+
+{- processTasks' :: (ToBackendKey SqlBackend a, a ~ PurchaseInvoice) => Entity a -> Task -> PurchaseInvoiceProcessingStatus -> DB (InvoiceGADT a)
+processTasks' entity task status = do
+  let documentId = fromSqlKey $ entityKey entity
+  completeTaskOrFail documentId task
+  taskList <-
+    selectList
+      [ WorkQueueTask ==. task
+      , WorkQueueDocumentId ==. documentId
+      , WorkQueueTaskcomplete ==. False
+      ]
+      []
+  if null taskList
+    then do
+      update (toSqlKey documentId) [PurchaseInvoiceProcessingStatus =. status]
+      MkInvoice (entityInvoice entity)-- return ()
+    else return ()
+
+
+ -}
 
 removeCompletedAction :: DocumentId -> Task -> DB ()
 removeCompletedAction documentId task = do
