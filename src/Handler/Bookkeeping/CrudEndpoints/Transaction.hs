@@ -245,13 +245,13 @@ getTransactionEntriesR companyId transactionId = do
       Just x -> return $ object ["rows" .= entries, "files" .= files, "transaction" .= transaction]
       Nothing -> sendResponseStatus status404 ("Cannot find transaction! Should never happen!" :: Text)
 
-data AutomationMasterKey = AutomationMasterKey
+{- data AutomationMasterKey = AutomationMasterKey
   { automationmasterkey :: String
   }
   deriving (Show, Generic)
 
 instance FromJSON AutomationMasterKey
-
+ -}
 deleteTransactionR :: CompanyId -> TransactionId -> Handler ()
 deleteTransactionR companyId transactionId = do
   runDB $ deleteTransaction transactionId

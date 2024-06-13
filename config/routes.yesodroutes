@@ -227,14 +227,8 @@
 -- remove, fetch or change individual invoice
 /company/#CompanyId/purchases/invoices/#PurchaseInvoiceId                      PurchaseInvoiceR DELETE PUT GET
 
--- Fetch or add new invoice detail
-/company/#CompanyId/purchases/invoicedetails/#PurchaseInvoiceDetailId          PurchaseInvoiceDetailR PUT DELETE
-
--- remove, fetch or change individual account
-/company/#CompanyId/purchases/invoices/#PurchaseInvoiceId/invoicedetails       PurchaseInvoiceDetailsR GET POST
-
 -- Fetch transactions by month
-/company/#CompanyId/purchases/documentsByMonth/#Int/#Integer                PurchaseInvoicesByMonthR GET
+/company/#CompanyId/purchases/documentsByMonth/#Int/#Integer                   PurchaseInvoicesByMonthR GET
 
 -- Post to ledger
 /company/#CompanyId/purchases/invoicepost/#PurchaseInvoiceId                   PostToLedgerR GET

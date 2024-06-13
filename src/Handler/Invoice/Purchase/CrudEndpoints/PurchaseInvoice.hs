@@ -65,31 +65,17 @@ isOverdue item = do
   return $ if days > 0 then True else False
      
 getPurchaseInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler Value
-getPurchaseInvoiceR cid id = do
-  invoice <- runDB $ get404 id
+getPurchaseInvoiceR companyId invoiceId = do
+  invoice <- runDB $ get404 invoiceId
   overdue <- isOverdue invoice
   print overdue
-  return $ object ["invoice" .= Entity id invoice]
-
-getPurchaseInvoiceDetailsR :: CompanyId -> PurchaseInvoiceId -> Handler Value
-getPurchaseInvoiceDetailsR companyId invoiceId = do
-  let filePath =
-        "companies" </> show (fromSqlKey companyId) </> "invoices"
-          </> show (fromSqlKey invoiceId)
-  entries <-
-    runDB $
-      selectList
-        [PurchaseInvoiceDetailPurchaseInvoiceId ==. invoiceId]
-        [Asc PurchaseInvoiceDetailId] ::
-      Handler [Entity PurchaseInvoiceDetail]
-  $(logInfo) (pack $ show entries)
-  return $ object ["rows" .= entries]
+  return $ object ["invoice" .= Entity invoiceId invoice]
 
 deletePurchaseInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler Value
-deletePurchaseInvoiceR companyId docId = do
-  runDB $ delete docId
+deletePurchaseInvoiceR companyId invoiceId = do
+  runDB $ delete invoiceId
   let filePath =
-        "companies" </> show companyId </> "invoices" </> show docId
+        "companies" </> show (fromSqlKey companyId) </> "invoices" </> show (fromSqlKey invoiceId)
   removeDirectoryIfExists filePath
   sendResponseStatus status200 ("DELETED" :: Text)
 
@@ -97,28 +83,10 @@ getPostToLedgerR :: CompanyId -> PurchaseInvoiceId -> Handler Value
 getPostToLedgerR companyId invoiceId = do
   return "Not implemented"
 
-updateAndReturnNewItemIds ::
-  ( PersistRecordBackend b SqlBackend
-  , PersistRecordBackend a SqlBackend
-  , PersistEntity a
-  , ToBackendKey SqlBackend b
-  ) =>
-  Key a ->
-  DocumentWithNewAndExistingItems a b ->
-  Handler ()
-updateAndReturnNewItemIds key transactionWithEntries = do
-  entryIds <- runDB $ updateParentAndInsertOrUpdateChildren key transactionWithEntries
-  sendResponseStatus status201 $ show $ map fromSqlKey entryIds
-
 putPurchaseUpdateR :: CompanyId -> PurchaseInvoiceId -> Handler ()
 putPurchaseUpdateR companyId purchaseInvoiceId = do
-  -- checkTransactionBelongsToCompany purchaseInvoiceId companyId
   $(logInfo) "here we go... again!"
-  transactionWithEntries <- requireCheckJsonBody :: Handler (DocumentWithNewAndExistingItems PurchaseInvoice PurchaseInvoiceDetail)
-  entryIds <- runDB $ updateParentAndInsertOrUpdateChildren purchaseInvoiceId transactionWithEntries
-  sendResponseStatus status201 $ show $ map fromSqlKey entryIds
-
-newtype Net = Net {unNet :: Double}
-newtype Gross = Gross {unGross :: Double}
-newtype Tax = Tax {unTax :: Double}
+  invoice <- requireCheckJsonBody :: Handler PurchaseInvoice
+  runDB $ replace purchaseInvoiceId invoice
+  sendResponseStatus status201 ("UPDATED" :: Text)
 

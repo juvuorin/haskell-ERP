@@ -117,14 +117,14 @@ instance FromJSON SalesInvoiceList
 instance ToJSON SalesInvoiceList
 
 postSalesInvoiceDetailsR :: CompanyId-> SalesInvoiceId -> Handler ()
-postSalesInvoiceDetailsR cid id = do
+postSalesInvoiceDetailsR companyId id = do
       details <- requireCheckJsonBody::Handler [SalesInvoiceDetail]
       ids <-  runDB $ insertMany (details)
       let rawIds = show $ map (fromSqlKey) ids  
       sendResponseStatus status201 (rawIds) 
 
 putSalesInvoiceDetailR :: CompanyId->SalesInvoiceDetailId ->Handler ()
-putSalesInvoiceDetailR cid id = do
+putSalesInvoiceDetailR companyId id = do
     invoicedetail <- (requireCheckJsonBody :: Handler SalesInvoiceDetail)
 
    {-  gross               Double

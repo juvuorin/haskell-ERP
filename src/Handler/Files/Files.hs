@@ -579,42 +579,32 @@ postFilesR companyId' = do
       if saved then return sOk else return sExists
     _ -> return sError
 
-postFilesMonthlyR :: CompanyId->Handler Value
+postFilesMonthlyR :: CompanyId -> Handler Value
 postFilesMonthlyR companyId = do
-  x' <- do
-    fileInfo <- runInputPost $ iopt fileField "file"
-    companyId <- runInputPost $ iopt textField "companyId"
-    return (fileInfo, companyId)
-  case x' of
-    (Just fileInfo, Just companyId) ->
-      do
-        putStrLn companyId
-        putStrLn (fileName fileInfo)
-
-        let companyIdInt64 = read (unpack companyId) :: Int64
-        let cid = toSqlKey companyIdInt64
+  formContent <- runInputPost $ iopt fileField "file"
+  case formContent of
+    Just fileInfo ->
+      do        
         time <- liftIO getZonedTime
-
         let (year, monthOfYear, dayOfMonth) = toGregorian $ localDay $ zonedTimeToLocalTime time
         let end = gregorianMonthLength year monthOfYear
         let firstDay = fromGregorian year monthOfYear 1
         let lastDay = fromGregorian year monthOfYear end
 
-        x <- runDB $ selectFirst [TransactionType ==. TypeGeneralExpenseMonthly, TransactionCompanyId ==. cid, TransactionDate >=. firstDay, TransactionDate <=. lastDay] [] :: Handler (Maybe (Entity Transaction))
+        x <- runDB $ selectFirst [TransactionType ==. TypeGeneralExpenseMonthly, TransactionCompanyId ==. companyId,  TransactionDate >=. firstDay, TransactionDate <=. lastDay] [] :: Handler (Maybe (Entity Transaction))
         case x of
           Just doc -> do
             let key = entityKey doc
             let docIdKey = fromSqlKey key
-            let filePath = "companies" </> unpack companyId </> "documents" </> show docIdKey
+            let filePath = "companies" </> show(fromSqlKey companyId) </> "documents" </> show docIdKey
             Handler.Files.Files.saveFile fileInfo filePath
             return ()
 
           Nothing -> do
-            let doc = defTransaction {transactionCompanyId = cid, transactionType = TypeGeneralExpenseMonthly, transactionMemo = Just "Saapuneet tositteet", transactionDate = lastDay}
+            let doc = defTransaction {transactionCompanyId = companyId,  transactionType = TypeGeneralExpenseMonthly, transactionMemo = Just "Saapuneet tositteet", transactionDate = lastDay}
             id <- runDB $ insert doc
             let docIdKey = fromSqlKey id
-
-            let filePath = "companies" </> unpack companyId </> "transactions" </> show docIdKey
+            let filePath = "companies" </> show(fromSqlKey companyId) </> "transactions" </> show docIdKey
             Handler.Files.Files.saveFile fileInfo filePath
 
             return ()

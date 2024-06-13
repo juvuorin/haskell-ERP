@@ -343,7 +343,7 @@ postSendSalesInvoiceR companyId salesInvoiceId  = do
 
 
 putSalesInvoiceR :: CompanyId-> SalesInvoiceId -> Handler Value
-putSalesInvoiceR cid id  = do
+putSalesInvoiceR companyId id  = do
     invoice<- requireCheckJsonBody
     --invoice <- (requireCheckJsonBody :: Handler SalesInvoice)
     runDB $ replace id invoice
@@ -375,7 +375,7 @@ merge :: [Value] -> Value
 merge = Object . HML.unions . map (\(Object x) -> x)
 
 getSalesInvoiceR :: CompanyId -> SalesInvoiceId -> Handler Value
-getSalesInvoiceR cid id = do
+getSalesInvoiceR companyId id = do
     invoice <- runDB $ get404 id
     return $ object ["invoice" .= (Entity id invoice)]
 

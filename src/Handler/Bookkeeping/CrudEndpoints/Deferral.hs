@@ -129,7 +129,7 @@ daysPassedFromBeginningOfMonth date  = do
   days
 
 -- split cost over months so that first and last month deferral is based on exact number of effective days, first and last
--- month's amounts may differ from the rest 
+-- months' amounts may differ from the rest 
 splitCostOverMonthsExact :: Double -> Day -> Day -> Either Text [(Day, Double)]
 splitCostOverMonthsExact totalCost startDate endDate  = do
 

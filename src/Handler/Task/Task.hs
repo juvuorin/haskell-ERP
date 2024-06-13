@@ -8,6 +8,13 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE FlexibleContexts #-}
 
+{-# LANGUAGE OverloadedLabels #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PartialTypeSignatures #-}
+
+
 module Handler.Task.Task where
 
 import Data.Foldable hiding (forM_, mapM_, any, elem, null)
@@ -15,7 +22,6 @@ import Database.Persist.Sql (
   toSqlKey, fromSqlKey,
  )
 import Import
-import qualified GHC.OverloadedLabels
 
 type DocumentId = Int64
 
@@ -55,8 +61,9 @@ setTasks companyId entity tasks = do
 
                 return ()
       Nothing -> sendResponseStatus status400 ("AccessRight table is missing " ++ show task ++ " right. Please add.")
+
 dependentTasks :: [[Task]]
-dependentTasks = [[PurchaseInvoiceProcessingTaskApproved,PurchaseInvoiceProcessingTaskRejected]]
+dependentTasks = [[PurchaseInvoiceProcessingTaskApprove,PurchaseInvoiceProcessingTaskReject]]
 
 getDependentTasks :: Task ->  [Task]
 getDependentTasks task = do
@@ -86,7 +93,6 @@ completeTaskOrFail documentId task = do
       mapM_ (\entity-> do
         update (entityKey entity) [WorkQueueTaskcomplete =. True, WorkQueueTaskresult =. Nothing] ) dependentEntities
 
-
 findTaskEntityOrFail :: DocumentId -> Task -> DB (Entity WorkQueue)
 findTaskEntityOrFail documentId task = do
   user <- liftHandler $ getAuthenticatedUser
@@ -100,7 +106,6 @@ findTaskEntityOrFail documentId task = do
   case taskEntity of
     Just task -> return task
     Nothing -> liftHandler $ sendResponseStatus status404 ("This document has not been set " ++ show task ++ " task")
-
 
 findDependentEntities :: DocumentId -> Task -> DB [Entity WorkQueue]
 findDependentEntities documentId task = do
@@ -121,56 +126,27 @@ removeTask documentId task = do
     then update (entityKey taskEntity) [WorkQueueRemoved =. True]
     else sendResponseStatus status400 ("Task must be completed before it can be removed" :: Text)
 
-instance SymbolToField "purchase_invoice_processing_status" PurchaseInvoice PurchaseInvoiceProcessingStatus where symbolToField = PurchaseInvoiceProcessingStatus
---instance SymbolToField "id" Association AssociationId where symbolToField = AssociationId
-
-{- instance GHC.OverloadedLabels.IsLabel "id" (Association -> Key Association) where
-    fromLabel = 
- -}
-
-instance GHC.OverloadedLabels.IsLabel "purchase_invoice_processing_status" (PurchaseInvoice -> PurchaseInvoiceProcessingStatus) where
-    fromLabel = purchaseInvoiceProcessingStatus
-
-
-processTasks :: (ToBackendKey SqlBackend a) => Entity a -> Task -> PurchaseInvoiceProcessingStatus -> DB ()
-processTasks entity task status = do
-  let documentId = fromSqlKey $ entityKey entity
-  completeTaskOrFail documentId task
-  taskList <-
-    selectList
-      [ WorkQueueTask ==. task
-      , WorkQueueDocumentId ==. documentId
-      , WorkQueueTaskcomplete ==. False
-      ]
-      []
-  if null taskList
-    then do
-      update (toSqlKey documentId) [PurchaseInvoiceProcessingStatus =. status]
-      return ()
-    else return ()
-
-
-
-{- processTasks' :: (ToBackendKey SqlBackend a, a ~ PurchaseInvoice) => Entity a -> Task -> PurchaseInvoiceProcessingStatus -> DB (InvoiceGADT a)
-processTasks' entity task status = do
-  let documentId = fromSqlKey $ entityKey entity
-  completeTaskOrFail documentId task
-  taskList <-
-    selectList
-      [ WorkQueueTask ==. task
-      , WorkQueueDocumentId ==. documentId
-      , WorkQueueTaskcomplete ==. False
-      ]
-      []
-  if null taskList
-    then do
-      update (toSqlKey documentId) [PurchaseInvoiceProcessingStatus =. status]
-      MkInvoice (entityInvoice entity)-- return ()
-    else return ()
-
-
- -}
-
+processTasks :: GenericGADT _ -> Task -> DocumentStatus -> DB (Maybe (GenericGADT _))
+processTasks gadtEntity task newStatus = do
+   
+   case gadtEntity of
+      MkDocument (Entity key _)->do
+        completeTaskOrFail  (fromSqlKey key) task
+        taskList <- selectList
+          [ WorkQueueTask ==. task
+          , WorkQueueDocumentId ==. fromSqlKey key
+          , WorkQueueTaskcomplete ==. False
+          ]
+          []
+        if null taskList
+        then do
+          update key [#document_status =. newStatus]
+          -- TODO: This is a bit clumsy and slow, should be able to update the record instead
+          newValue <- get404 key
+          return $ Just $ MkDocument {entityDocument=Entity key newValue}    
+        else return $ Nothing
+      
 removeCompletedAction :: DocumentId -> Task -> DB ()
 removeCompletedAction documentId task = do
   removeTask documentId task
+

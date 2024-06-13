@@ -102,9 +102,14 @@ module Application
 -- Need to install npm 6.14.15
 
 -------------------------------
+-- Debugging 
+-- :l DevelMain
+-- DevelMain.update
+
+
 
 import Control.Monad.Logger (liftLoc, runLoggingT,runNoLoggingT)
-import Data.List ((!!))
+import Data.List ( (!!), head )
 import Database.Persist.Postgresql
   ( createPostgresqlPool,
     pgConnStr,
@@ -188,7 +193,6 @@ import Data.Set (fromList)
 import ClassyPrelude (fromGregorian)
 import Data.Data
 import Text.Read
-import Data.List (head)
 -- import Handler.Home
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the

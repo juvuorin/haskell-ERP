@@ -116,7 +116,7 @@ defTransaction =
 defPurchaseInvoice :: PurchaseInvoice
 defPurchaseInvoice =
   PurchaseInvoice
-    { 
+    {  
       purchaseInvoiceOurreference = Nothing,
       purchaseInvoiceYourreference = Nothing,
       purchaseInvoiceType = DebitInvoice,
@@ -133,8 +133,7 @@ defPurchaseInvoice =
       purchaseInvoicePenaltyinterest = Nothing, --Double Maybe
       purchaseInvoiceNotes = Nothing, --Text Maybe
       purchaseInvoiceNoticeperiod = Nothing, --Int Maybe
-      purchaseInvoicePaymentstatus = Just PurchaseInvoicePaymentStatusInvoiceOpen, --PurchaseInvoicePaymentStatus Maybe
-      purchaseInvoiceProcessingStatus =PurchaseInvoiceProcessingStatusInvoiceCreated, --PurchaseInvoiceProcessingStatus Maybe
+      purchaseInvoiceDocumentStatus =PurchaseInvoiceStatusInvoiceCreated, --PurchaseInvoiceStatus Maybe
       purchaseInvoicePaidat = Nothing, --Day Maybe
       purchaseInvoicePaymentTermId = Nothing,
       purchaseInvoiceCashdiscountdate = Nothing,

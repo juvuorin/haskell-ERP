@@ -99,7 +99,7 @@ import Types
   ( Code,
     DefaultAccountType (DefaultAccountTypeInterestNonTax),
     TransactionType (TypePurchaseInvoice, TypeSalesInvoice),
-    round', currentDay, GenericStatus,
+    round', currentDay, DocumentStatus,
   )
 import Data.Map (elems)
 import Network.Wai
@@ -136,16 +136,20 @@ instance SymbolToField "company_id" ProcessedVatReport CompanyId where symbolToF
 
 
 
-{- SymbolToField "status" record GenericStatus,
-instance GHC.OverloadedLabels.IsLabel "status" (record -> GenericStatus),
+{- SymbolToField "status" record DocumentStatus,
+instance GHC.OverloadedLabels.IsLabel "status" (record -> DocumentStatus),
     fromLabel = partnerInfoStatus 
  -}
 
 
---instance SymbolToField "status" PartnerInfo GenericStatus where symbolToField = PartnerInfoStatus
-instance GHC.OverloadedLabels.IsLabel "status" (PartnerInfo -> GenericStatus) where 
-    fromLabel = partnerInfoStatus 
+instance SymbolToField "document_status" PurchaseInvoice DocumentStatus where symbolToField = PurchaseInvoiceDocumentStatus
 
+--instance SymbolToField "status" PartnerInfo DocumentStatus where symbolToField = PartnerInfoStatus
+
+instance GHC.OverloadedLabels.IsLabel "document_status" (PurchaseInvoice -> DocumentStatus) where
+    fromLabel = purchaseInvoiceDocumentStatus
+instance GHC.OverloadedLabels.IsLabel "document_status" (PartnerInfo -> DocumentStatus) where 
+    fromLabel = partnerInfoStatus 
 
 instance GHC.OverloadedLabels.IsLabel "id" (Entity record -> Key record) where 
     fromLabel = entityKey
@@ -244,6 +248,15 @@ selectList' filters options = do
     companyId <- hasAccess
     selectList ((#company_id ==. companyId) : filters) options
 
+selectFirst' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
+    =>  [Filter record] 
+    -> [SelectOpt record]
+    -> ReaderT SqlBackend Handler (Maybe (Entity record))
+
+selectFirst' filters options = do
+    companyId <- hasAccess
+    selectFirst ((#company_id ==. companyId) : filters) options
+
 getEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, SymbolToField "company_id" record (Key Company))
   => Key record -> ReaderT SqlBackend Handler (Maybe (Entity record))
 getEntity' key = do
@@ -261,6 +274,15 @@ get404' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend,
   => Key record -> ReaderT SqlBackend Handler record
 get404' key = do
   get404 key
+
+insertEntity' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company))
+  => record -> ReaderT SqlBackend Handler (Entity record)
+insertEntity' record = do
+  companyId <- hasAccess
+  if #company_id record == companyId then 
+    insertEntity record        
+  else sendResponseStatus status404 ("The record does not belong to the company in context" :: Text)
+
 
 delete' :: (PersistQueryRead SqlBackend, PersistRecordBackend record SqlBackend, GHC.OverloadedLabels.IsLabel "company_id" (record -> Key Company), SymbolToField "company_id" record (Key Company))
   => Key record -> ReaderT SqlBackend Handler ()
@@ -288,39 +310,6 @@ update' key updates = do
 
 
 
-selectListSecure
-    :: forall record backend . (PersistQueryRead backend, PersistRecordBackend record backend)
-    => EntityField record (Key Company) 
-    -> [Filter record]
-    -> [SelectOpt record]
-    -> ReaderT backend Handler [Entity record]
-
-selectListSecure tenantIdField filts opts = do
-    c <- liftHandler getCompanyId
-    let g =  Filter    { filterField  = tenantIdField
-                       , filterValue  = FilterValue  c
-                       , filterFilter = Eq }
-    selectList (g:filts) opts 
-
-{- 
-selectList''
-    :: forall record backend . (PersistQueryRead backend, PersistRecordBackend record SqlBackend, PersistEntity record)
-    => EntityField record (Key Company) -> [Filter record]
-    -> [SelectOpt record]
-    -> Handler [Entity record]
-
-selectList'' tenantIdField filts opts = do
-
-    c <- liftHandler getCompanyId
-    let g =  Filter    { filterField  = tenantIdField
-                       , filterValue  = FilterValue  c
-                       , filterFilter = Eq }
-    runDB $ selectList (g:filts) opts
-    
- -}    --srcRes <- selectSourceRes (g:filts) opts
-    --liftIO $ with srcRes (\src -> runConduit $ src .| CL.consume
-
-
 
 data HeterogenousListEntry
   = WithId (Entity Entry)
@@ -329,8 +318,6 @@ data HeterogenousListEntry
 
 instance FromJSON HeterogenousListEntry where
   parseJSON = genericParseJSON defaultOptions {sumEncoding = UntaggedValue}
-
-
 
 data NewOrExistingItem a = Existing (Entity a) | New a
   deriving (Generic)
@@ -372,12 +359,6 @@ genericUpdate companyId documentId documentWithDetails = do
   replace documentId $ documentFromClient documentWithDetails
   mapM_ (\item -> replace (entityKey item) (entityVal item)) entriesToUpdate
   insertMany entriesToInsert
-
-instance UpdateBatch PurchaseInvoice PurchaseInvoiceDetail where
-  batchUpdate = genericUpdate
-
-instance UpdateBatch SalesInvoice SalesInvoiceDetail where
-  batchUpdate = genericUpdate
 
 instance UpdateBatch Transaction Entry where
   batchUpdate companyId transactionId documentWithDetails = do
