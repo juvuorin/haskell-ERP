@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -7,17 +6,14 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE FlexibleContexts #-}
-
 {-# LANGUAGE OverloadedLabels #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PartialTypeSignatures #-}
 
 
 module Handler.Task.Task where
 
-import Data.Foldable hiding (forM_, mapM_, any, elem, null)
+import Data.Foldable hiding (all, forM_, mapM_, any, elem, null)
 import Database.Persist.Sql (
   toSqlKey, fromSqlKey,
  )
@@ -28,22 +24,23 @@ type DocumentId = Int64
 setTasks :: (ToBackendKey SqlBackend a) => CompanyId -> Entity a -> [Task] -> DB ()
 setTasks companyId entity tasks = do
   let documentId = fromSqlKey (entityKey entity)
+  id <- insert $ TaskGroup {taskGroupName="generic"}
   forM_ tasks $ \task -> do
     accessRightEntity <- selectFirst [AccessRightRight ==. task] []
     case accessRightEntity of
       Just accessRightEntity -> do
-        roles <- selectList [AccessRightRoleAccessRightId ==. (entityKey accessRightEntity), AccessRightRoleCompanyId ==. companyId] []
+        roles <- selectList' [AccessRightRoleAccessRightId ==. entityKey accessRightEntity] []
         if null roles
           then sendResponseStatus status400 ("A role with " ++ show task ++ " right is missing. Please add.")
           else do
-            let roleIds = map accessRightRoleRoleId (map entityVal roles)
-            users <- selectList [UserCompanyCompanyId ==. companyId] []
+            let roleIds = map (accessRightRoleRoleId . entityVal) roles
+            users <- selectList' [] []
             let userIds = map (userCompanyUserId . entityVal) users
             usersroles <- selectList [UserRoleUserId <-. userIds, UserRoleRoleId <-. roleIds] []
             if null usersroles
               then sendResponseStatus status400 ("A user with a role with" ++ show task ++ " right is missing. Please add.")
               else do
-                let userIds = map userRoleUserId (map entityVal usersroles)
+                let userIds = map (userRoleUserId . entityVal) usersroles
                 keys <- mapM (\userId ->
                   do
                     -- Let's check if the user  already has the same task pending
@@ -54,7 +51,7 @@ setTasks companyId entity tasks = do
                     case taskEntity of
                       Nothing -> do
                         -- Add task
-                        key <- insert (WorkQueue documentId userId task False Nothing False)
+                        key <- insert (WorkQueue  documentId id userId task False Nothing False)
                         return ()
                       _ -> return ()
                       ) userIds
@@ -73,8 +70,8 @@ getDependentTasks task = do
         filter (/= task) allTasks
 
 -- dependent tasks!
-completeTaskOrFail :: DocumentId -> Task -> DB ()
-completeTaskOrFail documentId task = do
+completeTaskOrFail :: DocumentId -> Task -> TaskResult -> DB ()
+completeTaskOrFail documentId task result = do
   taskEntity <- findTaskEntityOrFail documentId task
   let taskType = workQueueTask (entityVal taskEntity)
   dependentEntities <- findDependentEntities documentId taskType
@@ -86,7 +83,7 @@ completeTaskOrFail documentId task = do
       update
         (entityKey taskEntity)
         [ WorkQueueTaskcomplete =. True
-        , WorkQueueTaskresult =. Just task
+        , WorkQueueTaskresult =. Just result
         ]
 
       -- Update dependent tasks by completing them 
@@ -116,8 +113,7 @@ findDependentEntities documentId task = do
       , WorkQueueUserId ==. entityKey user
       ]
       []
-  let delendentTasks' = getDependentTasks task
-  return $ filter (\item->elem (workQueueTask (entityVal item)) delendentTasks') taskEntities
+  return $ filter (\item->workQueueTask (entityVal item) `elem` getDependentTasks task) taskEntities
 
 removeTask :: DocumentId -> Task -> DB ()
 removeTask documentId task = do
@@ -126,26 +122,43 @@ removeTask documentId task = do
     then update (entityKey taskEntity) [WorkQueueRemoved =. True]
     else sendResponseStatus status400 ("Task must be completed before it can be removed" :: Text)
 
-processTasks :: GenericGADT _ -> Task -> DocumentStatus -> DB (Maybe (GenericGADT _))
-processTasks gadtEntity task newStatus = do
-   
+processTasks :: GenericGADT _ -> Task -> TaskResult -> DocumentStatus -> DB (Maybe (GenericGADT _))
+processTasks gadtEntity task result newStatus = do
+
    case gadtEntity of
       MkDocument (Entity key _)->do
-        completeTaskOrFail  (fromSqlKey key) task
+        completeTaskOrFail  (fromSqlKey key) task result
         taskList <- selectList
           [ WorkQueueTask ==. task
           , WorkQueueDocumentId ==. fromSqlKey key
-          , WorkQueueTaskcomplete ==. False
           ]
           []
-        if null taskList
-        then do
-          update key [#document_status =. newStatus]
-          -- TODO: This is a bit clumsy and slow, should be able to update the record instead
-          newValue <- get404 key
-          return $ Just $ MkDocument {entityDocument=Entity key newValue}    
-        else return $ Nothing
-      
+        case taskList of
+          (x:xs) -> do
+            -- get the first element of the list
+            let first = workQueueTaskresult (entityVal $ unsafeHead taskList)
+            -- check if all results are the same as the first element
+            let same = all ((==first) . (workQueueTaskresult . entityVal)) taskList
+            let allComplete = all ((==True) . (workQueueTaskcomplete . entityVal)) taskList
+
+            -- TODO: For tasks that can be completed by just 1 user, we should check the "task type" (single, multiple)
+            -- and act accordingly here! Currently "all approvers" must approve then invoice before the invoice
+            -- can be set Open
+
+
+            if same && allComplete
+              then do
+                update key [#document_status =. newStatus]
+
+              -- TODO: This is a bit clumsy and slow, should be able to update the record instead, not fetch it from the
+              -- database again
+                newValue <- get404 key
+                return $ Just $ MkDocument {entityDocument=Entity key newValue}
+              else return $ Nothing
+          _ -> return $ Nothing
+
+
+
 removeCompletedAction :: DocumentId -> Task -> DB ()
 removeCompletedAction documentId task = do
   removeTask documentId task

@@ -218,8 +218,8 @@
 -- Verify purchase invoice
 !/company/#CompanyId/purchases/invoices/verify/#PurchaseInvoiceId              VerifyInvoiceR POST
 
--- Approve purchase invoice
-!/company/#CompanyId/purchases/invoices/approve/#PurchaseInvoiceId             ApproveInvoiceR POST
+-- Approve or reject purchase invoice
+!/company/#CompanyId/purchases/invoices/approveOrReject/#PurchaseInvoiceId             ApproveOrRejectInvoiceR POST
 
 -- Fetch all invoices or add a new invoice for a acompany
 /company/#CompanyId/purchases/invoices                                         PurchaseInvoicesR GET POST
