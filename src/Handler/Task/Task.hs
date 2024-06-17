@@ -67,36 +67,19 @@ setTasks companyId entity tasks = do
                 return ()
       Nothing -> sendResponseStatus status400 ("AccessRight table is missing " ++ show task ++ " right. Please add.")
 
---dependentTasks :: [[Task]]
---dependentTasks = [[PurchaseInvoiceProcessingTaskApprove,PurchaseInvoiceProcessingTaskReject]]
-
-{- getDependentTasks :: Task ->  [Task]
-getDependentTasks task = do
-        let allTasks = foldl (\acc item -> if task `elem` item then item else acc
-                                                  ) [] dependentTasks
-        -- remove task from the allTasks list
-        filter (/= task) allTasks
- -}
--- dependent tasks!
 completeTaskOrFail :: DocumentId -> Task -> TaskResult -> DB ()
 completeTaskOrFail documentId task result = do
-  taskEntity <- findTaskEntityOrFail documentId task
- -- let taskType = taskGroupTask (entityVal taskEntity)
- -- dependentEntities <- findDependentEntities documentId taskType
+  workQueuEntity <- findTaskEntityOrFail documentId task
 
-  if workQueueTaskcomplete (entityVal taskEntity)
+  if workQueueTaskcomplete (entityVal workQueuEntity)
     then sendResponseStatus status400 ("The user has already handled this task" :: Text)
     else do
       -- Update the task by compliting it
       update
-        (entityKey taskEntity)
+        (entityKey workQueuEntity)
         [ WorkQueueTaskcomplete =. True
         , WorkQueueTaskresult =. Just result
         ]
-
-      -- Update dependent tasks by completing them 
-   --   mapM_ (\entity-> do
-   --     update (entityKey entity) [WorkQueueTaskcomplete =. True, WorkQueueTaskresult =. Nothing] ) dependentEntities
 
 findTaskEntityOrFail :: DocumentId -> Task -> DB (Entity WorkQueue)
 findTaskEntityOrFail documentId task = do
@@ -170,8 +153,10 @@ processTasks gadtEntity task result newStatus = do
                 -- and act accordingly here! Currently "all approvers" must approve then invoice before the invoice
                 -- can be set Open
                 if same && allComplete
-                  then do
+                  then do                    
+                    -- Update document to reflect new status
                     update key [#document_status =. newStatus]
+                    -- Mark task group as complete
                     update (entityKey group) [TaskGroupComplete =. True]
 
                   -- TODO: This is a bit clumsy and slow, should be able to update the record instead, not fetch it from the

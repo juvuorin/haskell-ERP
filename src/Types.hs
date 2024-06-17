@@ -9,7 +9,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
-
+{-# LANGUAGE DuplicateRecordFields #-} 
 module Types (module Types) where
 
 import ClassyPrelude.Yesod (Entity, PathPiece, PersistEntity (PersistEntityBackend), PersistQueryRead, PersistRecordBackend, SymbolToField, ToBackendKey)
@@ -647,3 +647,4 @@ derivePersistField "ReportType"
 data GenericGADT (s :: DocumentStatus) where
   MkDocument :: ( SymbolToField "document_status" record DocumentStatus, ToBackendKey SqlBackend record) 
     => {entityDocument :: Entity record} -> GenericGADT s
+
