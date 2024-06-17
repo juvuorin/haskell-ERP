@@ -500,12 +500,13 @@ VatReportTemplate json
 
 TaskGroup
     name                Text
-
-WorkQueue json
+    task                Task
     documentId          Int64
+    complete            Bool
+    
+WorkQueue json
     taskGroupId         TaskGroupId
     userId              UserId
-    task                Task
     taskcomplete        Bool
     taskresult          TaskResult Maybe
     removed             Bool
