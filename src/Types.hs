@@ -203,6 +203,17 @@ instance FromJSON TaskResult
 instance ToJSON TaskResult
 derivePersistField "TaskResult"
 
+
+data PurchaseInvoiceTaskResult
+  = PurchaseInvoiceProcessingTaskResultInvoiceVerified'
+  | PurchaseInvoiceProcessingTaskResultInvoiceApproved'
+  | PurchaseInvoiceProcessingTaskResultInvoiceRejected'
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON TaskResult
+instance ToJSON TaskResult
+derivePersistField "TaskResult"
+
+
 data PurchaseInvoicePaymentStatus = PurchaseInvoicePaymentStatusInvoiceOpen | PurchaseInvoicePaymentStatusInvoiceDue
   deriving (Show, Read, Eq, Generic)
 instance FromJSON PurchaseInvoicePaymentStatus
