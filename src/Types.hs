@@ -19,7 +19,7 @@ import Data.Int (Int64)
 import Data.PayerSummaryReportsToIRTypes (DeliveryData)
 import Data.String (IsString (..))
 import Data.Text hiding (concatMap, filter, map)
-import qualified Data.Text as T
+import qualified Data.Text as T hiding (pack)
 import Data.Time
 import Data.Tree
 import Data.WageReportsToIRTypes (DeliveryData)
@@ -27,8 +27,10 @@ import Database.Persist.Postgresql (PersistQueryWrite, SqlBackend, fromSqlKey, t
 import Database.Persist.TH
 import GHC.Generics (Generic)
 import qualified GHC.OverloadedLabels
-import Text.Read (read)
+import Text.Read (read, readMaybe)
 import Yesod.Core (PathPiece (..))
+import qualified Data.Text as T
+import qualified Data.Char as C
 
 --import Import (Company)
 
@@ -183,7 +185,7 @@ instance FromJSON ApprovedStatus
 instance ToJSON ApprovedStatus
 derivePersistField "ApprovedStatus"
 
-data DocumentStatus -- PurchaseInvoice statuses
+{- data DocumentStatus -- PurchaseInvoice statuses
   = PurchaseInvoiceStatusInvoiceCreated
   | PurchaseInvoiceStatusInvoiceVerified
   | PurchaseInvoiceStatusInvoiceRejected
@@ -193,26 +195,88 @@ data DocumentStatus -- PurchaseInvoice statuses
 instance FromJSON DocumentStatus
 instance ToJSON DocumentStatus
 derivePersistField "DocumentStatus"
+ -}
 
-data TaskResult
+data PurchaseInvoiceStatus -- PurchaseInvoice statuses
+  = PurchaseInvoiceStatusInvoiceCreated
+  | PurchaseInvoiceStatusInvoiceVerified
+  | PurchaseInvoiceStatusInvoiceRejected
+  | PurchaseInvoiceStatusInvoiceOpen
+  | PurchaseInvoiceStatusInvoicePaid
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON PurchaseInvoiceStatus
+instance ToJSON PurchaseInvoiceStatus
+derivePersistField "PurchaseInvoiceStatus"
+
+
+data DocumentStatus -- PurchaseInvoice statuses
+  = PurchaseInvoiceStatus PurchaseInvoiceStatus 
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON DocumentStatus
+instance ToJSON DocumentStatus
+derivePersistField "DocumentStatus"
+
+
+
+
+
+
+data PurchaseInvoiceTaskResult
   = PurchaseInvoiceProcessingTaskResultInvoiceVerified
   | PurchaseInvoiceProcessingTaskResultInvoiceApproved
   | PurchaseInvoiceProcessingTaskResultInvoiceRejected
   deriving (Show, Read, Eq, Generic)
-instance FromJSON TaskResult
-instance ToJSON TaskResult
-derivePersistField "TaskResult"
+instance FromJSON PurchaseInvoiceTaskResult
+instance ToJSON PurchaseInvoiceTaskResult
+derivePersistField "PurchaseInvoiceTaskResult"
 
-
-data PurchaseInvoiceTaskResult
-  = PurchaseInvoiceProcessingTaskResultInvoiceVerified'
-  | PurchaseInvoiceProcessingTaskResultInvoiceApproved'
-  | PurchaseInvoiceProcessingTaskResultInvoiceRejected'
+data TaskResult = PurchaseInvoiceTaskResult PurchaseInvoiceTaskResult
   deriving (Show, Read, Eq, Generic)
 instance FromJSON TaskResult
 instance ToJSON TaskResult
 derivePersistField "TaskResult"
 
+instance (PathPiece PurchaseInvoiceTaskResult) where
+  fromPathPiece x = readMaybe $ unpack x
+
+{- data Showable = forall a . Show a => MkShowable a
+
+--
+-- And a nice existential builder
+--
+pack :: Show a => a -> Showable
+pack = MkShowable
+
+--
+-- A heteoregenous list of Showable values
+--
+hlist :: [Showable]
+hlist = [ Types.pack 3
+        , Types.pack 'x'
+        , Types.pack pi
+        , Types.pack "string"
+        , Types.pack (Just ()) ]
+ -}
+instance PathPiece TaskResult where
+  fromPathPiece x = readMaybe $ unpack x
+
+
+
+{- data PurchaseInvoiceTaskResult
+  = PurchaseInvoiceProcessingTaskResultInvoiceVerified'
+  | PurchaseInvoiceProcessingTaskResultInvoiceApproved'
+  | PurchaseInvoiceProcessingTaskResultInvoiceRejected'
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON PurchaseInvoiceTaskResult
+instance ToJSON PurchaseInvoiceTaskResult
+derivePersistField "PurchaseInvoiceTaskResult"
+ -}
+{- data AnyTaskResult = PurchaseInvoiceTaskResult PurchaseInvoiceTaskResult | TaskResult TaskResult
+  deriving (Show, Read, Eq, Generic)
+instance FromJSON AnyTaskResult
+instance ToJSON AnyTaskResult
+derivePersistField "AnyTaskResult"
+ -}
 
 data PurchaseInvoicePaymentStatus = PurchaseInvoicePaymentStatusInvoiceOpen | PurchaseInvoicePaymentStatusInvoiceDue
   deriving (Show, Read, Eq, Generic)

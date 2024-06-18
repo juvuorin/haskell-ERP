@@ -1,31 +1,39 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE OverloadedLabels #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-
 
 module Handler.Task.Task where
 
-import Data.Foldable hiding (all, forM_, mapM_, any, elem, null)
+import Data.Foldable hiding (all, any, elem, forM_, mapM_, null)
 import Database.Persist.Sql (
-  toSqlKey, fromSqlKey,
+  fromSqlKey,
+  toSqlKey,
  )
 import Import
 
 type DocumentId = Int64
 
-setTasks :: (ToBackendKey SqlBackend a) => CompanyId -> Entity a -> [Task] -> DB ()
-setTasks companyId entity tasks = do
+
+nextTask :: Task -> DB (Maybe Task)
+nextTask PurchaseInvoiceProcessingTaskVerify = return $ Just PurchaseInvoiceProcessingTaskApproveOrReject
+nextTask PurchaseInvoiceProcessingTaskApproveOrReject = return Nothing
+
+nextTask _ = sendResponseStatus status500 ("Illegal task" :: Text)
+
+setTasks :: (ToBackendKey SqlBackend a) => Entity a -> Task -> DB ()
+setTasks entity tasks' = do
   let documentId = fromSqlKey (entityKey entity)
+  let tasks = [tasks']
   forM_ tasks $ \task -> do
-    groupId <- insert $ TaskGroup {taskGroupName="generic",taskGroupComplete=False,taskGroupDocumentId=documentId, taskGroupTask=task}
+    groupId <- insert $ TaskGroup{taskGroupName = "generic", taskGroupComplete = False, taskGroupDocumentId = documentId, taskGroupTask = task}
     accessRightEntity <- selectFirst [AccessRightRight ==. task] []
     case accessRightEntity of
       Just accessRightEntity -> do
@@ -41,28 +49,36 @@ setTasks companyId entity tasks = do
               then sendResponseStatus status400 ("A user with a role with" ++ show task ++ " right is missing. Please add.")
               else do
                 let userIds = map (userRoleUserId . entityVal) usersroles
-                keys <- mapM (\userId ->
-                  do
-                    -- Let's check if the user already has the same task pending
-                    taskGroup <- selectFirst [TaskGroupDocumentId ==. documentId,
-                                              TaskGroupTask ==. task
-                                              --TaskGroupStatus ==. not pending!
-                                              ] []
+                keys <-
+                  mapM
+                    ( \userId ->
+                        do
+                          -- Let's check if the user already has the same task pending
+                          taskGroup <-
+                            selectFirst
+                              [ TaskGroupDocumentId ==. documentId
+                              , TaskGroupTask ==. task
+                              --TaskGroupStatus ==. not pending!
+                              ]
+                              []
 
-                    taskEntity <- case taskGroup of
-                      Just group -> do
-                        selectFirst [WorkQueueTaskGroupId ==. entityKey group,
-                                               WorkQueueUserId ==. userId,
-                                               WorkQueueTaskcomplete ==. False
-                                              ] []
-                      Nothing -> undefined  
-                    case taskEntity of
-                      Nothing -> do
-                        -- Add task
-                        key <- insert (WorkQueue groupId userId False Nothing False)
-                        return ()
-                      _ -> return ()
-                      ) userIds
+                          workQueueEntity <- case taskGroup of
+                            Just group -> do
+                              selectFirst
+                                [ WorkQueueTaskGroupId ==. entityKey group
+                                , WorkQueueUserId ==. userId
+                                , WorkQueueTaskcomplete ==. False
+                                ]
+                                []
+                            Nothing -> sendResponseStatus status400 ("The task is not set for the document" :: Text)
+                          case workQueueEntity of
+                            Nothing -> do
+                              -- Add task
+                              key <- insert (WorkQueue groupId userId False Nothing False)
+                              return ()
+                            _ -> sendResponseStatus status400 ("The user already has this task set" :: Text)
+                    )
+                    userIds
 
                 return ()
       Nothing -> sendResponseStatus status400 ("AccessRight table is missing " ++ show task ++ " right. Please add.")
@@ -74,7 +90,7 @@ completeTaskOrFail documentId task result = do
   if workQueueTaskcomplete (entityVal workQueuEntity)
     then sendResponseStatus status400 ("The user has already handled this task" :: Text)
     else do
-      -- Update the task by compliting it
+      -- Update the task by completing it
       update
         (entityKey workQueuEntity)
         [ WorkQueueTaskcomplete =. True
@@ -86,36 +102,25 @@ findTaskEntityOrFail documentId task = do
   user <- liftHandler $ getAuthenticatedUser
   taskGroupEntity <-
     selectFirst
-      [ TaskGroupDocumentId ==.  documentId
-      , TaskGroupTask ==. task,
-        TaskGroupComplete ==. False
+      [ TaskGroupDocumentId ==. documentId
+      , TaskGroupTask ==. task
+      , TaskGroupComplete ==. False
       ]
       []
 
-  taskEntity <- case taskGroupEntity of
+  workQueueEntity <- case taskGroupEntity of
     Just x -> do
-        selectFirst
-          [ WorkQueueUserId ==. entityKey user
-          , WorkQueueTaskGroupId ==. (entityKey x)
-          ]
-          [] 
+      selectFirst
+        [ WorkQueueUserId ==. entityKey user
+        , WorkQueueTaskGroupId ==. (entityKey x)
+        ]
+        []
     Nothing -> liftHandler $ sendResponseStatus status404 ("TaskGroup not found" :: Text)
- 
-  case taskEntity of
+
+  case workQueueEntity of
     Just task -> return task
     Nothing -> liftHandler $ sendResponseStatus status404 ("This document has not been set " ++ show task ++ " task")
 
-{- findDependentEntities :: DocumentId -> Task -> DB [Entity WorkQueue]
-findDependentEntities documentId task = do
-  user <- liftHandler $ getAuthenticatedUser
-  taskEntities <-
-    selectList
-      [ WorkQueueDocumentId ==. documentId
-      , WorkQueueUserId ==. entityKey user
-      ]
-      []
-  return $ filter (\item->workQueueTask (entityVal item) `elem` getDependentTasks task) taskEntities
- -}
 removeTask :: DocumentId -> Task -> DB ()
 removeTask documentId task = do
   taskEntity <- findTaskEntityOrFail documentId task
@@ -124,61 +129,59 @@ removeTask documentId task = do
     else sendResponseStatus status400 ("Task must be completed before it can be removed" :: Text)
 
 processTasks :: GenericGADT _ -> Task -> TaskResult -> DocumentStatus -> DB (Maybe (GenericGADT _))
-processTasks gadtEntity task result newStatus = do
+processTasks (MkDocument entity@(Entity key _)) task result newStatus = do
+      completeTaskOrFail (fromSqlKey key) task result
 
-   case gadtEntity of
-      MkDocument (Entity key _) -> do
-        completeTaskOrFail  (fromSqlKey key) task result
-
-        taskGroup <- selectList
+      taskGroup <-
+        selectList
           [ TaskGroupTask ==. task
           , TaskGroupDocumentId ==. fromSqlKey key
           , TaskGroupComplete ==. False
           ]
           []
-        case taskGroup of
-          [group] -> do
-            taskList <- selectList[WorkQueueTaskGroupId ==. entityKey group][]
-            case taskList of
-              
-              -- If many users are involved in the process we do not accept contradictory results
-              (x:xs:xss) -> do
-                -- get the first element of the list
-                let first = workQueueTaskresult (entityVal $ unsafeHead taskList)
-                -- check if all results are the same as the first element
-                let same = all ((==first) . (workQueueTaskresult . entityVal)) taskList
-                let allComplete = all ((==True) . (workQueueTaskcomplete . entityVal)) taskList
-
-                -- TODO: For tasks that can be completed by just 1 user, we should check the "task type" (single, multiple)
-                -- and act accordingly here! Currently "all approvers" must approve then invoice before the invoice
-                -- can be set Open
-                if same && allComplete
-                  then do                    
-                    -- Update document to reflect new status
-                    update key [#document_status =. newStatus]
-                    -- Mark task group as complete
-                    update (entityKey group) [TaskGroupComplete =. True]
-
-                  -- TODO: This is a bit clumsy and slow, should be able to update the record instead, not fetch it from the
-                  -- database again
-                    newValue <- get404 key
-                    return $ Just $ MkDocument {entityDocument=Entity key newValue}
-                  else return $ Nothing
-              -- If just one user is involved in the process
-              [x] -> do
-                  if (workQueueTaskcomplete . entityVal) x
-                  then do
-                    update key [#document_status =. newStatus]
-                    newValue <- get404 key
-                    return $ Just $ MkDocument {entityDocument=Entity key newValue}       
-                  else do
-                    return $ Nothing
-              _ -> return $ Nothing
-          _ -> return $ Nothing
-      
-
+      case taskGroup of
+        [group] -> do
+          taskList <- selectList [WorkQueueTaskGroupId ==. entityKey group] []
+          result <- case taskList of
+            -- If many users are involved in the process we do not accept contradictory results
+            (x : xs : xss) -> do
+              -- get the first element of the list
+              let first = workQueueTaskresult (entityVal $ unsafeHead taskList)
+              -- check if all results are the same as the first element
+              let same = all ((== first) . (workQueueTaskresult . entityVal)) taskList
+              let allComplete = all ((== True) . (workQueueTaskcomplete . entityVal)) taskList
+              -- TODO: For tasks that can be completed by just 1 user, we should check the "task type" (single, multiple)
+              -- and act accordingly here! Currently "all approvers" must approve then invoice before the invoice
+              -- can be set Open
+              if same && allComplete
+                then do
+                  return True
+                else return False
+            -- If just one user is involved in the process
+            [x] -> do
+              if (workQueueTaskcomplete . entityVal) x
+                then do
+                  print "-----------------------------"
+                  return True
+                else return False
+            _ -> return False
+          if result then do
+              -- Update document status
+              update key [#document_status =. newStatus]
+              -- Mark task group as complete
+              update (entityKey group) [TaskGroupComplete =. True]
+              newValue <- get404 key
+              -- set next task if any 
+              next <- nextTask task
+              case next of
+                Just next -> setTasks entity next
+                Nothing -> return ()
+ 
+              -- return the document with new status
+              return $ Just $ MkDocument{entityDocument = Entity key newValue}
+          else return Nothing
+        _ -> return Nothing
 
 removeCompletedAction :: DocumentId -> Task -> DB ()
 removeCompletedAction documentId task = do
   removeTask documentId task
-

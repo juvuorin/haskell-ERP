@@ -17,17 +17,21 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 module Handler.Invoice.Purchase.CrudEndpoints.PurchaseInvoices where
 
 import Data.Aeson
 import Database.Persist.Sql (
-  fromSqlKey,
+  fromSqlKey, PersistFieldSql,
  )
 import GHC.Exts
 import Handler.Task.Task
 import Import
-
+import qualified Import as T
+import qualified Data.Char as C
+import Data.List.NonEmpty hiding (map)
 getPurchaseInvoicesR :: CompanyId -> Handler Value
 getPurchaseInvoicesR companyId = do
   invoices <- runDB $ selectList [] [] :: Handler [Entity PurchaseInvoice]
@@ -56,12 +60,12 @@ data MonthInfo = MonthInfo
 instance ToJSON MonthInfo
 instance FromJSON MonthInfo
 
-type Created = GenericGADT 'PurchaseInvoiceStatusInvoiceCreated
-type Verified = GenericGADT 'PurchaseInvoiceStatusInvoiceVerified
+type Created = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceCreated)
+type Verified = GenericGADT('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceVerified)
 
 --type Rejected = GenericGADT 'PurchaseInvoiceStatusInvoiceRejected
-type Open = GenericGADT 'PurchaseInvoiceStatusInvoiceOpen
-type Paid = GenericGADT 'PurchaseInvoiceStatusInvoicePaid
+type Open = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceOpen)
+type Paid = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoicePaid)
 
 type family ResultOf a
 
@@ -74,25 +78,6 @@ type instance ResultOf Verified = Either Verified Open
 -- An Open invoice can only stay Open or become Paid
 type instance ResultOf Open = Either Open Paid
 
-{- verify' :: Created -> DB (ResultOf Created)
-verify' invoiceCreated = do
-  result <- processTasks invoiceCreated PurchaseInvoiceProcessingTaskVerify PurchaseInvoiceStatusInvoiceVerified
-  case result of
-    Nothing -> return $ Left invoiceCreated
-    Just x -> return $ Right x
- -}
-
-{-
-verify :: Created -> DB (Either Created Verified)
-result <- processTasks invoiceCreated PurchaseInvoiceProcessingTaskVerify PurchaseInvoiceStatusInvoiceVerified
-
-approve :: Verified -> DB (Either Verified Open)
-result <- processTasks invoiceVerified PurchaseInvoiceProcessingTaskApprove PurchaseInvoiceStatusInvoiceOpen
-
-reject :: Verified -> DB (Either Verified Rejected)
-result <- processTasks invoiceVerified PurchaseInvoiceProcessingTaskReject PurchaseInvoiceStatusInvoiceRejected
- -}
-
 invoicesReadyForPayment :: DB [Open]
 invoicesReadyForPayment = do
   companyId <- liftHandler $ getCompanyId
@@ -103,80 +88,111 @@ class Monad m => MonadInvoice m a where
   invoices :: CompanyId -> m [a]
   invoice :: CompanyId -> Key PurchaseInvoice -> m a
 
+class Monad m => ValidInvoice m a where
+  --invoices :: CompanyId -> m [a]
+  validate :: Entity PurchaseInvoice -> m a
+
+instance ValidInvoice DB Created where
+  validate invoice = do
+      if purchaseInvoiceDocumentStatus (entityVal invoice) == PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceCreated
+        then return $ MkDocument invoice
+        else sendResponseStatus status404 ("Invoice is invalid" :: Text)
+
+instance ValidInvoice DB Verified where
+  validate invoice = do
+      if purchaseInvoiceDocumentStatus (entityVal invoice) == PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified
+        then return $ MkDocument invoice
+        else sendResponseStatus status404 ("Invoice is invalid" :: Text)
+
+
 instance MonadInvoice DB Created where
   invoice companyId invoiceId = do
-    invoice <- selectFirst' [PurchaseInvoiceId ==. invoiceId, PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatusInvoiceCreated] [] -- :: DB (Maybe (Entity PurchaseInvoice))
+    invoice <- selectFirst' [PurchaseInvoiceId ==. invoiceId, PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceCreated] [] -- :: DB (Maybe (Entity PurchaseInvoice))
     case invoice of
       Just invoice -> return $ MkDocument invoice
       Nothing -> sendResponseStatus status404 ("Invoice not found" :: Text)
 
 instance MonadInvoice DB Verified where
   invoice companyId invoiceId = do
-    invoice <- selectFirst' [PurchaseInvoiceId ==. invoiceId, PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatusInvoiceVerified] [] -- :: DB (Maybe (Entity PurchaseInvoice))
+    invoice <- selectFirst' [PurchaseInvoiceId ==. invoiceId, PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified] [] -- :: DB (Maybe (Entity PurchaseInvoice))
     case invoice of
       Just invoice -> return $ MkDocument invoice
       Nothing -> sendResponseStatus status404 ("Invoice not found" :: Text)
 
 instance MonadInvoice DB Open where
   invoices companyId = do
-    invoices <- selectList' [PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatusInvoiceOpen] [] -- :: DB (Maybe (Entity PurchaseInvoice))
+    invoices <- selectList' [PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceOpen] [] -- :: DB (Maybe (Entity PurchaseInvoice))
     return $ map MkDocument invoices
 
-result = PurchaseInvoiceProcessingTaskResultInvoiceVerified
-postProcessInvoiceInvoiceR :: CompanyId -> PurchaseInvoiceId -> TaskResult -> Handler ()
-postProcessInvoiceInvoiceR companyId invoiceId result = runDB $ do
-  purchaseInvoice <- get404 invoiceId
-  let currentStatus = purchaseInvoiceDocumentStatus purchaseInvoice
 
-  x <- case currentStatus of
-        PurchaseInvoiceStatusInvoiceCreated -> do 
-            result <- invoice companyId invoiceId >>= flip verify result
-            case result of
-              Right _ -> return ("Invoice is successfully verified by all verifiers" :: Text)
-              Left _ -> return ("Invoice is successfully verified by you" :: Text)
-  
-        PurchaseInvoiceStatusInvoiceVerified -> do 
-            result <- invoice companyId invoiceId >>= flip approveOrReject result
-            case result of
-              Right _ -> return  ("Invoice is successfully approved by all approvers" :: Text)
-              Left _ -> return ("Invoice is successfully approved by you" :: Text)
-        
-        _ -> sendResponseStatus status500 ("Illegal processing instruction" :: Text)
-  sendResponseStatus status200 x
+--purchaseInvoiceProcessingTasks :: [Task]
+purchaseInvoiceProcessingTasks = [PurchaseInvoiceProcessingTaskVerify, PurchaseInvoiceProcessingTaskApproveOrReject]
+   
+processNextInvoiceState ::Entity PurchaseInvoice -> DocumentStatus -> PurchaseInvoiceTaskResult -> DB Text
+processNextInvoiceState invoice (PurchaseInvoiceStatus status) result = do
+            case status of
+              PurchaseInvoiceStatusInvoiceCreated -> do
+                result <- validate invoice >>= flip verify (toTaskResult result)
+                case result of
+                  -- Invoice is verified by all verifiers, let's move on to the next task
+                  Right _ -> return ("Invoice is successfully verified by all verifiers" :: Text)
+                  Left _ -> return ("Invoice is successfully verified by you" :: Text)
+
+              PurchaseInvoiceStatusInvoiceVerified -> do
+                result <- validate invoice >>= flip approveOrReject (toTaskResult result)
+                case result of
+                  Right _ -> return  ("Invoice is successfully approved by all approvers" :: Text)
+                  Left _ -> return ("Invoice is successfully approved by you" :: Text)
+              _ -> sendResponseStatus status500 ("Illegal processing instruction" :: Text)
+   
+postProcessInvoiceInvoiceR :: CompanyId -> PurchaseInvoiceId -> PurchaseInvoiceTaskResult -> Handler ()
+postProcessInvoiceInvoiceR companyId invoiceId taskResult = 
+  do
+    x <- runDB $ do
+      purchaseInvoice <- getEntity404' invoiceId
+      processNextInvoiceState purchaseInvoice (purchaseInvoiceDocumentStatus (entityVal purchaseInvoice)) taskResult
+    sendResponseStatus status200 x
+
+class ToTaskResult a where
+  toTaskResult :: a -> TaskResult 
+
+instance ToTaskResult PurchaseInvoiceTaskResult where
+  toTaskResult = PurchaseInvoiceTaskResult
 
 getInvoices :: DB [Entity PurchaseInvoice]
 getInvoices = selectList' [] []
 
 verify :: Created -> TaskResult -> DB (Either Created Verified)
 verify invoiceCreated result = do
-  result <- processTasks invoiceCreated PurchaseInvoiceProcessingTaskVerify result PurchaseInvoiceStatusInvoiceVerified
+  result <- processTasks invoiceCreated PurchaseInvoiceProcessingTaskVerify result $ PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified
   case result of
     Nothing -> return $ Left invoiceCreated
     Just x -> return $ Right x
 
 approveOrReject :: Verified -> TaskResult -> DB (Either Verified Open)
 approveOrReject invoiceVerified result = do
-  result <- processTasks invoiceVerified PurchaseInvoiceProcessingTaskApproveOrReject result PurchaseInvoiceStatusInvoiceOpen
+  result <- processTasks invoiceVerified PurchaseInvoiceProcessingTaskApproveOrReject result $ PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceOpen
   case result of
     Nothing -> return $ Left invoiceVerified
     Just x -> return $ Right x
 
 postPurchaseInvoicesR :: CompanyId -> Handler Value
 postPurchaseInvoicesR companyId = do
-  invoice <- requireCheckJsonBody :: Handler PurchaseInvoice
+  --invoice <- requireCheckJsonBody :: Handler PurchaseInvoice
+  let invoice = defPurchaseInvoice 
   id <- runDB $ do
     entity <- insertEntity' invoice
 
-    -- Let's check if someone has the right to verify or approve an invoice
+    -- Let's check if someone has the right to verify
     setTasks
-      companyId
       entity
-      [ PurchaseInvoiceProcessingTaskVerify
-      , PurchaseInvoiceProcessingTaskApproveOrReject
+      PurchaseInvoiceProcessingTaskVerify
+      {- [ PurchaseInvoiceProcessingTaskVerify,
+        PurchaseInvoiceProcessingTaskApproveOrReject
       ]
-
+ -}
     -- If verifier and approver are set we can change the status to Created
-    update (entityKey entity) [PurchaseInvoiceDocumentStatus =. PurchaseInvoiceStatusInvoiceCreated]
+    update (entityKey entity) [PurchaseInvoiceDocumentStatus =. PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceCreated]
     return (entityKey entity)
 
   return $ toJSON (fromSqlKey id)

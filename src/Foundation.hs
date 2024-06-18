@@ -39,7 +39,7 @@ import qualified Yesod.Core.Unsafe as Unsafe
 import Yesod.Default.Util (addStaticContentExternal)
 import Prelude (read, (!!))
 import qualified GHC.Conc as T
-import Types (DefaultAccountType, Rolename (Admin))
+import Types (DefaultAccountType,PurchaseInvoiceTaskResult,TaskResult, Rolename (Admin))
 import Control.Monad.Reader
 
 -- The foundation datatype for your application. This can be a good place to
