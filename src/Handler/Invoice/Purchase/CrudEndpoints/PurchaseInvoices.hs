@@ -122,28 +122,59 @@ instance MonadInvoice DB Open where
     invoices <- selectList' [PurchaseInvoiceDocumentStatus ==. PurchaseInvoiceStatusInvoiceOpen] [] -- :: DB (Maybe (Entity PurchaseInvoice))
     return $ map MkDocument invoices
 
+postVerifyInvoiceR :: CompanyId -> PurchaseInvoiceId ->  Handler ()
+postVerifyInvoiceR companyId invoiceId = do
+  result <- runDB $ invoice companyId invoiceId >>= flip verify result
+  case result of
+    Right _ -> sendResponseStatus status200 ("Invoice is successfully verified by all verifiers" :: Text)
+    Left _ -> sendResponseStatus status200 ("Invoice is successfully verified by you" :: Text)
 
-
---result = PurchaseInvoiceProcessingTaskResultInvoiceVerified
-postProcessInvoiceInvoiceR :: CompanyId -> PurchaseInvoiceId -> TaskResult -> Handler ()
-postProcessInvoiceInvoiceR companyId invoiceId result = runDB $ do
-  purchaseInvoice <- get404 invoiceId
+result = PurchaseInvoiceProcessingTaskResultInvoiceVerified
+postProcessInvoiceInvoiceR :: CompanyId -> PurchaseInvoiceId -> WorkQueueId -> TaskResult -> Handler ()
+postProcessInvoiceInvoiceR companyId invoiceId workQueueId result = do
+  workQueueItem <- runDB $ get404 workQueueId
+  let taskGroupId = workQueueTaskGroupId workQueueItem
+  taskGroup <- runDB $ get404 taskGroupId 
+  let task = taskGroupTask taskGroup
+  purchaseInvoice <- runDB $ get404 invoiceId
   let currentStatus = purchaseInvoiceDocumentStatus purchaseInvoice
 
-  x <- case currentStatus of
-    PurchaseInvoiceStatusInvoiceCreated -> do
-      result <- invoice companyId invoiceId >>= flip verify result
-      case result of
-        Right _ -> return ("Invoice is successfully verified by all verifiers" :: Text)
-        Left _ -> return ("Invoice is successfully verified by you" :: Text)
-    PurchaseInvoiceStatusInvoiceVerified -> do
-      result <- invoice companyId invoiceId >>= flip approveOrReject result
-      case result of
-        Right _ -> return ("Invoice is successfully approved by all approvers" :: Text)
-        Left _ -> return ("Invoice is successfully approved by you" :: Text)
-    _ -> sendResponseStatus status500 ("Illegal purchase invoice processing instruction" :: Text)
-  sendResponseStatus status200 x
+  result <- case (currentStatus, task) of
+          (PurchaseInvoiceStatusInvoiceCreated, PurchaseInvoiceProcessingTaskVerify) -> do 
+            runDB $ invoice companyId invoiceId >>= flip verify result
+        
+          (PurchaseInvoiceStatusInvoiceVerified, PurchaseInvoiceProcessingTaskApproveOrReject) -> do
+            runDB $ invoice companyId invoiceId >>= flip approveOrReject result
+          _ -> sendResponseStatus status400 ("Task not found" :: Text)
+  case result of
+    Right _ -> return ()
+    Left _ -> return ()
 
+verify' :: Created -> TaskResult -> DB ()
+verify' invoiceCreated result = do
+  result <- processTasks invoiceCreated PurchaseInvoiceProcessingTaskVerify result PurchaseInvoiceStatusInvoiceVerified
+  case result of
+    Nothing -> return $ Left invoiceCreated
+    Just x -> return $ Right x
+
+--  case result of
+--    Right _ -> sendResponseStatus status200 ("Invoice is successfully verified by all verifiers" :: Text)
+--    Left _ -> sendResponseStatus status200 ("Invoice is successfully verified by you" :: Text)
+
+postApproveOrRejectInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler ()
+postApproveOrRejectInvoiceR companyId invoiceId = do
+  result <- runDB $ invoice companyId invoiceId >>= flip approveOrReject result
+  case result of
+    Right _ -> sendResponseStatus status200 ("Invoice is successfully approved or rejectedby all approvers" :: Text)
+    Left _ -> sendResponseStatus status200 ("Invoice is successfully approvedor rejected by you" :: Text)
+
+{- postRejectInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler ()
+postRejectInvoiceR companyId invoiceId = do
+  result <- runDB $ invoice companyId invoiceId >>= reject
+  case result of
+      Right _ -> sendResponseStatus status200 ("Invoice is successfully rejected by all rejecters" :: Text)
+      Left _ -> sendResponseStatus status200 ("Invoice is successfully rejected by you" :: Text)
+ -}
 getInvoices :: DB [Entity PurchaseInvoice]
 getInvoices = selectList' [] []
 
