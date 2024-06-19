@@ -141,7 +141,7 @@ processTasks (MkDocument entity@(Entity key _)) task result newStatus = do
           []
       case taskGroup of
         [group] -> do
-          taskList <- selectList [WorkQueueTaskGroupId ==. entityKey group] []
+          taskList <- selectList [WorkQueueTaskGroupId ==. entityKey group,WorkQueueRemoved==. False] []
           result <- case taskList of
             -- If many users are involved in the process we do not accept contradictory results
             (x : xs : xss) -> do
@@ -150,6 +150,7 @@ processTasks (MkDocument entity@(Entity key _)) task result newStatus = do
               -- check if all results are the same as the first element
               let same = all ((== first) . (workQueueTaskresult . entityVal)) taskList
               let allComplete = all ((== True) . (workQueueTaskcomplete . entityVal)) taskList
+         
               -- TODO: For tasks that can be completed by just 1 user, we should check the "task type" (single, multiple)
               -- and act accordingly here! Currently "all approvers" must approve then invoice before the invoice
               -- can be set Open

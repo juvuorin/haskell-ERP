@@ -223,7 +223,6 @@ hasAccess = do
   if access then return companyId else sendResponseStatus status403 ("The user has no access to this company" :: Text)
 
 
-
 test3 :: ReaderT SqlBackend Handler ()
 test3 = do
   

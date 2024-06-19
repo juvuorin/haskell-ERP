@@ -217,26 +217,22 @@ instance ToJSON DocumentStatus
 derivePersistField "DocumentStatus"
 
 
-
-
-
-
-data PurchaseInvoiceTaskResult
+data PurchaseInvoiceProcessingTaskResult
   = PurchaseInvoiceProcessingTaskResultInvoiceVerified
   | PurchaseInvoiceProcessingTaskResultInvoiceApproved
   | PurchaseInvoiceProcessingTaskResultInvoiceRejected
   deriving (Show, Read, Eq, Generic)
-instance FromJSON PurchaseInvoiceTaskResult
-instance ToJSON PurchaseInvoiceTaskResult
-derivePersistField "PurchaseInvoiceTaskResult"
+instance FromJSON PurchaseInvoiceProcessingTaskResult
+instance ToJSON PurchaseInvoiceProcessingTaskResult
+derivePersistField "PurchaseInvoiceProcessingTaskResult"
 
-data TaskResult = PurchaseInvoiceTaskResult PurchaseInvoiceTaskResult
+data TaskResult = PurchaseInvoiceProcessingTaskResult PurchaseInvoiceProcessingTaskResult
   deriving (Show, Read, Eq, Generic)
 instance FromJSON TaskResult
 instance ToJSON TaskResult
 derivePersistField "TaskResult"
 
-instance (PathPiece PurchaseInvoiceTaskResult) where
+instance (PathPiece PurchaseInvoiceProcessingTaskResult) where
   fromPathPiece x = readMaybe $ unpack x
 
 {- data Showable = forall a . Show a => MkShowable a
@@ -284,7 +280,7 @@ instance FromJSON PurchaseInvoicePaymentStatus
 instance ToJSON PurchaseInvoicePaymentStatus
 derivePersistField "PurchaseInvoicePaymentStatus"
 
-data Task = PurchaseInvoiceProcessingTaskVerify | PurchaseInvoiceProcessingTaskApproveOrReject | PurchaseInvoiceProcessingTaskApprove | PurchaseInvoiceProcessingTaskReject
+data Task = PurchaseInvoiceProcessingTaskVerify | PurchaseInvoiceProcessingTaskApproveOrReject | PurchaseInvoiceProcessingTaskCancel|PurchaseInvoiceProcessingTaskApprove | PurchaseInvoiceProcessingTaskReject
   deriving (Data, Show, Read, Eq, Generic)
 instance FromJSON Task
 instance ToJSON Task
