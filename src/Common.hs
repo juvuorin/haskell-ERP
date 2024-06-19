@@ -142,7 +142,10 @@ instance GHC.OverloadedLabels.IsLabel "status" (record -> DocumentStatus),
  -}
 
 
-instance SymbolToField "document_status" PurchaseInvoice DocumentStatus where symbolToField = PurchaseInvoiceDocumentStatus
+instance SymbolToField "document_status" PurchaseInvoice DocumentStatus where symbolToField :: EntityField PurchaseInvoice DocumentStatus
+                                                                              symbolToField = PurchaseInvoiceDocumentStatus
+instance SymbolToField "company_id" Task (Key Company) where symbolToField = TaskCompanyId
+instance SymbolToField "company_id" TaskGroup (Key Company) where symbolToField = TaskGroupCompanyId
 
 --instance SymbolToField "status" PartnerInfo DocumentStatus where symbolToField = PartnerInfoStatus
 

@@ -8,7 +8,7 @@ AccessLog
     userId              UserId  
 
 AccessRight json
-    right               Task
+    right               TaskType
     UniqueRight         right
     description         Text
 
@@ -498,15 +498,19 @@ VatReportTemplate json
     code                Int
     description         String
 
-TaskGroup
+TaskGroup json
+    companyId           CompanyId
     name                Text
-    task                Task
+    task                TaskType
     documentId          Int64
     complete            Bool
+    deriving (Show)
     
-WorkQueue json
+Task json
+    companyId           CompanyId
     taskGroupId         TaskGroupId
     userId              UserId
-    taskcomplete        Bool
-    taskresult          TaskResult Maybe
+    complete            Bool
+    result              TaskResult Maybe
     removed             Bool
+    deriving (Show)

@@ -27,7 +27,7 @@ import Database.Persist.Sql (
   fromSqlKey, PersistFieldSql,
  )
 import GHC.Exts
-import Handler.Task.Task
+import Handler.Task.Task hiding (removeTask)
 import Import
 import qualified Import as T
 import qualified Data.Char as C
@@ -110,104 +110,54 @@ instance ValidInvoice DB Open where
     return $ map MkDocument invoices
 
 postVerifyInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler ()
-postVerifyInvoiceR companyId invoiceId = do  
-  result <- runDB $ invoice companyId invoiceId >>= verify 
+postVerifyInvoiceR companyId invoiceId = do
+  result <- runDB $ invoice companyId invoiceId >>= verify
   case result of
     Right _ -> sendResponseStatus status200 ("Invoice is successfully verified by all verifiers" :: Text)
     Left _ -> sendResponseStatus status200 ("Invoice is successfully verified by you" :: Text)
 
+
+postRemoveTaskR :: CompanyId -> PurchaseInvoiceId -> TaskId -> Handler ()
+postRemoveTaskR companyId invoiceId taskId = do
+  runDB $ removeTask invoiceId taskId
+ {-  case result of
+    Right _ -> sendResponseStatus status200 ("Invoice is successfully approved by all approvers" :: Text)
+    Left _ -> sendResponseStatus status200 ("Invoice is successfully approved by you" :: Text)
+ -}
 postApproveInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler ()
 postApproveInvoiceR companyId invoiceId = do
-  result <- runDB $ invoice companyId invoiceId >>= approve 
+  result <- runDB $ invoice companyId invoiceId >>= approve
   case result of
     Right _ -> sendResponseStatus status200 ("Invoice is successfully approved by all approvers" :: Text)
     Left _ -> sendResponseStatus status200 ("Invoice is successfully approved by you" :: Text)
 
 postRejectInvoiceR :: CompanyId -> PurchaseInvoiceId -> Handler ()
 postRejectInvoiceR companyId invoiceId = do
-  result <- runDB $ invoice companyId invoiceId >>= reject 
+  result <- runDB $ invoice companyId invoiceId >>= reject
   case result of
     Right _ -> sendResponseStatus status200 ("Invoice is successfully rejected by all rejecters" :: Text)
     Left _ -> sendResponseStatus status200 ("Invoice is successfully rejected by you" :: Text)
 
 
-getPreviousStatusByTask :: Task -> PurchaseInvoiceStatus
-getPreviousStatusByTask task = case task of
-  PurchaseInvoiceProcessingTaskVerify -> PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceCreated
-  PurchaseInvoiceProcessingTaskApproveOrReject -> PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified
-
-getPreviousStatus purchaseInvoiceId = do
-  user <- liftHandler $ getAuthenticatedUser
-  let userId = entityKey user  
-  taskGroupEntity <-
-    selectList'
-      [ 
-        TaskGroupDocumentId ==. (fromSqlKey purchaseInvoiceId)    
-      ]
-      []
-  case taskGroupEntity of
-    l@(x:xs) -> do
-      let entity = (Data.List.last l) 
-      let lastTask = taskGroupTask (entityVal (Data.List.last l)) 
-      let previousStatus = getPreviousStatusByTask lastTask
-      setTasks entity lastTask 
-
-      workQueueEntity <-
-        selectList'
-          [ 
-            WorkQueueUserId ==. userId,
-            WorkQueueTaskGroupId ==. entityKey entity,
-            WorkQueueTaskcomplete ==. True
-
-          ]
-          []
-      -- update invoice
-      update purchaseInvoiceId [PurchaseInvoiceDocumentStatus =. previousStatus]
-
-
-    [] -> sendResponseStatus status404 ("TaskGroup not found" :: Text)
+removeTask :: Key PurchaseInvoice -> TaskId -> DB ()
+removeTask purchaseInvoiceId taskId = do
   
-  
+    removeTasks taskId purchaseInvoiceId
 
 
-
-
-{- postCancelTaskR :: CompanyId -> PurchaseInvoiceId -> Handler ()
-postCancelTaskR companyId invoiceId = do
-
-  result <- runDB $ invoice companyId invoiceId >>= cancel 
-  result <- processTasks invoice PurchaseInvoiceProcessingTaskCancel 
-                        (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceVerified) 
-                        (PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified)
-
-  case result of
-    Right _ -> sendResponseStatus status200 ("Invoice is successfully rejected by all rejecters" :: Text)
-    Left _ -> sendResponseStatus status200 ("Invoice is successfully rejected by you" :: Text)
-
-cancel :: Created -> DB (Either Created Verified)
-cancel invoice = do
-  result <- processTasks invoice PurchaseInvoiceProcessingTaskVerify 
-                        (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceVerified) 
-                        (PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified)
-  case result of
-    Nothing -> return $ Left invoice
-    Just x -> return $ Right x
-
-
- -}
 class ToTaskResult a where
-  toTaskResult :: a -> TaskResult 
+  toTaskResult :: a -> TaskResult
 
 instance ToTaskResult PurchaseInvoiceProcessingTaskResult where
   toTaskResult = PurchaseInvoiceProcessingTaskResult
 
 getInvoices :: DB [Entity PurchaseInvoice]
 getInvoices = selectList' [] []
- 
+
 verify :: Created -> DB (Either Created Verified)
 verify invoice = do
-  result <- processTasks invoice PurchaseInvoiceProcessingTaskVerify 
-                        (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceVerified) 
+  result <- processTasks invoice PurchaseInvoiceProcessingTaskVerify
+                        (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceVerified)
                         (PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceVerified)
   case result of
     Nothing -> return $ Left invoice
@@ -216,7 +166,7 @@ verify invoice = do
 approve :: Verified -> DB (Either Verified Open)
 approve invoice = do
   result <- processTasks invoice
-                         PurchaseInvoiceProcessingTaskApproveOrReject 
+                         PurchaseInvoiceProcessingTaskApproveOrReject
                          (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceApproved)
                          (PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceOpen)
   case result of
@@ -227,22 +177,22 @@ reject :: Verified -> DB (Either Verified Verified)
 reject invoice = do
   result <- processTasks  invoice
                           PurchaseInvoiceProcessingTaskApproveOrReject
-                          (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceRejected) 
+                          (toTaskResult PurchaseInvoiceProcessingTaskResultInvoiceRejected)
                           (PurchaseInvoiceStatus PurchaseInvoiceStatusInvoiceOpen)
   case result of
     Nothing -> return $ Left invoice
     Just x -> return $ Right x
- 
+
 
 
 postPurchaseInvoicesR :: CompanyId -> Handler Value
 postPurchaseInvoicesR companyId = do
-  let invoice = defPurchaseInvoice 
+  let invoice = defPurchaseInvoice
   id <- runDB $ do
     entity <- insertEntity' invoice
 
     -- Let's check if someone has the right to verify
-    setTasks
+    setNewTasks
       entity
       PurchaseInvoiceProcessingTaskVerify
       {- [ PurchaseInvoiceProcessingTaskVerify,

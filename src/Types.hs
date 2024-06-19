@@ -280,11 +280,11 @@ instance FromJSON PurchaseInvoicePaymentStatus
 instance ToJSON PurchaseInvoicePaymentStatus
 derivePersistField "PurchaseInvoicePaymentStatus"
 
-data Task = PurchaseInvoiceProcessingTaskVerify | PurchaseInvoiceProcessingTaskApproveOrReject | PurchaseInvoiceProcessingTaskCancel|PurchaseInvoiceProcessingTaskApprove | PurchaseInvoiceProcessingTaskReject
+data TaskType = PurchaseInvoiceProcessingTaskVerify | PurchaseInvoiceProcessingTaskApproveOrReject | PurchaseInvoiceProcessingTaskCancel|PurchaseInvoiceProcessingTaskApprove | PurchaseInvoiceProcessingTaskReject
   deriving (Data, Show, Read, Eq, Generic)
-instance FromJSON Task
-instance ToJSON Task
-derivePersistField "Task"
+instance FromJSON TaskType
+instance ToJSON TaskType
+derivePersistField "TaskType"
 
 data AccessRightType = VerifyPurchaseInvoice | ApprovePurchaseInvoice | RejectPurchaseInvoice deriving (Enum, Data, Show, Read, Eq, Generic)
 instance FromJSON AccessRightType
