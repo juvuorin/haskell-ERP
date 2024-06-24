@@ -63,8 +63,6 @@ instance FromJSON MonthInfo
 
 type Created = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceCreated)
 type Verified = GenericGADT('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceVerified)
-
---type Rejected = GenericGADT 'PurchaseInvoiceStatusInvoiceRejected
 type Open = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoiceOpen)
 type Paid = GenericGADT ('PurchaseInvoiceStatus 'PurchaseInvoiceStatusInvoicePaid)
 

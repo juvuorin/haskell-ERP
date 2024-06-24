@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes #-}
+--{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 module TestImport
@@ -9,34 +9,47 @@ module TestImport
 import Application           (makeFoundation, makeLogWare)
 import ClassyPrelude         as X hiding (delete, deleteBy, Handler)
 import Database.Persist      as X hiding (get)
-import Database.Persist.Sql  (SqlPersistM, runSqlPersistMPool, rawExecute, rawSql, unSingle, connEscapeName)
+
+
+import Database.Persist.Sql  (SqlPersistM, SqlBackend, runSqlPersistMPool, rawExecute, rawSql, unSingle)
 import Foundation            as X
 import Model                 as X
 import Test.Hspec            as X
-import Yesod.Default.Config2 (useEnv, loadYamlSettings)
+import Yesod.Default.Config2 (useEnv, loadAppSettings, loadYamlSettings, ignoreEnv)
 import Yesod.Auth            as X
 import Yesod.Test            as X
 import Yesod.Core.Unsafe     (fakeHandlerGetLogger)
-
+import           System.Environment         (setEnv)
+import Database.Persist.Types
 -- Wiping the database
-import Database.Persist.Sqlite              (sqlDatabase, mkSqliteConnectionInfo, fkEnabled, createSqlitePoolFromInfo)
+--import Database.Persist.Sqlite              (sqlDatabase, mkSqliteConnectionInfo, fkEnabled, createSqlitePoolFromInfo)
+--import Database.Persist.Postgresql--              (sqlDatabase, mkSqliteConnectionInfo, fkEnabled, createSqlitePoolFromInfo)
+import Database.Persist.Postgresql
+  ( createPostgresqlPool,
+    pgConnStr,
+    pgPoolSize,
+    runSqlPool,
+  )
+
 import Control.Monad.Logger                 (runLoggingT)
 import Lens.Micro                           (set)
 import Settings (appDatabaseConf)
 import Yesod.Core (messageLoggerSource)
+import Text.Shakespeare.Text (st)
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
-    pool <- fmap appConnPool getTestYesod
-    liftIO $ runSqlPersistMPool query pool
-
-runHandler :: Handler a -> YesodExample App a
-runHandler handler = do
     app <- getTestYesod
-    fakeHandlerGetLogger appLogger app handler
+    liftIO $ runDBWithApp app query
 
+runDBWithApp :: App -> SqlPersistM a -> IO a
+runDBWithApp app query = runSqlPersistMPool query (appConnPool app)
+
+
+-- | Spec runner that sets up a test environment with DB.
 withApp :: SpecWith (TestApp App) -> Spec
 withApp = before $ do
+    setEnv "JWT_SECRET" "test"
     settings <- loadYamlSettings
         ["config/test-settings.yml", "config/settings.yml"]
         []
@@ -50,54 +63,17 @@ withApp = before $ do
 -- 'withApp' calls it before each test, creating a clean environment for each
 -- spec to run in.
 wipeDB :: App -> IO ()
-wipeDB app = do
-    -- In order to wipe the database, we need to use a connection which has
-    -- foreign key checks disabled.  Foreign key checks are enabled or disabled
-    -- per connection, so this won't effect queries outside this function.
-    --
-    -- Aside: foreign key checks are enabled by persistent-sqlite, as of
-    -- version 2.6.2, unless they are explicitly disabled in the
-    -- SqliteConnectionInfo.
+wipeDB app = runDBWithApp app $ do
+    tables <- getTables
+    sqlBackend <- ask
+    print tables
+    let escapedTables = map (\name->"\""++name++"\"") tables
+    let query = "TRUNCATE TABLE " ++ intercalate ", " escapedTables
+    rawExecute query []
 
-    let logFunc = messageLoggerSource app (appLogger app)
-
-    let dbName = sqlDatabase $ appDatabaseConf $ appSettings app
-        connInfo = set fkEnabled False $ mkSqliteConnectionInfo dbName
-
-    pool <- runLoggingT (createSqlitePoolFromInfo connInfo 1) logFunc
-
-    flip runSqlPersistMPool pool $ do
-        tables <- getTables
-        sqlBackend <- ask
-        let queries = map (\t -> "DELETE FROM " ++ (connEscapeName sqlBackend $ DBName t)) tables
-        forM_ queries (\q -> rawExecute q [])
-
-getTables :: DB [Text]
+getTables :: MonadIO m => ReaderT SqlBackend m [Text]
 getTables = do
-    tables <- rawSql "SELECT name FROM sqlite_master WHERE type = 'table';" []
-    return (fmap unSingle tables)
 
--- | Authenticate as a user. This relies on the `***REMOVED***` flag
--- being set in test-settings.yaml, which enables dummy authentication in
--- Foundation.hs
-authenticateAs :: Entity User -> YesodExample App ()
-authenticateAs (Entity _ u) = do
-    request $ do
-        setMethod "POST"
-        addPostParam "ident" $ userIdent u
-        setUrl $ AuthR $ PluginR "dummy" []
+    tables <- rawSql "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';"[]
 
--- | Create a user.  The dummy email entry helps to confirm that foreign-key
--- checking is switched off in wipeDB for those database backends which need it.
-createUser :: Text -> YesodExample App (Entity User)
-createUser ident = runDB $ do
-    user <- insertEntity User
-        { userIdent = ident
-        , userPassword = Nothing
-        }
-    _ <- insert Email
-        { emailEmail = ident
-        , emailUserId = Just $ entityKey user
-        , emailVerkey = Nothing
-        }
-    return user
+    return $ map unSingle tables

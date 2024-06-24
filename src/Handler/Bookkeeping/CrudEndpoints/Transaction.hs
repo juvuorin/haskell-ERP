@@ -244,7 +244,7 @@ getTransactionEntriesR companyId transactionId = do
     case transaction of
       Just x -> return $ object ["rows" .= entries, "files" .= files, "transaction" .= transaction]
       Nothing -> sendResponseStatus status404 ("Cannot find transaction! Should never happen!" :: Text)
-
+ 
 {- data AutomationMasterKey = AutomationMasterKey
   { automationmasterkey :: String
   }
