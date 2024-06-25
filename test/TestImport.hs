@@ -42,9 +42,18 @@ runDB query = do
     app <- getTestYesod
     liftIO $ runDBWithApp app query
 
+
+-- | Get response from JSON body.
+{- getJsonResponse :: FromJSON a => YesodExample App a
+getJsonResponse =
+  withResponse $ \SResponse {..} ->
+    case fromJSON <$> decode simpleBody of
+      Just (Success a) -> return a
+      _ -> liftIO $ assertFailure $ "cannot decode JSON: " ++ unpack simpleBody
+ -}
+
 runDBWithApp :: App -> SqlPersistM a -> IO a
 runDBWithApp app query = runSqlPersistMPool query (appConnPool app)
-
 
 -- | Spec runner that sets up a test environment with DB.
 withApp :: SpecWith (TestApp App) -> Spec
