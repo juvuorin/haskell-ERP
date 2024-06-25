@@ -1,9 +1,9 @@
-{-# LANGUAGE CPP             ***REMOVED***-}
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards ***REMOVED***-}
-{-# LANGUAGE TemplateHaskell ***REMOVED***-}
-{-# LANGUAGE DeriveGeneric***REMOVED***-}
+{-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TemplateHaskell   #-}
+{-# LANGUAGE DeriveGeneric  #-}
 -- | Settings are centralized, as much as possible, into this file. This
 -- includes database connection settings, static file locations, etc.
 -- In addition, you can configure a number of different aspects of Yesod

@@ -10,11 +10,11 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
-{-# LANGUAGE FlexibleContexts    ***REMOVED***-}
-{-# LANGUAGE KindSignatures      ***REMOVED***-}
-{-# LANGUAGE NoImplicitPrelude   ***REMOVED***-}
-{-# LANGUAGE OverloadedStrings   ***REMOVED***-}
-{-# LANGUAGE Rank2Types          ***REMOVED***-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE KindSignatures        #-}
+{-# LANGUAGE NoImplicitPrelude     #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE Rank2Types            #-}
 {-# OPTIONS_GHC -F -pgmF=record-dot-preprocessor #-} 
 
 {- 400 Bad Request

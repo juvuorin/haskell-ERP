@@ -1,8 +1,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude   ***REMOVED***-}
-{-# LANGUAGE OverloadedStrings   ***REMOVED***-}
-{-# LANGUAGE TemplateHaskell     ***REMOVED***-}
-{-# LANGUAGE TypeFamilies        ***REMOVED***-}
+{-# LANGUAGE NoImplicitPrelude     #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE TemplateHaskell       #-}
+{-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module Handler.Bookkeeping.InternalReporting.ReportTrees where

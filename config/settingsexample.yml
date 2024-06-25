@@ -54,21 +54,21 @@ maventa_vendor_api_key : ""
 # NB: If you need a numeric value (e.g. 123) to parse as a String, wrap it in single quotes (e.g. "_env:YESOD_PGPASS:'123'")
 # See https://github.com/yesodweb/yesod/wiki/Configuration#parsing-numeric-values-as-strings
 
-# ***REMOVED***
+# database:
 # See config/test-settings.yml for an override during tests
-#  ***REMOVED*** "_env:YESOD_SQLITE_DATABASE:web-boilerplate-haskell.sqlite3"
+#  database: "_env:YESOD_SQLITE_DATABASE:web-boilerplate-haskell.sqlite3"
 #  poolsize: "_env:YESOD_SQLITE_POOLSIZE:10"
 
 # copyright: Insert copyright statement here
 #analytics: UA-YOURCODE
 
-***REMOVED***
+database:
   user:     "_env:YESOD_PGUSER:xxxxxxxxx"
   password: "_env:YESOD_PGPASS:xxxxxxxxx"
   host:     "_env:YESOD_PGHOST:localhost"
   port:     "_env:YESOD_PGPORT:5432"
  # See config/test-settings.yml for an override during tests
-  ***REMOVED*** "_env:YESOD_PGDATABASE:xxxxxx"
+  database: "_env:YESOD_PGDATABASE:xxxxxx"
   poolsize: "_env:YESOD_PGPOOLSIZE:10"
 copyright: Insert copyright statement here
 #analytics: UA-YOURCODE
