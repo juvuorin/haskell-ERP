@@ -8,6 +8,7 @@ static/tmp/
 static/combined/
 tunnarit.txt
 config/client_session_key.aes
+config/test-settings.yml
 *.aes
 *.hi
 *.o
