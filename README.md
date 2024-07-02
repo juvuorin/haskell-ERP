@@ -20,7 +20,7 @@ What is demonstrated and what you could learn while dealing with this piece of s
 * Accessing Alandsbanken Open Banking API 
 * Using Bang patterns to force code execution
 * Using secure sockets to deal with secure HTTP endpoints
-* Using GADT's to demonstrate type safe for invoicing
+* Using GADT's to demonstrate type safety for the purchase invoice module
 * Using HAXML for producing Haskell code for parsing XML
 * Using Tree structures for handling account charts
 * Using JWT to authenticate the users
