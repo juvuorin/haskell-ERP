@@ -53,7 +53,8 @@ removeTasks taskId documentId = do
           let lastTaskType = taskGroupTask (entityVal taskGroup)
           let previousStatus = getPreviousStatusByTask lastTaskType
           let documentId' = taskGroupDocumentId (entityVal taskGroup)
-
+           
+          -- TODO: We know that eventually taskGroupId may hit 1 again, but til then everything is fine :D
           taskGroupKeys <- selectKeysList [TaskGroupDocumentId ==. documentId', TaskGroupId >. taskTaskGroupId (entityVal task)] []
           -- Delete all tasks that are following this task, they will be reset
           deleteWhere [TaskTaskGroupId <-. taskGroupKeys]
